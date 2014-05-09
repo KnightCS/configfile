@@ -1,49 +1,3 @@
-" All system-wide defaults are set in $VIMRUNTIME/debian.vim (usually just
-" /usr/share/vim/vimcurrent/debian.vim) and sourced by the call to :runtime
-" you can find below.  If you wish to change any of those settings, you should
-" do it in this file (/etc/vim/vimrc), since debian.vim will be overwritten
-" everytime an upgrade of the vim packages is performed.  It is recommended to
-" make changes after sourcing debian.vim since it alters the value of the
-" 'compatible' option.
-" This line should not be removed as it ensures that various options are
-" properly set to work with the Vim-related packages available in Debian.
-runtime! debian.vim
-" Uncomment the next line to make Vim more Vi-compatible
-" NOTE: debian.vim sets 'nocompatible'.  Setting 'compatible' changes numerous
-" options, so any other options should be set AFTER setting 'compatible'.
-"set compatible
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
-if has("syntax")
-  syntax on
-endif
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
-"set background=dark
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
-"if has("autocmd")
-"  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-"endif
-" Uncomment the following to have Vim load indentation rules and plugins
-" according to the detected filetype.
-"if has("autocmd")
-"  filetype plugin indent on
-"endif
-" The following are commented out as they cause vim to behave a lot
-" differently from regular Vi. They are highly recommended though.
-"set showcmd		" Show (partial) command in status line.
-"set showmatch		" Show matching brackets.
-"set ignorecase		" Do case insensitive matching
-"set smartcase		" Do smart case matching
-"set incsearch		" Incremental search
-"set autowrite		" Automatically save before commands like :next and :make
-"set hidden             " Hide buffers when they are abandoned
-"set mouse=a		" Enable mouse usage (all modes)
-" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
-endif
 ""********** ********** ********** **********
 " VIM增强设置
 " Autor:Knight_cs
@@ -132,10 +86,15 @@ set guioptions-=m
 " nomagic(\M)：除了 $ ^ 之外其他元字符都要加反斜杠。
 set magic
 "*****~*****~*****
+" 设置主题
+"colorscheme monokai
+colorscheme desert
 " 背景使用黑色
 "set background=dark	 
 " 设置字体
-set guifont=Courier_New:h10:cANSI
+"set guifont=Courier_New:h10:cANSI
+"set guifont=Monaco:h9:cANSI
+set guifont=Monaco\ 12
 " 显示行号   
 set number
 "带有如下符号的单词不要被换行分割
@@ -188,8 +147,8 @@ set matchtime=5
 " 不要高亮被搜索的句子（phrases） 
 set nohlsearch 
 " 高亮字符，让其不受100列限制 
-:highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white 
-:match OverLength '\%101v.*'
+highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white 
+match OverLength '\%101v.*'
 " 高亮显示普通txt文件（需要txt.vim脚本）
 "au BufRead,BufNewFile *  setfiletype txt
 "*****~*****~*****
@@ -286,20 +245,6 @@ set tags=tags;/
 "autocmd FileType java set tags+=D:\tools\java\tags  
 "autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags  
 """"""""""""""""""""""""""""""""""""""""
-" 5.Tag list (ctags) 
-""""""""""""""""""""""""""""""""""""""""
-" 默认打开Taglist 
-let Tlist_Auto_Open=0 
-let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
-" 不同时显示多个文件的tag，只显示当前文件的 
-let Tlist_Show_One_File = 1
-" 如果taglist窗口是最后一个窗口，则退出vim 
-let Tlist_Exit_OnlyWindow = 1
-" 在左侧窗口中显示taglist窗口		 
-let Tlist_Use_Right_Window = 0 		 
-" 函数列表开关
-map <silent> <leader>tl :TlistToggle<cr>
-""""""""""""""""""""""""""""""""""""""""
 " 6.自动标题、自动补全
 """"""""""""""""""""""""""""""""""""""""
 " 打开文件类型检测, 加了这句才可以用智能补全
@@ -308,9 +253,12 @@ filetype plugin indent on
 set completeopt=longest,menu
 " 新建.c,.h,.sh,.java文件，自动插入文件头 
 " .c,.cpp文件有c.vim插件进行插入
+"let my_autoadd_filetype='*.[ch]pp,*.cc,*.[ch],*.sh,*.java'
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.sh,*.java exec ":call SetTitle()"
+"autocmd BufNewFile ($my_autoadd_filetype) exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
-autocmd BufNewFile * normal G 
+autocmd BufNewFile * normal 6GA
+"autocmd BufNewFile &my_autoadd_filetype normal 6G
 "定义函数SetTitle，自动插入文件头 
 func SetTitle() 
 	if &filetype == 'sh' 
@@ -325,12 +273,12 @@ func SetTitle()
         call append(line(".")+7, "\######## ######## ######## ######## ######## ######## ########") 
         call append(line(".")+8, "") 
 	else
-		call setline(1,          " /*****~*****~*****~*****~*****~*****~*****~*****~*****") 
+		call setline(1,          "/*****~*****~*****~*****~*****~*****~*****~*****~*****") 
 		call append(line("."),   " *  > File Name:    ".expand("%")) 
 		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com") 
 		call append(line(".")+2, " *  > Created Time: ".strftime("%c")) 
 		call append(line(".")+3, " *  > Version:      1.0")
-		call append(line(".")+4, " *  > Program:")
+		call append(line(".")+4, " *  > Program: ")
 		call append(line(".")+5, " *****~*****~*****~*****~*****~*****~*****~*****~*****/") 
 		call append(line(".")+6, "")
 	endif
@@ -349,21 +297,133 @@ set report=0
 "nmap <leader>w :w!<cr>
 "nmap <leader>f :find<cr>
 " 映射全选+复制 ctrl+a
-map <C-A> ggVGY
-map! <C-A> <Esc>ggVGY
-map <F12> gg=G
+"map <C-A> ggVGY
+"map! <C-A> <Esc>ggVGY
+"map <F12> gg=G
 " 选中状态下 Ctrl+c 复制
-vmap <C-c> "+y
-"去空行  
-nnoremap <F2> :g/^\s*$/d<CR> 
+"vnoremap <C-c> "+y 
+"vnoremap <leader>cc "+y
+"去空行 
+"nnoremap <F2> :g/^\s*$/d<CR> 
 "比较文件  
-nnoremap <C-F2> :vert diffsplit 
+"nnoremap <C-F2> :vert diffsplit 
 "新建标签  
-map <M-F2> :tabnew<CR>  
+"map <M-F2> :tabnew<CR>  
 "列出当前目录文件  
-map <F3> :tabnew .<CR>  
+"map <F3> :tabnew .<CR>  
 "打开树状文件目录  
-map <C-F3> \be  
+"map <C-F3> \be  
 
-" a.vim配置
-map av :AV<cr>
+""""""""""""""""""""""""""""""""""""""""
+" 8.Vundle插件管理
+""""""""""""""""""""""""""""""""""""""""
+"增强模式中那个的命令行自动完成操作
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+" alternatively, pass a path where Vundle should install plugins
+"let path = '~/some/path/here'
+"call vundle#rc(path)
+"
+" let Vundle manage Vundle, required
+Plugin 'gmarik/vundle'
+
+""""""""git repo"""""""""""""""
+" The following are examples of different formats supported.
+" Keep Plugin commands between here and filetype plugin indent on.
+" scripts on GitHub repos
+Plugin 'tpope/vim-fugitive'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'tpope/vim-rails.git'
+Plugin 'Valloric/YouCompleteMe'
+	""""""""""""YCM""""""""""""""""""""
+	let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
+	let g:ycm_collect_identifiers_from_tags_files = 1
+	let g:ycm_seed_identifiers_with_syntax = 1
+	let g:ycm_confirm_extra_conf = 0
+	let g:ycm_allow_changing_updatetime = 0
+	set updatetime=100
+	" 跳转到定义处
+	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
+	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+Plugin 'scrooloose/Syntastic'
+	""""""""""syntastic""""""""""""
+	let g:syntastic_check_on_open = 1
+	let g:syntastic_cpp_include_dirs = ['/usr/include/']
+	let g:syntastic_cpp_remove_include_errors = 1
+	let g:syntastic_cpp_check_header = 1
+	let g:syntastic_cpp_compiler = 'clang++'
+	let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libstdc++'
+	"set error or warning signs
+	let g:syntastic_error_symbol = '✗'
+	let g:syntastic_warning_symbol = '⚠'
+	""whether to show balloons
+	let g:syntastic_enable_balloons = 1
+
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
+" scripts from http://vim-scripts.org/vim/scripts.html
+Plugin 'L9'
+Plugin 'FuzzyFinder'
+" 自动补全括号、大括号等。
+Plugin 'auto-pairs'
+" 快速插入代码片段
+Bundle 'SirVer/ultisnips'
+	let g:UltiSnipsExpandTrigger = "<tab>"
+	let g:UltiSnipsJumpForwardTrigger = "<tab>"
+	let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+	"	定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
+	let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/UltiSnips"]"]"
+	let g:solarized_visibility = "high"
+	
+""""""""vim scripts""""""""""""""""""
+Bundle 'taglist.vim'
+	""""""""""""""""""""""""""""""""""""""""
+	" 5.Tag list (ctags) 
+	""""""""""""""""""""""""""""""""""""""""
+	" 默认不打开Taglist 
+	let Tlist_Auto_Open=0 
+	let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
+	" 不同时显示多个文件的tag，只显示当前文件的 
+	let Tlist_Show_One_File = 1
+	" 如果taglist窗口是最后一个窗口，则退出vim 
+	let Tlist_Exit_OnlyWindow = 1
+	" 在左侧窗口中显示taglist窗口		 
+	let Tlist_Use_Right_Window = 0 		 
+	" 函数列表开关
+	map <silent> <leader>tl :TlistToggle<cr>
+Bundle "Tagbar"
+	" auto open when open a c++ file
+	autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
+	" set the window's width
+	let g:tagbar_width = 20
+	let g:tagbar_ctags_bin='/usr/bin/ctags'
+	nmap <leader>tb :TagbarToggle<cr>
+"Plugin 'c.vim'
+Bundle 'grep.vim'
+Bundle 'mru.vim'
+Bundle 'comments.vim'
+" 在头文件以及源文件间跳转
+Plugin 'a.vim'
+	" a.vim配置
+	map av :AV<cr>
+" scripts not on GitHub
+" Plugin 'git://git.wincent.com/command-t.git'
+" git repos on your local machine (i.e. when working on your own plugin)
+" Plugin 'file:///home/gmarik/path/to/plugin'
+" ...
+
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList          - list configured plugins
+" :PluginInstall(!)    - install (update) plugins
+" :PluginSearch(!) foo - search (or refresh cache first) for foo
+" :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
+"
+" see :h vundle for more details or wiki for FAQ
+" NOTE: comments after Plugin commands are not allowed.
+" Put your stuff after this line
