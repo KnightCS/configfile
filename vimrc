@@ -347,6 +347,9 @@ Plugin 'Valloric/YouCompleteMe'
 	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
 	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+	" jump
+	" you can use ctrl+o jump back to where the previous tags you view
+	" and you also can use ctral+i jump to the next tags you want to view.
 Plugin 'scrooloose/Syntastic'
 	""""""""""syntastic""""""""""""
 	let g:syntastic_check_on_open = 1
