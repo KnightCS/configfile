@@ -75,6 +75,8 @@ if version >= 603
     set encoding=utf-8
 endif
 "*****~*****~*****
+" 去掉边框
+set go=
 " 隐藏工具栏
 set guioptions-=T
 " 隐藏菜单栏     
@@ -86,10 +88,15 @@ set guioptions-=m
 " nomagic(\M)：除了 $ ^ 之外其他元字符都要加反斜杠。
 set magic
 "*****~*****~*****
+" 设置主题
+"colorscheme monokai
+colorscheme desert
 " 背景使用黑色
 "set background=dark	 
 " 设置字体
-set guifont=Courier_New:h10:cANSI
+"set guifont=Courier_New:h10:cANSI
+"set guifont=Monaco:h9:cANSI
+set guifont=Monaco\ 12
 " 显示行号   
 set number
 "带有如下符号的单词不要被换行分割
@@ -121,8 +128,8 @@ set foldenable
 " 把{{{和}}}之间的内容折叠
 set foldmethod=marker
 " 折行前空出4字符显示折行标识
-set foldcolumn=4  
-set foldlevel=3 
+set foldcolumn=0
+set foldlevel=0
 "*****~*****~*****
 "*****~*****~***** 
 " 高亮显示
@@ -142,8 +149,8 @@ set matchtime=5
 " 不要高亮被搜索的句子（phrases） 
 set nohlsearch 
 " 高亮字符，让其不受100列限制 
-:highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white 
-:match OverLength '\%101v.*'
+highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white 
+match OverLength '\%101v.*'
 " 高亮显示普通txt文件（需要txt.vim脚本）
 "au BufRead,BufNewFile *  setfiletype txt
 "*****~*****~*****
@@ -240,20 +247,6 @@ set tags=tags;/
 "autocmd FileType java set tags+=D:\tools\java\tags  
 "autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags  
 """"""""""""""""""""""""""""""""""""""""
-" 5.Tag list (ctags) 
-""""""""""""""""""""""""""""""""""""""""
-" 默认打开Taglist 
-let Tlist_Auto_Open=0 
-let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
-" 不同时显示多个文件的tag，只显示当前文件的 
-let Tlist_Show_One_File = 1
-" 如果taglist窗口是最后一个窗口，则退出vim 
-let Tlist_Exit_OnlyWindow = 1
-" 在左侧窗口中显示taglist窗口		 
-let Tlist_Use_Right_Window = 0 	
-" 函数列表开关
-map <silent> <leader>tl :TlistToggle<cr>
-""""""""""""""""""""""""""""""""""""""""
 " 6.自动标题、自动补全
 """"""""""""""""""""""""""""""""""""""""
 " 打开文件类型检测, 加了这句才可以用智能补全
@@ -262,9 +255,12 @@ filetype plugin indent on
 set completeopt=longest,menu
 " 新建.c,.h,.sh,.java文件，自动插入文件头 
 " .c,.cpp文件有c.vim插件进行插入
+"let my_autoadd_filetype='*.[ch]pp,*.cc,*.[ch],*.sh,*.java'
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.sh,*.java exec ":call SetTitle()"
+"autocmd BufNewFile ($my_autoadd_filetype) exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
-autocmd BufNewFile * normal 6GA 
+autocmd BufNewFile * normal 6GA
+"autocmd BufNewFile &my_autoadd_filetype normal 6G
 "定义函数SetTitle，自动插入文件头 
 func SetTitle() 
 	if &filetype == 'sh' 
@@ -279,12 +275,12 @@ func SetTitle()
         call append(line(".")+7, "\######## ######## ######## ######## ######## ######## ########") 
         call append(line(".")+8, "") 
 	else
-		call setline(1,          " /*****~*****~*****~*****~*****~*****~*****~*****~*****") 
+		call setline(1,          "/*****~*****~*****~*****~*****~*****~*****~*****~*****") 
 		call append(line("."),   " *  > File Name:    ".expand("%")) 
 		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com") 
 		call append(line(".")+2, " *  > Created Time: ".strftime("%c")) 
 		call append(line(".")+3, " *  > Version:      1.0")
-		call append(line(".")+4, " *  > Program:")
+		call append(line(".")+4, " *  > Program: ")
 		call append(line(".")+5, " *****~*****~*****~*****~*****~*****~*****~*****~*****/") 
 		call append(line(".")+6, "")
 	endif
@@ -303,21 +299,22 @@ set report=0
 "nmap <leader>w :w!<cr>
 "nmap <leader>f :find<cr>
 " 映射全选+复制 ctrl+a
-map <C-A> ggVGY
-map! <C-A> <Esc>ggVGY
-map <F12> gg=G
+"map <C-A> ggVGY
+"map! <C-A> <Esc>ggVGY
+"map <F12> gg=G
 " 选中状态下 Ctrl+c 复制
-vmap <C-c> "+y
-"去空行  
-nnoremap <F2> :g/^\s*$/d<CR> 
+"vnoremap <C-c> "+y 
+"vnoremap <leader>cc "+y
+"去空行 
+"nnoremap <F2> :g/^\s*$/d<CR> 
 "比较文件  
-nnoremap <C-F2> :vert diffsplit 
+"nnoremap <C-F2> :vert diffsplit 
 "新建标签  
-map <M-F2> :tabnew<CR>  
+"map <M-F2> :tabnew<CR>  
 "列出当前目录文件  
-map <F3> :tabnew .<CR>  
+"map <F3> :tabnew .<CR>  
 "打开树状文件目录  
-map <C-F3> \be  
+"map <C-F3> \be  
 
 """"""""""""""""""""""""""""""""""""""""
 " 8.Vundle插件管理
@@ -346,10 +343,38 @@ Plugin 'Valloric/YouCompleteMe'
 	let g:ycm_collect_identifiers_from_tags_files = 1
 	let g:ycm_seed_identifiers_with_syntax = 1
 	let g:ycm_confirm_extra_conf = 0
+	let g:ycm_allow_changing_updatetime = 0
+	set updatetime=100
+	" 离开插入模式后自动关闭预览窗口
+	autocmd InsertLeave * if pumvisible() == 0|pclose|endif	
+	" 禁止缓存匹配项,每次都重新生成匹配项
+	let g:ycm_cache_omnifunc=0	
+	" 语法关键字补全
+	let g:ycm_seed_identifiers_with_syntax=1	
+	" 在注释输入中也能补全
+	let g:ycm_complete_in_comments = 1
+	" 在字符串输入中也能补全
+	let g:ycm_complete_in_strings = 1	
+	" 注释和字符串中的文字也会被收入补全
+	let g:ycm_collect_identifiers_from_comments_and_strings = 0
 	" 跳转到定义处
 	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
 	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+	" jump
+	" you can use ctrl+o jump back to where the previous tags you view
+	" and you also can use ctral+i jump to the next tags you want to view.
+	let g:ycm_filetype_blacklist = {
+				\ 'tagbar' : 1,
+				\ 'qf' : 1,
+				\ 'notes' : 1,
+				\ 'markdown' : 1,
+				\ 'unite' : 1,
+				\ 'text' : 1,
+				\ 'vimwiki' : 1,
+				\ 'gitcommit' : 1,
+				\}
+" 语法检测
 Plugin 'scrooloose/Syntastic'
 	""""""""""syntastic""""""""""""
 	let g:syntastic_check_on_open = 1
@@ -358,11 +383,43 @@ Plugin 'scrooloose/Syntastic'
 	let g:syntastic_cpp_check_header = 1
 	let g:syntastic_cpp_compiler = 'clang++'
 	let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libstdc++'
+	" whether to show balloons
+	let g:syntastic_enable_balloons = 1	
 	"set error or warning signs
 	let g:syntastic_error_symbol = '✗'
 	let g:syntastic_warning_symbol = '⚠'
-	""whether to show balloons
+	" whether to show balloons
+	let g:syntastic_enable_highlighting = 1
 	let g:syntastic_enable_balloons = 1
+	let g:syntastic_python_checkers=['pyflakes']
+"快速插入代码片段
+Plugin 'vim-scripts/UltiSnips'
+"Bundle 'SirVer/ultisnips'
+	let g:UltiSnipsExpandTrigger = "<tab>"
+	let g:UltiSnipsJumpForwardTrigger = "<tab>"
+	let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+	"定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
+	let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/UltiSnips"]
+	" If you want :UltiSnipsEdit to split your window.
+	"let g:UltiSnipsEditSplit="vertical"
+	"let g:solarized_visibility = "high"
+"	let g:UltiSnips = {}
+"	let g:UltiSnips.always_use_first_snippet = 1
+"	let g:UltiSnips.ExpandTrigger = '<c-j>'
+"	let g:UltiSnips.ListSnippets = '<c-r><tab>'
+"	let g:UltiSnips.JumpForwardTrigger = '<tab>'
+"	let g:UltiSnips.JumpBackwardTrigger = '<s-tab>'	
+" 装逼的状态栏
+Plugin 'bling/vim-airline'
+	set t_Co=256
+	let g:airline_powerline_fonts=0
+"Plugin 'Lokaltog/vim-powerline'
+"	set guifont=PowerlineSymbols\ for\ Powerline
+"	set nocompatible
+"	set t_Co=256
+"	let g:Powerline_symbols = 'fancy'
+"	let g:Powerline_symbols = 'unicode'
+"	let Powerline_symbols='compatible'
 
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
@@ -372,21 +429,15 @@ Plugin 'L9'
 Plugin 'FuzzyFinder'
 " 自动补全括号、大括号等。
 Plugin 'auto-pairs'
-" 快速插入代码片段
-Bundle 'SirVer/ultisnips'
-	let g:UltiSnipsExpandTrigger = "<tab>"
-	let g:UltiSnipsJumpForwardTrigger = "<tab>"
-	let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-	"	定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
-	let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/UltiSnips"]"]"
-	let g:solarized_visibility = "high"
+" 快速注释
+Plugin 'scrooloose/nerdcommenter'
 	
 """"""""vim scripts""""""""""""""""""
 Bundle 'taglist.vim'
 	""""""""""""""""""""""""""""""""""""""""
 	" 5.Tag list (ctags) 
 	""""""""""""""""""""""""""""""""""""""""
-	" 默认打开Taglist 
+	" 默认不打开Taglist 
 	let Tlist_Auto_Open=0 
 	let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
 	" 不同时显示多个文件的tag，只显示当前文件的 
@@ -397,6 +448,14 @@ Bundle 'taglist.vim'
 	let Tlist_Use_Right_Window = 0 		 
 	" 函数列表开关
 	map <silent> <leader>tl :TlistToggle<cr>
+Bundle "Tagbar"
+	" auto open when open a c++ file
+	autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
+	" set the window's width
+	let g:tagbar_width = 20
+	let g:tagbar_ctags_bin='/usr/bin/ctags'
+	nmap <leader>tb :TagbarToggle<cr>
+"Plugin 'c.vim'
 Bundle 'grep.vim'
 Bundle 'mru.vim'
 Bundle 'comments.vim'
@@ -404,7 +463,20 @@ Bundle 'comments.vim'
 Plugin 'a.vim'
 	" a.vim配置
 	map av :AV<cr>
-"Plugin 'c.vim'
+" 文件头&函数注释
+Plugin 'DoxygenToolkit.vim'
+	let g:DoxygenToolkit_briefTag_pre="@Synopsis  "
+	let g:DoxygenToolkit_paramTag_pre="@Param "
+	let g:DoxygenToolkit_returnTag="@Returns   "
+	let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
+	let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
+	let g:DoxygenToolkit_authorName="KnightCS,chenshuomailbox@gmail.com"
+	let s:licenseTag="Copyright(C)\<enter>"
+	let s:licenseTag=s:licenseTag."For free\<enter>"
+	let s:licenseTag=s:licenseTag."All right recerved\<enter>"
+	let g:DoxygenToolkit_licenseTag=s:licenseTag
+	let g:DoxygenToolkit_briefTag_funcName="yes"
+	let g:Doxygen_enhanced_color=1
 " scripts not on GitHub
 " Plugin 'git://git.wincent.com/command-t.git'
 " git repos on your local machine (i.e. when working on your own plugin)
