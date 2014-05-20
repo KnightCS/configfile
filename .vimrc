@@ -339,7 +339,8 @@ Plugin 'Lokaltog/vim-easymotion'
 Plugin 'tpope/vim-rails.git'
 Plugin 'Valloric/YouCompleteMe'
 	""""""""""""YCM""""""""""""""""""""
-	let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
+	"let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
+	let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 	let g:ycm_collect_identifiers_from_tags_files = 1
 	let g:ycm_seed_identifiers_with_syntax = 1
 	let g:ycm_confirm_extra_conf = 0
@@ -361,6 +362,8 @@ Plugin 'Valloric/YouCompleteMe'
 	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
 	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+	" c函数全局补全
+	let g:ycm_key_invoke_completion = '<C-Space>'
 	" jump
 	" you can use ctrl+o jump back to where the previous tags you view
 	" and you also can use ctral+i jump to the next tags you want to view.
