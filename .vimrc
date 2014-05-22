@@ -416,6 +416,7 @@ Plugin 'vim-scripts/UltiSnips'
 Plugin 'bling/vim-airline'
 	set t_Co=256
 	let g:airline_powerline_fonts=0
+	"theme:serene\simple\luna\jellybeans\sol\
 "Plugin 'Lokaltog/vim-powerline'
 "	set guifont=PowerlineSymbols\ for\ Powerline
 "	set nocompatible
@@ -467,10 +468,11 @@ Plugin 'a.vim'
 	" a.vim配置
 	map av :AV<cr>
 " 文件头&函数注释
+"doxauthor,dox,doxblock
 Plugin 'DoxygenToolkit.vim'
-	let g:DoxygenToolkit_briefTag_pre="@Synopsis  "
-	let g:DoxygenToolkit_paramTag_pre="@Param "
-	let g:DoxygenToolkit_returnTag="@Returns   "
+	let g:DoxygenToolkit_briefTag_pre="@Synopsis:  "
+	let g:DoxygenToolkit_paramTag_pre="@Param: "
+	let g:DoxygenToolkit_returnTag="@Returns:   "
 	let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
 	let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
 	let g:DoxygenToolkit_authorName="KnightCS,chenshuomailbox@gmail.com"
