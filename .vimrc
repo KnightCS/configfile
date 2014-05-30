@@ -256,26 +256,28 @@ set completeopt=longest,menu
 " 新建.c,.h,.sh,.java文件，自动插入文件头 
 " .c,.cpp文件有c.vim插件进行插入
 "let my_autoadd_filetype='*.[ch]pp,*.cc,*.[ch],*.sh,*.java'
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.sh,*.java exec ":call SetTitle()"
+autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java exec ":call SetTitle()"
 "autocmd BufNewFile ($my_autoadd_filetype) exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
 autocmd BufNewFile * normal 6GA
 "autocmd BufNewFile &my_autoadd_filetype normal 6G
 "定义函数SetTitle，自动插入文件头 
 func SetTitle() 
-	if &filetype == 'sh' 
-		call setline(1, "\#!/bin/bash") 
-        call append(line("."),   "\######## ######## ######## ######## ######## ######## ########") 
-		call append(line(".")+1, "\#	File Name:		".expand("%")) 
-		call append(line(".")+2, "\#	Author:			Knight_cs") 
-		call append(line(".")+3, "\#	Mail:			chenshuo_mailbox@qq.com") 
-		call append(line(".")+4, "\#	Created Time:	".strftime("%c"))
-		call append(line(".")+5, "\#	Program: ")
-		call append(line(".")+6, "\#	") 
-        call append(line(".")+7, "\######## ######## ######## ######## ######## ######## ########") 
-        call append(line(".")+8, "") 
+	if &filetype == 'sh' || &filetype == 'python' 
+		if &filetype == 'sh'
+			call setline(1, "\#!/bin/bash") 
+		else
+			call setline(1, "\#!/usr/bin/python") 
+		endif
+        call append(line("."),   "\#*****~*****~*****~*****~*****~*****~*****~*****~*****") 
+		call append(line(".")+1, "\# >File Name:    ".expand("%")) 
+		call append(line(".")+2, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)") 
+		call append(line(".")+3, "\# >Created Time: ".strftime("%c"))
+		call append(line(".")+4, "\# >Program: ")
+        call append(line(".")+5, "\#*****~*****~*****~*****~*****~*****~*****~*****~*****") 
+        call append(line(".")+6, "") 
 	else
-		call setline(1,          "/*****~*****~*****~*****~*****~*****~*****~*****~*****") 
+		call setline(1,          "\/*****~*****~*****~*****~*****~*****~*****~*****~*****") 
 		call append(line("."),   " *  > File Name:    ".expand("%")) 
 		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com") 
 		call append(line(".")+2, " *  > Created Time: ".strftime("%c")) 
@@ -432,7 +434,8 @@ Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 " 自动补全括号、大括号等。
-Plugin 'auto-pairs'
+Plugin 'jiangmiao/auto-pairs'
+	"let g:AutoPairsFlyMode = 1
 " 快速注释
 Plugin 'scrooloose/nerdcommenter'
 	
@@ -474,7 +477,7 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_paramTag_pre="@Param: "
 	let g:DoxygenToolkit_returnTag="@Returns:   "
 	let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
-	let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
+	let g:DoxygenToolkit_blockFooter="--------------------------------------------------------------------------"
 	let g:DoxygenToolkit_authorName="KnightCS,chenshuomailbox@gmail.com"
 	let s:licenseTag="Copyright(C)\<enter>"
 	let s:licenseTag=s:licenseTag."For free\<enter>"
@@ -482,6 +485,11 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_licenseTag=s:licenseTag
 	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
+" 文件目录数
+Plugin 'scrooloose/nerdtree'
+"	" 如果neadtree为最后一个窗口，则自动关闭
+"	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") &&b:NERDTreeType == "primary") | q | endief	
+	map <leader>tn :NERDTreeToggle<CR>
 " scripts not on GitHub
 " Plugin 'git://git.wincent.com/command-t.git'
 " git repos on your local machine (i.e. when working on your own plugin)
