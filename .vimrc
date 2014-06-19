@@ -1,15 +1,15 @@
 ""********** ********** ********** **********
 " VIM增强设置
 " Autor:Knight_cs
-" DesCRiption:for Linux/Windows, GUI/Console
+" DesCRiption:for Linux, GUI/Console
 " LINUX全局版本请见：/usr/share/vim/vimrc
 " Version: 1.00
 ""********** ********** ********** **********
 """"""""""""""""""""""""""""""""""""""""
-" 1.一般设置  
+" 1.一般设置
 """"""""""""""""""""""""""""""""""""""""
 " 不要使用vi的键盘模式，而是viｍ自己的
-" 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限  
+" 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 set nocompatible
 " 启动的时候不显示那个援助索马里儿童的提示
 set shortmess=atl
@@ -17,7 +17,7 @@ set shortmess=atl
 set noeb
 " 左下角的状态
 set showmode
-"*****~*****~***** 
+"*****~*****~*****
 " 目录、文件
 "*****~*****~*****
 " 载入文件类型插件
@@ -25,7 +25,7 @@ filetype plugin on
 " 为特定文件类型载入相关缩进文件
 filetype indent on
 " 自动切换当前目录为当前文件所在的目录
-set autochdir 
+set autochdir
 " 设置当文件被改动时自动载入
 set autoread
 " 覆盖文件时不备份
@@ -33,15 +33,15 @@ set autoread
 set nobackup
 set noswapfile
 " 设置备份时的行为为覆盖
-"set backupcopy=yes 
+"set backupcopy=yes
 " 自动保存
 set autowrite
-" 代码补全 
-set completeopt=preview,menu 
+" 代码补全
+set completeopt=preview,menu
 " 在处理未保存或只读文件的时候，弹出确定
 set confirm
 "*****~*****~*****
-"*****~*****~***** 
+"*****~*****~*****
 " 编码相关
 "*****~*****~*****
 " 内部使用字符编码方式
@@ -65,9 +65,9 @@ set viminfo +=!
 " quickfix模式
 autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 """"""""""""""""""""""""""""""""""""""""
-" 2.显示相关  
+" 2.显示相关
 """"""""""""""""""""""""""""""""""""""""
-"*****~*****~***** 
+"*****~*****~*****
 " 显示中文帮助
 "*****~*****~*****
 if version >= 603
@@ -79,10 +79,10 @@ endif
 set go=
 " 隐藏工具栏
 set guioptions-=T
-" 隐藏菜单栏     
-set guioptions-=m 
-"*****~*****~***** 
-" 设置魔术 
+" 隐藏菜单栏
+set guioptions-=m
+"*****~*****~*****
+" 设置魔术
 "*****~*****~*****
 " magic(\m)：除了 $ . * ^ 之外其他元字符都要加反斜杠。
 " nomagic(\M)：除了 $ ^ 之外其他元字符都要加反斜杠。
@@ -92,46 +92,46 @@ set magic
 "colorscheme monokai
 colorscheme desert
 " 背景使用黑色
-"set background=dark	 
+"set background=dark
 " 设置字体
 "set guifont=Courier_New:h10:cANSI
 "set guifont=Monaco:h9:cANSI
 set guifont=Monaco\ 12
-" 显示行号   
+" 显示行号
 set number
 "带有如下符号的单词不要被换行分割
-set iskeyword+=_,$,@,%,#,-	
+set iskeyword+=_,$,@,%,#,-
 " 字符间插入的像素行数目
 set linespace=0
 " 显示制表符
-"set list                       
+"set list
 " 将制表符显示为'>---',将行尾空格显示为'-'
-"set listchars = tab:>-,trail:- 
+"set listchars = tab:>-,trail:-
 " 将制表符显示为'.   '"
-"set listchars=tab:.\ ,trail:.   
-"*****~*****~***** 
+"set listchars=tab:.\ ,trail:.
+"*****~*****~*****
 " 光标
 "*****~*****~*****
-" 不要闪烁 
+" 不要闪烁
 set novisualbell
-" 光标移动到buffer的顶部和底部时保持3行距离 
-set scrolloff=3	
+" 光标移动到buffer的顶部和底部时保持3行距离
+set scrolloff=3
 "*****~*****~*****
-"*****~*****~***** 
+"*****~*****~*****
 " 折叠
 "*****~*****~*****
-" 允许折叠 
-set foldenable			
-" 手动折叠   
+" 允许折叠
+set foldenable
+" 手动折叠
 "set foldmethod=manual
-"set foldmethod=indent  
+"set foldmethod=indent
 " 把{{{和}}}之间的内容折叠
 set foldmethod=marker
 " 折行前空出4字符显示折行标识
 set foldcolumn=0
 set foldlevel=0
 "*****~*****~*****
-"*****~*****~***** 
+"*****~*****~*****
 " 高亮显示
 "*****~*****~*****
 " 语法高亮
@@ -140,16 +140,16 @@ syntax on
 " 突出显示当前行(下划线)
 set cursorline
 " 用浅色高亮当前行
-autocmd InsertEnter * se cul 
-autocmd InsertLeave * se nocul 
-" 高亮显示匹配的括号 
-set showmatch  
-" 匹配括号高亮的时间（单位是十分之一秒） 
-set matchtime=5 
-" 不要高亮被搜索的句子（phrases） 
-set nohlsearch 
-" 高亮字符，让其不受100列限制 
-highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white 
+autocmd InsertEnter * se cul
+autocmd InsertLeave * se nocul
+" 高亮显示匹配的括号
+set showmatch
+" 匹配括号高亮的时间（单位是十分之一秒）
+set matchtime=5
+" 不要高亮被搜索的句子（phrases）
+set nohlsearch
+" 高亮字符，让其不受100列限制
+highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white
 match OverLength '\%101v.*'
 " 高亮显示普通txt文件（需要txt.vim脚本）
 "au BufRead,BufNewFile *  setfiletype txt
@@ -157,133 +157,127 @@ match OverLength '\%101v.*'
 "*****~*****~*****
 " 命令行、状态栏
 "*****~*****~*****
-" 启动显示状态行(1),总是显示状态行(2) 
+" 启动显示状态行(1),总是显示状态行(2)
 set laststatus=2
-" 命令行（在状态行下）的高度，默认为1，这里是2 
+" 命令行（在状态行下）的高度，默认为1，这里是2
 set cmdheight=2
 " 输入的命令显示出来，看的清楚些
-set showcmd 
+set showcmd
 " 打开状态栏标尺
 set ruler
-" 状态行颜色 
-highlight StatusLine guifg=SlateBlue guibg=Yellow 
+" 状态行颜色
+highlight StatusLine guifg=SlateBlue guibg=Yellow
 highlight StatusLineNC guifg=Gray guibg=White
-" 状态行显示的内容 
-set statusline=%F%r%m%*%=[%{&ff}]%Y\ [%l,%v-%c][%p%%]%{strftime(\"%m/%y-%H:%M\")} 
-"set statusline=%F%m%r%h%w%=[POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")} 
+" 状态行显示的内容
+set statusline=%F%r%m%*%=[%{&ff}]%Y\ [%l,%v-%c][%p%%]%{strftime(\"%m/%y-%H:%M\")}
+"set statusline=%F%m%r%h%w%=[POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
 "set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
 " 我的状态行显示的内容（包括文件类型和解码）
 "set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\-\ %H:%M\")}
 "set statusline=[%F]%y%r%m%*
 "*****~*****~*****
 "*****~*****~*****
-" 搜索和匹配 
+" 搜索和匹配
 "*****~*****~*****
 " 搜索逐字符高亮
 set hlsearch
 set incsearch
-" 在搜索的时候忽略大小写 
-set ignorecase 
-" 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索） 
-set incsearch 
-" 输入:set list命令是应该显示些啥？ 
-set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$ 
+" 在搜索的时候忽略大小写
+set ignorecase
+" 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
+set incsearch
+" 输入:set list命令是应该显示些啥？
+set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
 "*****~*****~*****
-"*****~*****~***** 
-" 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位） 
 "*****~*****~*****
-set mouse=a 
-set selection=exclusive 
+" 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
+"*****~*****~*****
+set mouse=a
+set selection=exclusive
 set selectmode=mouse,key
 "*****~*****~*****
 " 在被分割的窗口间显示空白，便于阅读
 set fillchars=vert:\ ,stl:\ ,stlnc:\
 """"""""""""""""""""""""""""""""""""""""
-" 3.文本格式和排版 
+" 3.文本格式和排版
 """"""""""""""""""""""""""""""""""""""""
 " 检测文件类型
 filetype on
-" 自动格式化 
-set formatoptions=tcrqn 
-" 继承前一行的缩进方式，特别适用于多行注释 
-set autoindent 
-" 使用C样式的缩进 
-set cindent 
-" 为C程序提供自动缩进 
-set smartindent 
-" Tab键的宽度4 
-set tabstop=4 
-" 统一缩进为4 
-set softtabstop=4 
-set shiftwidth=4 
-" 不要用空格代替制表符 
-set noexpandtab 
-" 不要换行 
-set nowrap 
-" 在行和段开始处使用制表符 
-set smarttab 
+" 自动格式化
+set formatoptions=tcrqn
+" 继承前一行的缩进方式，特别适用于多行注释
+set autoindent
+" 使用C样式的缩进
+set cindent
+" 为C程序提供自动缩进
+set smartindent
+" Tab键的宽度4
+set tabstop=4
+" 统一缩进为4
+set softtabstop=4
+set shiftwidth=4
+" 不要用空格代替制表符
+set noexpandtab
+" 不要换行
+set nowrap
+" 在行和段开始处使用制表符
+set smarttab
 " 行内替换
 set gdefault
 """"""""""""""""""""""""""""""""""""""""
-" 4.CTags的设定 
+" 4.CTags的设定
 """"""""""""""""""""""""""""""""""""""""
-" 按照名称排序 
-let Tlist_Sort_Type = "name" 
-" 在右侧显示窗口 
-let Tlist_Use_Right_Window = 1 
-" 压缩方式 
-let Tlist_Compart_Format = 1 
-" 如果只有一个buffer，kill窗口也kill掉buffer 
-let Tlist_Exist_OnlyWindow = 1 
-" 不要关闭其他文件的tags 
-let Tlist_File_Fold_Auto_Close = 1 
-" 不要显示折叠树 
-let Tlist_Enable_Fold_Column = 0 
+" 按照名称排序
+let Tlist_Sort_Type = "name"
+" 在右侧显示窗口
+let Tlist_Use_Right_Window = 1
+" 压缩方式
+let Tlist_Compart_Format = 1
+" 如果只有一个buffer，kill窗口也kill掉buffer
+let Tlist_Exist_OnlyWindow = 1
+" 不要关闭其他文件的tags
+let Tlist_File_Fold_Auto_Close = 1
+" 不要显示折叠树
+let Tlist_Enable_Fold_Column = 0
 " 不同时显示多个文件的tag，只显示当前文件的
 let Tlist_Show_One_File=1
-"设置tags  
-set tags=tags;/  
-"set autochdir 
-"autocmd FileType java set tags+=D:\tools\java\tags  
-"autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags  
+"设置tags
+set tags=tags;/
+"set autochdir
+"autocmd FileType java set tags+=D:\tools\java\tags
+"autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags
 """"""""""""""""""""""""""""""""""""""""
 " 6.自动标题、自动补全
 """"""""""""""""""""""""""""""""""""""""
 " 打开文件类型检测, 加了这句才可以用智能补全
-filetype plugin indent on 
+filetype plugin indent on
 " 关掉智能补全时的预览窗口
 set completeopt=longest,menu
-" 新建.c,.h,.sh,.java文件，自动插入文件头 
-" .c,.cpp文件有c.vim插件进行插入
-"let my_autoadd_filetype='*.[ch]pp,*.cc,*.[ch],*.sh,*.java'
+" 新建.c,.h,.sh,.java文件，自动插入文件头
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java exec ":call SetTitle()"
-"autocmd BufNewFile ($my_autoadd_filetype) exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
-autocmd BufNewFile * normal 6GA
-"autocmd BufNewFile &my_autoadd_filetype normal 6G
-"定义函数SetTitle，自动插入文件头 
-func SetTitle() 
-	if &filetype == 'sh' || &filetype == 'python' 
-		if &filetype == 'sh'
-			call setline(1, "\#!/bin/bash") 
-		else
-			call setline(1, "\#!/usr/bin/python") 
-		endif
-        call append(line("."),   "\#*****~*****~*****~*****~*****~*****~*****~*****~*****") 
-		call append(line(".")+1, "\# >File Name:    ".expand("%")) 
-		call append(line(".")+2, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)") 
+autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java normal 6GA
+"定义函数SetTitle，自动插入文件头
+func SetTitle()
+	if &filetype == 'sh'
+		call setline(1, "\#!/bin/bash")
+        call append(line("."),   "\#*****~*****~*****~*****~*****~*****~*****~*****~*****")
+		call append(line(".")+1, "\# >File Name:    ".expand("%"))
+		call append(line(".")+2, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)")
 		call append(line(".")+3, "\# >Created Time: ".strftime("%c"))
 		call append(line(".")+4, "\# >Program: ")
-        call append(line(".")+5, "\#*****~*****~*****~*****~*****~*****~*****~*****~*****") 
-        call append(line(".")+6, "") 
+        call append(line(".")+5, "\#*****~*****~*****~*****~*****~*****~*****~*****~*****")
+        call append(line(".")+6, "")
+	elseif &filetype == 'python'
+		call setline(1, "\#!/usr/bin/python")
 	else
-		call setline(1,          "\/*****~*****~*****~*****~*****~*****~*****~*****~*****") 
-		call append(line("."),   " *  > File Name:    ".expand("%")) 
-		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com") 
-		call append(line(".")+2, " *  > Created Time: ".strftime("%c")) 
+		call setline(1,          "\/*****~*****~*****~*****~*****~*****~*****~*****~*****")
+		call append(line("."),   " *  > File Name:    ".expand("%"))
+		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com")
+		call append(line(".")+2, " *  > Created Time: ".strftime("%c"))
 		call append(line(".")+3, " *  > Version:      1.0")
 		call append(line(".")+4, " *  > Program: ")
-		call append(line(".")+5, " *****~*****~*****~*****~*****~*****~*****~*****~*****/") 
+		call append(line(".")+5, " *****~*****~*****~*****~*****~*****~*****~*****~*****/")
 		call append(line(".")+6, "")
 	endif
 endfun
@@ -292,36 +286,17 @@ endfun
 """"""""""""""""""""""""""""""""""""""""
 "增强模式中那个的命令行自动完成操作
 set wildmenu
-" 使回格键（backspace）正常处理indent, eol, start等 
-set backspace=2 
+" 使回格键（backspace）正常处理indent, eol, start等
+set backspace=2
 " 允许backspace和光标键跨越行边界
 set whichwrap+=<,>,h,l
 " 通过使用: commands命令，告诉我们文件的哪一行被改变过
 set report=0
-"nmap <leader>w :w!<cr>
-"nmap <leader>f :find<cr>
-" 映射全选+复制 ctrl+a
-"map <C-A> ggVGY
-"map! <C-A> <Esc>ggVGY
-"map <F12> gg=G
-" 选中状态下 Ctrl+c 复制
-"vnoremap <C-c> "+y 
-"vnoremap <leader>cc "+y
-"去空行 
-"nnoremap <F2> :g/^\s*$/d<CR> 
-"比较文件  
-"nnoremap <C-F2> :vert diffsplit 
-"新建标签  
-"map <M-F2> :tabnew<CR>  
-"列出当前目录文件  
-"map <F3> :tabnew .<CR>  
-"打开树状文件目录  
-"map <C-F3> \be  
-
 """"""""""""""""""""""""""""""""""""""""
 " 8.Vundle插件管理
 """"""""""""""""""""""""""""""""""""""""
 "增强模式中那个的命令行自动完成操作
+filetype plugin indent on
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -330,18 +305,31 @@ call vundle#rc()
 "call vundle#rc(path)
 "
 " let Vundle manage Vundle, required
+""""""""""""""""
+""""插件管理""""
+""""""""""""""""
 Plugin 'gmarik/vundle'
 
 """"""""git repo"""""""""""""""
 " The following are examples of different formats supported.
 " Keep Plugin commands between here and filetype plugin indent on.
 " scripts on GitHub repos
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Plugin 'tpope/vim-fugitive'
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Plugin 'Lokaltog/vim-easymotion'
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Plugin 'tpope/vim-rails.git'
+""""""""""""""""
+""""自动补全""""
+""""""""""""""""
 Plugin 'Valloric/YouCompleteMe'
-	""""""""""""YCM""""""""""""""""""""
-	"let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py'
 	let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 	let g:ycm_collect_identifiers_from_tags_files = 1
 	let g:ycm_seed_identifiers_with_syntax = 1
@@ -349,26 +337,17 @@ Plugin 'Valloric/YouCompleteMe'
 	let g:ycm_allow_changing_updatetime = 0
 	set updatetime=100
 	" 离开插入模式后自动关闭预览窗口
-	autocmd InsertLeave * if pumvisible() == 0|pclose|endif	
+	autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 	" 禁止缓存匹配项,每次都重新生成匹配项
-	let g:ycm_cache_omnifunc=0	
+	let g:ycm_cache_omnifunc=0
 	" 语法关键字补全
-	let g:ycm_seed_identifiers_with_syntax=1	
+	let g:ycm_seed_identifiers_with_syntax=1
 	" 在注释输入中也能补全
 	let g:ycm_complete_in_comments = 1
 	" 在字符串输入中也能补全
-	let g:ycm_complete_in_strings = 1	
+	let g:ycm_complete_in_strings = 1
 	" 注释和字符串中的文字也会被收入补全
 	let g:ycm_collect_identifiers_from_comments_and_strings = 0
-	" 跳转到定义处
-	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
-	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
-	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
-	" c函数全局补全
-	let g:ycm_key_invoke_completion = '<C-Space>'
-	" jump
-	" you can use ctrl+o jump back to where the previous tags you view
-	" and you also can use ctral+i jump to the next tags you want to view.
 	let g:ycm_filetype_blacklist = {
 				\ 'tagbar' : 1,
 				\ 'qf' : 1,
@@ -379,9 +358,18 @@ Plugin 'Valloric/YouCompleteMe'
 				\ 'vimwiki' : 1,
 				\ 'gitcommit' : 1,
 				\}
-" 语法检测
+	" c函数全局补全
+	let g:ycm_key_invoke_completion = '<C-Space>'
+	" jump
+	" you can use ctrl+o jump back to where the previous tags you view
+	" and you also can use ctral+i jump to the next tags you want to view.
+	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
+	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+""""""""""""""""
+""""语法检测""""
+""""""""""""""""
 Plugin 'scrooloose/Syntastic'
-	""""""""""syntastic""""""""""""
 	let g:syntastic_check_on_open = 1
 	let g:syntastic_cpp_include_dirs = ['/usr/include/']
 	let g:syntastic_cpp_remove_include_errors = 1
@@ -389,7 +377,7 @@ Plugin 'scrooloose/Syntastic'
 	let g:syntastic_cpp_compiler = 'clang++'
 	let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libstdc++'
 	" whether to show balloons
-	let g:syntastic_enable_balloons = 1	
+	let g:syntastic_enable_balloons = 1
 	"set error or warning signs
 	let g:syntastic_error_symbol = '✗'
 	let g:syntastic_warning_symbol = '⚠'
@@ -397,64 +385,97 @@ Plugin 'scrooloose/Syntastic'
 	let g:syntastic_enable_highlighting = 1
 	let g:syntastic_enable_balloons = 1
 	let g:syntastic_python_checkers=['pyflakes']
-"快速插入代码片段
-Plugin 'vim-scripts/UltiSnips'
-"Bundle 'SirVer/ultisnips'
-	let g:UltiSnipsExpandTrigger = "<tab>"
-	let g:UltiSnipsJumpForwardTrigger = "<tab>"
-	let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-	"定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
-	let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/UltiSnips"]
+""""""""""""""""""""""""
+""""快速插入代码片段""""
+""""""""""""""""""""""""
+"Plugin 'vim-scripts/UltiSnips'
+Bundle 'SirVer/ultisnips'
+	" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+	let g:UltiSnipsExpandTrigger="<c-j>"
+	let g:UltiSnipsJumpForwardTrigger="<c-b>"
+	let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
 	" If you want :UltiSnipsEdit to split your window.
-	"let g:UltiSnipsEditSplit="vertical"
-	"let g:solarized_visibility = "high"
-"	let g:UltiSnips = {}
-"	let g:UltiSnips.always_use_first_snippet = 1
-"	let g:UltiSnips.ExpandTrigger = '<c-j>'
-"	let g:UltiSnips.ListSnippets = '<c-r><tab>'
-"	let g:UltiSnips.JumpForwardTrigger = '<tab>'
-"	let g:UltiSnips.JumpBackwardTrigger = '<s-tab>'	
-" 装逼的状态栏
+	let g:UltiSnipsEditSplit="vertical"
+	"定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
+	"let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/UltiSnips"]
+	"let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/snippets"]
+""""""""""""""""""""
+""""代码片段配置""""
+""""""""""""""""""""
+Plugin 'honza/vim-snippets'
+""""""""""""""""""""
+""""装逼的状态栏""""
+""""""""""""""""""""
 Plugin 'bling/vim-airline'
 	set t_Co=256
 	let g:airline_powerline_fonts=0
 	"theme:serene\simple\luna\jellybeans\sol\
 "Plugin 'Lokaltog/vim-powerline'
-"	set guifont=PowerlineSymbols\ for\ Powerline
-"	set nocompatible
-"	set t_Co=256
-"	let g:Powerline_symbols = 'fancy'
-"	let g:Powerline_symbols = 'unicode'
-"	let Powerline_symbols='compatible'
+	"set guifont=PowerlineSymbols\ for\ Powerline
+	"set nocompatible
+	"set t_Co=256
+	"let g:Powerline_symbols = 'fancy'
+	"let g:Powerline_symbols = 'unicode'
+	"let Powerline_symbols='compatible'
+""""""""""""""""""
+""""文件目录树""""
+""""""""""""""""""
+Plugin 'scrooloose/nerdtree'
+	map <leader>tn :NERDTreeToggle<CR>
+	let NERDTreeHighlightCursorline=1
+	let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
+	let g:netrw_home='~/bak'
+	"close vim if the only window left open is a NERDTree
+	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+""""""""""""""""""""""""""""""""""""
+""""for show no user whitespaces""""
+""""""""""""""""""""""""""""""""""""
+Bundle 'bronson/vim-trailing-whitespace'
+	" \+空格去掉末尾的空格
+	map <leader>q<space> :FixWhitespace<cr>
 
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
 Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
 " scripts from http://vim-scripts.org/vim/scripts.html
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Plugin 'L9'
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Plugin 'FuzzyFinder'
-" 自动补全括号、大括号等。
+""""""""""""""""""""""""""""""
+""""自动补全括号、大括号等""""
+""""""""""""""""""""""""""""""
 Plugin 'jiangmiao/auto-pairs'
 	"let g:AutoPairsFlyMode = 1
-" 快速注释
+""""""""""""""""
+""""快速注释""""
+""""""""""""""""
 Plugin 'scrooloose/nerdcommenter'
-	
+
 """"""""vim scripts""""""""""""""""""
+"""""""""""""""
+""""taglist""""
+"""""""""""""""
 Bundle 'taglist.vim'
-	""""""""""""""""""""""""""""""""""""""""
-	" 5.Tag list (ctags) 
-	""""""""""""""""""""""""""""""""""""""""
-	" 默认不打开Taglist 
-	let Tlist_Auto_Open=0 
-	let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
-	" 不同时显示多个文件的tag，只显示当前文件的 
+	" 默认不打开Taglist
+	let Tlist_Auto_Open=0
+	let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+	" 不同时显示多个文件的tag，只显示当前文件的
 	let Tlist_Show_One_File = 1
-	" 如果taglist窗口是最后一个窗口，则退出vim 
+	" 如果taglist窗口是最后一个窗口，则退出vim
 	let Tlist_Exit_OnlyWindow = 1
-	" 在左侧窗口中显示taglist窗口		 
-	let Tlist_Use_Right_Window = 0 		 
+	" 在左侧窗口中显示taglist窗口
+	let Tlist_Use_Right_Window = 0
 	" 函数列表开关
 	map <silent> <leader>tl :TlistToggle<cr>
+""""""""""""""
+""""tagbar""""
+""""""""""""""
 Bundle "Tagbar"
 	" auto open when open a c++ file
 	autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
@@ -462,17 +483,29 @@ Bundle "Tagbar"
 	let g:tagbar_width = 20
 	let g:tagbar_ctags_bin='/usr/bin/ctags'
 	nmap <leader>tb :TagbarToggle<cr>
-"Plugin 'c.vim'
+""""""""""""""""
+""""文件搜索""""
+""""""""""""""""
 Bundle 'grep.vim'
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Bundle 'mru.vim'
+"""""""""""""""
+""""Unknown""""
+"""""""""""""""
 Bundle 'comments.vim'
-" 在头文件以及源文件间跳转
+""""""""""""""""""""""""""""""""
+""""在头文件以及源文件间跳转""""
+""""""""""""""""""""""""""""""""
 Plugin 'a.vim'
 	" a.vim配置
 	map av :AV<cr>
-" 文件头&函数注释
-"doxauthor,dox,doxblock
+"""""""""""""""""""""""
+""""文件头&函数注释""""
+"""""""""""""""""""""""
 Plugin 'DoxygenToolkit.vim'
+"doxauthor,dox,doxblock
 	let g:DoxygenToolkit_briefTag_pre="@Synopsis:  "
 	let g:DoxygenToolkit_paramTag_pre="@Param: "
 	let g:DoxygenToolkit_returnTag="@Returns:   "
@@ -485,11 +518,7 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_licenseTag=s:licenseTag
 	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
-" 文件目录数
-Plugin 'scrooloose/nerdtree'
-"	" 如果neadtree为最后一个窗口，则自动关闭
-"	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") &&b:NERDTreeType == "primary") | q | endief	
-	map <leader>tn :NERDTreeToggle<CR>
+
 " scripts not on GitHub
 " Plugin 'git://git.wincent.com/command-t.git'
 " git repos on your local machine (i.e. when working on your own plugin)
