@@ -102,11 +102,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-#myconfig
-#alias cman='man -M /usr/share/man/cman/UTF-8'
-alias grep='grep --color=auto'
-#alias stcflash='/usr/local/bin/stcflash'
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -118,6 +113,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
+#myconfig
+#alias cman='man -M /usr/share/man/cman/UTF-8'
+alias grep='grep --color=auto'
+#alias stcflash='/usr/local/bin/stcflash'
 export PATH=$PATH:~/work/work_tool/gcc-arm-none-eabi/bin
 export PATH=$PATH:~/work/work_tool/arm-linux-gcc/bin
 export PYTHONSTARTUP=~/.pythonstartup.py
