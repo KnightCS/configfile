@@ -295,6 +295,25 @@ set report=0
 " 编辑配置文件
 "nnoremap <leader>ev :edit $MYVIMRC<CR>
 "autocmd BufWritePost $MYVIMRC source %
+" 快捷键使用记录
+" quickfix模式:
+"	autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+" ycm:
+"	noremap <leader>gc :YcmCompleter GoToDeclaration<CR>
+"	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+"	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" ultisnips:
+"	let g:UltiSnipsExpandTrigger="<c-j>"
+"	let g:UltiSnipsJumpForwardTrigger="<c-k>"
+"	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
+" vim-trailing-whitespace:
+"	map <leader>q<space> :FixWhitespace<cr>
+" nerdtree:
+"	map <leader>tn :NERDTreeToggle<CR>
+" tagbar:
+"	nmap <leader>tb :TagbarToggle<cr>
+" a.vim:
+"	map av :AV<cr>
 """"""""""""""""""""""""""""""""""""""""
 " 8.Vundle插件管理
 """"""""""""""""""""""""""""""""""""""""
@@ -400,8 +419,8 @@ Bundle 'SirVer/ultisnips'
 	let g:UltiSnipsSnippetDirectories=['UltiSnips']
 	let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 	let g:UltiSnipsExpandTrigger="<c-j>"
-	let g:UltiSnipsJumpForwardTrigger="<c-b>"
-	let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+	let g:UltiSnipsJumpForwardTrigger="<c-k>"
+	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 	" If you want :UltiSnipsEdit to split your window.
 	let g:UltiSnipsEditSplit="vertical"
 """"""""""""""""""""
