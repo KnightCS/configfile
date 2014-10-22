@@ -172,7 +172,6 @@ highlight StatusLineNC guifg=Gray guibg=White
 set statusline=%F%r%m%*%=[%{&ff}]%Y\ [%l,%v-%c][%p%%]%{strftime(\"%m/%y-%H:%M\")}
 "set statusline=%F%m%r%h%w%=[POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
 "set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
-" 我的状态行显示的内容（包括文件类型和解码）
 "set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\-\ %H:%M\")}
 "set statusline=[%F]%y%r%m%*
 "*****~*****~*****
@@ -187,6 +186,7 @@ set ignorecase
 " 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
 set incsearch
 " 输入:set list命令是应该显示些啥？
+" set list
 set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
 "*****~*****~*****
 "*****~*****~*****
@@ -243,7 +243,7 @@ let Tlist_Enable_Fold_Column = 0
 let Tlist_Show_One_File=1
 "设置tags
 set tags=tags;/
-"set autochdir
+set autochdir
 "autocmd FileType java set tags+=D:\tools\java\tags
 "autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags
 """"""""""""""""""""""""""""""""""""""""
@@ -265,7 +265,7 @@ func SetTitle()
 		call append(line(".")+1, "\# >File Name:    ".expand("%"))
 		call append(line(".")+2, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)")
 		call append(line(".")+3, "\# >Created Time: ".strftime("%c"))
-		call append(line(".")+4, "\# >Program: ")
+		call append(line(".")+4, "\# >Program:")
         call append(line(".")+5, "\#*****~*****~*****~*****~*****~*****~*****~*****~*****")
         call append(line(".")+6, "")
 	elseif &filetype == 'python'
@@ -276,7 +276,7 @@ func SetTitle()
 		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com")
 		call append(line(".")+2, " *  > Created Time: ".strftime("%c"))
 		call append(line(".")+3, " *  > Version:      1.0")
-		call append(line(".")+4, " *  > Program: ")
+		call append(line(".")+4, " *  > Program:")
 		call append(line(".")+5, " *****~*****~*****~*****~*****~*****~*****~*****~*****/")
 		call append(line(".")+6, "")
 	endif
@@ -292,6 +292,9 @@ set backspace=2
 set whichwrap+=<,>,h,l
 " 通过使用: commands命令，告诉我们文件的哪一行被改变过
 set report=0
+" 编辑配置文件
+"nnoremap <leader>ev :edit $MYVIMRC<CR>
+"autocmd BufWritePost $MYVIMRC source %
 """"""""""""""""""""""""""""""""""""""""
 " 8.Vundle插件管理
 """"""""""""""""""""""""""""""""""""""""
@@ -335,6 +338,7 @@ Plugin 'Valloric/YouCompleteMe'
 	let g:ycm_seed_identifiers_with_syntax = 1
 	let g:ycm_confirm_extra_conf = 0
 	let g:ycm_allow_changing_updatetime = 0
+	let g:ycm_use_ultisnips_completer=1
 	set updatetime=100
 	" 离开插入模式后自动关闭预览窗口
 	autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -347,7 +351,7 @@ Plugin 'Valloric/YouCompleteMe'
 	" 在字符串输入中也能补全
 	let g:ycm_complete_in_strings = 1
 	" 注释和字符串中的文字也会被收入补全
-	let g:ycm_collect_identifiers_from_comments_and_strings = 0
+	let g:ycm_collect_identifiers_from_comments_and_strings = 1
 	let g:ycm_filetype_blacklist = {
 				\ 'tagbar' : 1,
 				\ 'qf' : 1,
@@ -390,16 +394,16 @@ Plugin 'scrooloose/Syntastic'
 """"""""""""""""""""""""
 "Plugin 'vim-scripts/UltiSnips'
 Bundle 'SirVer/ultisnips'
+	autocmd FileType [ch],[ch]pp,cc nested :UltiSnipsAddFiletypes c
+	autocmd FileType python nested :UltiSnipsAddFiletypes python
 	" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+	let g:UltiSnipsSnippetDirectories=['UltiSnips']
+	let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 	let g:UltiSnipsExpandTrigger="<c-j>"
 	let g:UltiSnipsJumpForwardTrigger="<c-b>"
 	let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
 	" If you want :UltiSnipsEdit to split your window.
 	let g:UltiSnipsEditSplit="vertical"
-	"定义存放代码片段的文件夹 .vim/snippets下，使用自定义和默认的，将会的到全局，有冲突的会提示
-	"let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/UltiSnips"]
-	"let g:UltiSnipsSnippetDirectories=["snippets", "bundle/ultisnips/snippets"]
 """"""""""""""""""""
 """"代码片段配置""""
 """"""""""""""""""""
