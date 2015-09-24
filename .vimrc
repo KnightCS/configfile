@@ -71,8 +71,8 @@ autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 " 显示中文帮助
 "*****~*****~*****
 if version >= 603
-    set helplang=cn
-    set encoding=utf-8
+set helplang=cn
+set encoding=utf-8
 endif
 "*****~*****~*****
 " 去掉边框
@@ -101,6 +101,8 @@ set guifont=Monaco\ 12
 set number
 "带有如下符号的单词不要被换行分割
 set iskeyword+=_,$,@,%,#,-
+" c/python到底80列的时候显示竖线
+set colorcolumn=81
 " 字符间插入的像素行数目
 set linespace=0
 " 显示制表符
@@ -259,27 +261,34 @@ autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java exec ":call SetTitle()"
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java normal 6GA
 "定义函数SetTitle，自动插入文件头
 func SetTitle()
-	if &filetype == 'sh'
-		call setline(1, "\#!/bin/bash")
-        call append(line("."),   "\#*****~*****~*****~*****~*****~*****~*****~*****~*****")
-		call append(line(".")+1, "\# >File Name:    ".expand("%"))
-		call append(line(".")+2, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)")
-		call append(line(".")+3, "\# >Created Time: ".strftime("%c"))
-		call append(line(".")+4, "\# >Program:")
-        call append(line(".")+5, "\#*****~*****~*****~*****~*****~*****~*****~*****~*****")
-        call append(line(".")+6, "")
-	elseif &filetype == 'python'
-		call setline(1, "\#!/usr/bin/python")
-	else
-		call setline(1,          "\/*****~*****~*****~*****~*****~*****~*****~*****~*****")
-		call append(line("."),   " *  > File Name:    ".expand("%"))
-		call append(line(".")+1, " *  > Author:       knight_cs (), chenshuomailbox@gmail.com")
-		call append(line(".")+2, " *  > Created Time: ".strftime("%c"))
-		call append(line(".")+3, " *  > Version:      1.0")
-		call append(line(".")+4, " *  > Program:")
-		call append(line(".")+5, " *****~*****~*****~*****~*****~*****~*****~*****~*****/")
-		call append(line(".")+6, "")
-	endif
+if &filetype == 'sh'
+	call setline(1,          "\#!/bin/bash")
+	call append(line("."),   "\# >File Name:    ".expand("%"))
+	call append(line(".")+1, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)")
+	call append(line(".")+2, "\# >Created Time: ".strftime("%c"))
+	call append(line(".")+3, "\# >Program:")
+	call append(line(".")+4, "")
+elseif &filetype == 'python'
+	call setline(1,          "\#!/usr/bin/python")
+	call append(line("."),   "\#-*- coding: UTF-8 -*-")
+	call append(line(".")+1, "\# >FileName: ".expand("%"))
+	call append(line(".")+2, "\# >Author: Knight_cs (chenshuo_mailbox@gmail.com)")
+	call append(line(".")+3, "\# >Created Time: ".strftime("%c"))
+	call append(line(".")+4, "\# >Program:")
+	call append(line(".")+5, "")
+	call append(line(".")+6, "\# Test Code #")
+	call append(line(".")+7, "if __name__ == '__main__':")
+	call append(line(".")+8, "    pass")
+else
+	call setline(1,          "\/***************")
+	call append(line("."),   " * File Name:    ".expand("%"))
+	call append(line(".")+1, " * Author:       knight_cs (), chenshuomailbox@gmail.com")
+	call append(line(".")+2, " * Created Time: ".strftime("%c"))
+	call append(line(".")+3, " * Version:      1.0")
+	call append(line(".")+4, " * Program:")
+	call append(line(".")+5, " ****************/")
+	call append(line(".")+6, "")
+endif
 endfun
 """"""""""""""""""""""""""""""""""""""""
 " 7.键盘命令
@@ -304,7 +313,7 @@ set report=0
 "	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
 " ultisnips:
 "	let g:UltiSnipsExpandTrigger="<c-j>"
-"	let g:UltiSnipsJumpForwardTrigger="<c-k>"
+"	let g:UltiSnipsJumpForwardTrigger="<c-l>"
 "	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 " vim-trailing-whitespace:
 "	map <leader>q<space> :FixWhitespace<cr>
@@ -419,7 +428,7 @@ Bundle 'SirVer/ultisnips'
 	let g:UltiSnipsSnippetDirectories=['UltiSnips']
 	let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 	let g:UltiSnipsExpandTrigger="<c-j>"
-	let g:UltiSnipsJumpForwardTrigger="<c-k>"
+	let g:UltiSnipsJumpForwardTrigger="<c-l>"
 	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 	" If you want :UltiSnipsEdit to split your window.
 	let g:UltiSnipsEditSplit="vertical"
@@ -501,7 +510,7 @@ Bundle 'taglist.vim'
 """"""""""""""
 Bundle "Tagbar"
 	" auto open when open a c++ file
-	autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
+	"autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
 	" set the window's width
 	let g:tagbar_width = 20
 	let g:tagbar_ctags_bin='/usr/bin/ctags'
@@ -541,6 +550,10 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_licenseTag=s:licenseTag
 	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
+""""""""""""""""""""""""""
+""""python实时语法检查""""
+""""""""""""""""""""""""""
+Plugin 'pyflakes.vim'
 
 " scripts not on GitHub
 " Plugin 'git://git.wincent.com/command-t.git'
