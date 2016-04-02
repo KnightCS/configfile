@@ -175,7 +175,7 @@ Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
 " scripts from http://vim-scripts.org/vim/scripts.html
 
 ""**********
-" Unknown
+" 文件查找
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 
@@ -193,6 +193,10 @@ Plugin 'scrooloose/nerdcommenter'
 " Unknown
 Bundle 'mru.vim'
 Bundle 'comments.vim'
+
+""**********
+" 对齐文字
+Bundle 'Align'
 
 ""**********
 " taglist
