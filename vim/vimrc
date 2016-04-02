@@ -258,7 +258,7 @@ filetype plugin indent on
 " 关掉智能补全时的预览窗口
 set completeopt=longest,menu
 " 设置*.rs结尾的文件识别为rust文件
-autocmd BufNewFile *.rs set filetype=rust
+autocmd BufNewFile,BufRead *.rs set filetype=rust
 " 新建.c,.h,.sh,.java文件，自动插入文件头
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾

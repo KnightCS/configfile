@@ -145,13 +145,6 @@ Plugin 'honza/vim-snippets'
 ""**********
 " rust支持
 Plugin 'rust-lang/rust.vim'
-Plugin 'racer-rust/vim-racer'
-	"" 开启rust的自动reformat的功能
-	let g:rustfmt_autosave = 1
-	"" 手动补全和定义跳转
-	set hidden
-	"" 这一行指的是你编译出来的racer所在的路径
-	let g:racer_cmd = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/third_party/racerd/target/release/racerd"
 
 ""**********
 " 装逼的状态栏
