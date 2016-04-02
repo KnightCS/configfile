@@ -92,6 +92,7 @@ Plugin 'Valloric/YouCompleteMe'
 	" In this example, the rust source code zip has been extracted to
 	" /usr/local/rust/rustc-1.5.0
 	let g:ycm_rust_src_path = '/usr/local/rust/rustc-1.7.0/src'
+	let g:ycm_python_binary_path = '/usr/bin/python3'
 	" jump
 	" you can use ctrl+o jump back to where the previous tags you view
 	" and you also can use ctral+i jump to the next tags you want to view.
