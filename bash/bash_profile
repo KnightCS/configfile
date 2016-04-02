@@ -9,3 +9,7 @@ fi
 if [[ -f ${HOME}/.bashrc ]]; then
 	source ${HOME}/.bashrc
 fi
+
+# set history
+HISTCONTROL=ignoreboth
+HISTIGNORE='ls:history:pwd'
