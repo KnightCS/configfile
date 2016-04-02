@@ -1,0 +1,13 @@
+[user]
+	name = Knight_CS
+	email = chenshuomailbox@gmail.com
+[core]
+	editor = vim
+[merge]
+	tool = vimdiff
+[alias]
+	st = status
+	co = checkout
+	ci = commit
+[color]
+	ui = true
