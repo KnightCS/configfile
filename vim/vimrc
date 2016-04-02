@@ -257,39 +257,51 @@ set autochdir
 filetype plugin indent on
 " 关掉智能补全时的预览窗口
 set completeopt=longest,menu
+" 设置*.rs结尾的文件识别为rust文件
+autocmd BufNewFile *.rs set filetype=rust
 " 新建.c,.h,.sh,.java文件，自动插入文件头
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java exec ":call SetTitle()"
+autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java normal 6GA
+autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs normal G
 "定义函数SetTitle，自动插入文件头
 func SetTitle()
+	let user_name  = "KnightCS"
+	let user_email = ""
 	if &filetype == 'sh'
 		call setline(1,          "\#!/bin/bash")
-		call append(line("."),   "\# >File Name:    ".expand("%"))
-		call append(line(".")+1, "\# >Author:       Knight_cs (chenshuo_mailbox@gmail.com)")
-		call append(line(".")+2, "\# >Created Time: ".strftime("%c"))
-		call append(line(".")+3, "\# >Program:")
+		call append(line("."),   "\# >File Name   : ".expand("%"))
+		call append(line(".")+1, "\# >Author      : ".expand(user_name))
+		call append(line(".")+2, "\# >Description :")
+		call append(line(".")+3, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
 		call append(line(".")+4, "")
 	elseif &filetype == 'python'
 		call setline(1,          "\#!/usr/bin/python")
 		call append(line("."),   "\#-*- coding: UTF-8 -*-")
-		call append(line(".")+1, "\# >FileName: ".expand("%"))
-		call append(line(".")+2, "\# >Author: Knight_cs (chenshuo_mailbox@gmail.com)")
-		call append(line(".")+3, "\# >Created Time: ".strftime("%c"))
-		call append(line(".")+4, "\# >Program:")
+		call append(line(".")+1, "\# >FileName    : ".expand("%"))
+		call append(line(".")+2, "\# >Author      : ".expand(user_name))
+		call append(line(".")+3, "\# >Description :")
+		call append(line(".")+4, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
 		call append(line(".")+5, "")
-		call append(line(".")+6, "\# Test Code #")
-		call append(line(".")+7, "if __name__ == '__main__':")
-		call append(line(".")+8, "    pass")
+		call append(line(".")+6, "if __name__ == '__main__':")
+		call append(line(".")+7, "    pass")
 	else
-		call setline(1,          "\/***************")
-		call append(line("."),   " * File Name:    ".expand("%"))
-		call append(line(".")+1, " * Author:       knight_cs (), chenshuomailbox@gmail.com")
-		call append(line(".")+2, " * Created Time: ".strftime("%c"))
-		call append(line(".")+3, " * Version:      1.0")
-		call append(line(".")+4, " * Program:")
-		call append(line(".")+5, " ****************/")
-		call append(line(".")+6, "")
+		call setline(1,          "\/*")
+		call append(line("."),   " * File Name   : ".expand("%"))
+		call append(line(".")+1, " * Author      : ".expand(user_name))
+		call append(line(".")+2, " * Description :")
+		call append(line(".")+3, " *  version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
+		call append(line(".")+4, " */")
+		call append(line(".")+5, "")
+	endif
+endfun
+
+func NewVersion(var)
+	if &filetype == 'sh'
+		call append(4, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+	elseif &filetype == 'python'
+		call append(5, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+	else
+		call append(4, " *  version  ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
 	endif
 endfun
 
