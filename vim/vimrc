@@ -226,6 +226,10 @@ set nowrap
 set smarttab
 " 行内替换
 set gdefault
+" 设置*.rs结尾的文件识别为rust文件
+autocmd BufNewFile,BufRead *.rs set filetype=rust
+" 重新打开文件时，光标定位到上次打开的位置
+autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 
 ""**********
 " 4. CTags的设定
@@ -257,8 +261,6 @@ set autochdir
 filetype plugin indent on
 " 关掉智能补全时的预览窗口
 set completeopt=longest,menu
-" 设置*.rs结尾的文件识别为rust文件
-autocmd BufNewFile,BufRead *.rs set filetype=rust
 " 新建.c,.h,.sh,.java文件，自动插入文件头
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
