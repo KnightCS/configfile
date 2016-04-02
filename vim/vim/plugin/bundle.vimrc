@@ -100,6 +100,10 @@ Plugin 'Valloric/YouCompleteMe'
 	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
+"Bundle 'OmniCppComplete'
+"Bundle 'winmanager'
+"Bundle 'SuperTab'
+
 ""**********
 " 语法检测
 Plugin 'scrooloose/Syntastic'
