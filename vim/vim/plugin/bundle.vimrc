@@ -156,6 +156,13 @@ Plugin 'bling/vim-airline'
 	"let g:Powerline_symbols = 'unicode'
 	"let Powerline_symbols='compatible'
 
+
+""**********
+" rust代码高亮，自动补全，代码检查
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'racer-rust/vim-racer'
+Plugin 'rust-lang/rust.vim'
+
 ""**********
 " 文件目录树
 Plugin 'scrooloose/nerdtree'
