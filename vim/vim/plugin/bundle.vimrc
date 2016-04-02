@@ -4,7 +4,6 @@
 " DesCRiption:for Linux, GUI/Console
 " LINUX全局版本请见：/usr/share/vim/vimrc
 " Version: 2.00
-""**********
 
 " 快捷键使用记录
 " quickfix模式:
@@ -25,9 +24,10 @@
 "	nmap <leader>tb :TagbarToggle<cr>
 " a.vim:
 "	map av :AV<cr>
-""""""""""""""""""""""""""""""""""""""""
+
+""**********
 " Vundle插件管理
-""""""""""""""""""""""""""""""""""""""""
+"
 "增强模式中那个的命令行自动完成操作
 filetype plugin indent on
 " set the runtime path to include Vundle and initialize
@@ -38,30 +38,25 @@ call vundle#rc()
 "call vundle#rc(path)
 "
 " let Vundle manage Vundle, required
-""""""""""""""""
-""""插件管理""""
-""""""""""""""""
+
+""**********
+" 0. 插件管理
 Plugin 'gmarik/vundle'
 
-""""""""git repo"""""""""""""""
+""**********
 " The following are examples of different formats supported.
 " Keep Plugin commands between here and filetype plugin indent on.
 " scripts on GitHub repos
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
+""**********
+
+""**********
+" Unknown
 Plugin 'tpope/vim-fugitive'
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
 Plugin 'Lokaltog/vim-easymotion'
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
 Plugin 'tpope/vim-rails.git'
-""""""""""""""""
-""""自动补全""""
-""""""""""""""""
+
+""**********
+" 自动补全
 Plugin 'Valloric/YouCompleteMe'
 	let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 	let g:ycm_collect_identifiers_from_tags_files = 1
@@ -96,16 +91,16 @@ Plugin 'Valloric/YouCompleteMe'
 	let g:ycm_key_invoke_completion = '<C-Space>'
 	" In this example, the rust source code zip has been extracted to
 	" /usr/local/rust/rustc-1.5.0
-	let g:ycm_rust_src_path = '/usr/local/rust'
+	let g:ycm_rust_src_path = '/usr/local/rust/rustc-1.7.0/src'
 	" jump
 	" you can use ctrl+o jump back to where the previous tags you view
 	" and you also can use ctral+i jump to the next tags you want to view.
 	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
 	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
-""""""""""""""""
-""""语法检测""""
-""""""""""""""""
+
+""**********
+" 语法检测
 Plugin 'scrooloose/Syntastic'
 	let g:syntastic_check_on_open = 1
 	let g:syntastic_cpp_include_dirs = ['/usr/include/']
@@ -122,9 +117,9 @@ Plugin 'scrooloose/Syntastic'
 	let g:syntastic_enable_highlighting = 1
 	let g:syntastic_enable_balloons = 1
 	let g:syntastic_python_checkers=['pyflakes']
-""""""""""""""""""""""""
-""""快速插入代码片段""""
-""""""""""""""""""""""""
+
+""**********
+" 快速插入代码片段
 "Plugin 'vim-scripts/UltiSnips'
 Bundle 'SirVer/ultisnips'
 	autocmd FileType [ch],[ch]pp,cc nested :UltiSnipsAddFiletypes c
@@ -137,13 +132,13 @@ Bundle 'SirVer/ultisnips'
 	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
 	" If you want :UltiSnipsEdit to split your window.
 	let g:UltiSnipsEditSplit="vertical"
-""""""""""""""""""""
-""""代码片段配置""""
-""""""""""""""""""""
+
+""**********
+" 代码片段配置
 Plugin 'honza/vim-snippets'
-""""""""""""""""""""
-""""装逼的状态栏""""
-""""""""""""""""""""
+
+""**********
+" 装逼的状态栏
 Plugin 'bling/vim-airline'
 	set t_Co=256
 	let g:airline_powerline_fonts=0
@@ -155,9 +150,9 @@ Plugin 'bling/vim-airline'
 	"let g:Powerline_symbols = 'fancy'
 	"let g:Powerline_symbols = 'unicode'
 	"let Powerline_symbols='compatible'
-""""""""""""""""""
-""""文件目录树""""
-""""""""""""""""""
+
+""**********
+" 文件目录树
 Plugin 'scrooloose/nerdtree'
 	map <leader>tn :NERDTreeToggle<CR>
 	let NERDTreeHighlightCursorline=1
@@ -165,39 +160,41 @@ Plugin 'scrooloose/nerdtree'
 	let g:netrw_home='~/bak'
 	"close vim if the only window left open is a NERDTree
 	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-""""""""""""""""""""""""""""""""""""
-""""for show no user whitespaces""""
-""""""""""""""""""""""""""""""""""""
+
+""**********
+" for show no user whitespaces
 Bundle 'bronson/vim-trailing-whitespace'
 	" \+空格去掉末尾的空格
 	map <leader>q<space> :FixWhitespace<cr>
 
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
+
 Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
 " scripts from http://vim-scripts.org/vim/scripts.html
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
+
+""**********
+" Unknown
 Plugin 'L9'
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
 Plugin 'FuzzyFinder'
-""""""""""""""""""""""""""""""
-""""自动补全括号、大括号等""""
-""""""""""""""""""""""""""""""
+
+""**********
+" 自动补全括号、大括号等
 Plugin 'jiangmiao/auto-pairs'
 	"let g:AutoPairsFlyMode = 1
-""""""""""""""""
-""""快速注释""""
-""""""""""""""""
+
+""**********
+" 快速注释
 Plugin 'scrooloose/nerdcommenter'
 
-""""""""vim scripts""""""""""""""""""
-"""""""""""""""
-""""taglist""""
-"""""""""""""""
+""vim scripts
+""**********
+" Unknown
+Bundle 'mru.vim'
+Bundle 'comments.vim'
+
+""**********
+" taglist
 Bundle 'taglist.vim'
 	" 默认不打开Taglist
 	let Tlist_Auto_Open=0
@@ -210,9 +207,9 @@ Bundle 'taglist.vim'
 	let Tlist_Use_Right_Window = 0
 	" 函数列表开关
 	map <silent> <leader>tl :TlistToggle<cr>
-""""""""""""""
-""""tagbar""""
-""""""""""""""
+
+""**********
+" tagbar
 Bundle "Tagbar"
 	" auto open when open a c++ file
 	"autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
@@ -220,27 +217,19 @@ Bundle "Tagbar"
 	let g:tagbar_width = 20
 	let g:tagbar_ctags_bin='/usr/bin/ctags'
 	nmap <leader>tb :TagbarToggle<cr>
-""""""""""""""""
-""""文件搜索""""
-""""""""""""""""
+
+""**********
+" 文件搜索
 Bundle 'grep.vim'
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
-Bundle 'mru.vim'
-"""""""""""""""
-""""Unknown""""
-"""""""""""""""
-Bundle 'comments.vim'
-""""""""""""""""""""""""""""""""
-""""在头文件以及源文件间跳转""""
-""""""""""""""""""""""""""""""""
+
+""**********
+" 在头文件以及源文件间跳转
 Plugin 'a.vim'
 	" a.vim配置
 	map av :AV<cr>
-"""""""""""""""""""""""
-""""文件头&函数注释""""
-"""""""""""""""""""""""
+
+""**********
+" 文件头&函数注释
 Plugin 'DoxygenToolkit.vim'
 "doxauthor,dox,doxblock
 	let g:DoxygenToolkit_briefTag_pre="@Synopsis:  "
@@ -255,9 +244,9 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_licenseTag=s:licenseTag
 	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
-""""""""""""""""""""""""""
-""""python实时语法检查""""
-""""""""""""""""""""""""""
+
+""**********
+" python实时语法检查
 Plugin 'pyflakes.vim'
 
 " scripts not on GitHub
