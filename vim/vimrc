@@ -26,6 +26,18 @@ set history=1000
 set clipboard+=unnamed
 "保存全局变量
 set viminfo +=!
+
+"增强模式中那个的命令行自动完成操作
+set wildmenu
+" 使回格键（backspace）正常处理indent, eol, start等
+set backspace=2
+" 允许backspace和光标键跨越行边界
+set whichwrap+=<,>,h,l
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0
+" 编辑配置文件
+" nnoremap <leader>ev :edit $MYVIMRC<CR>
+" autocmd BufWritePost $MYVIMRC source %
 " quickfix模式
 autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 
@@ -42,6 +54,7 @@ set autoread
 " 覆盖文件时不备份
 " 禁止生成临时文件
 set nobackup
+set nowritebackup
 set noswapfile
 " 设置备份时的行为为覆盖
 "set backupcopy=yes
@@ -200,6 +213,7 @@ set selectmode=mouse,key
 " 2.11 在被分割的窗口间显示空白，便于阅读
 set fillchars=vert:\ ,stl:\ ,stlnc:\
 
+
 ""**********
 " 3. 文本格式和排版
 "
@@ -229,7 +243,8 @@ set gdefault
 " 设置*.rs结尾的文件识别为rust文件
 autocmd BufNewFile,BufRead *.rs set filetype=rust
 " 重新打开文件时，光标定位到上次打开的位置
-autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <=
+			\ line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 
 ""**********
 " 4. CTags的设定
@@ -255,7 +270,9 @@ set autochdir
 "autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags
 
 ""**********
-" 5. 自动标题、自动补全
+" 5. 自定义函数
+" - c、c++、java、python、bash、rust等文件自动添加文件头
+" - 添加新的版本说明
 "
 " 打开文件类型检测, 加了这句才可以用智能补全
 filetype plugin indent on
@@ -302,46 +319,25 @@ func NewVersion(var)
 		call append(4, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
 	elseif &filetype == 'python'
 		call append(5, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
-	else
-		call append(4, " *  version  ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+	elseif &filetype == 'h' || &filetype == 'hpp' || &filetype == 'java' ||
+		\  &filetype == 'c' || &filetype == 'cpp' || &filetype == 'rust'
+		call append(4, " *  version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
 	endif
 endfun
+nmap <leader>nv :call NewVersion()<Left>
 
 ""**********
-" 6. 键盘命令
-"
-"增强模式中那个的命令行自动完成操作
-set wildmenu
-" 使回格键（backspace）正常处理indent, eol, start等
-set backspace=2
-" 允许backspace和光标键跨越行边界
-set whichwrap+=<,>,h,l
-" 通过使用: commands命令，告诉我们文件的哪一行被改变过
-set report=0
-" 编辑配置文件
-"nnoremap <leader>ev :edit $MYVIMRC<CR>
-"autocmd BufWritePost $MYVIMRC source %
-" 快捷键使用记录
-" quickfix模式:
-"	autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
-" ycm:
-"	noremap <leader>gc :YcmCompleter GoToDeclaration<CR>
-"	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
-"	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
-" ultisnips:
-"	let g:UltiSnipsExpandTrigger="<c-j>"
-"	let g:UltiSnipsJumpForwardTrigger="<c-l>"
-"	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
-" vim-trailing-whitespace:
-"	map <leader>q<space> :FixWhitespace<cr>
-" nerdtree:
-"	map <leader>tn :NERDTreeToggle<CR>
-" tagbar:
-"	nmap <leader>tb :TagbarToggle<cr>
-" a.vim:
-"	map av :AV<cr>
-
-""**********
-" 7. Vim Plugin: Use vundle
+" 6. Vim Plugin: Use vundle
 "
 so ~/.vim/plugin/bundle.vimrc
+
+""**********
+" 7. 快捷键记录
+" 注：<leader>键为“\”
+"
+" 编辑配置文件：<leader>ev
+" 折叠：
+"	zc、zC:折叠
+"	zo、zO:打开折叠
+" quickfix模式，写入并make：<leader><space>
+" 快速插入新版本：<leader>nv版本号

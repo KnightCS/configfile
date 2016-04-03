@@ -5,17 +5,20 @@
 " LINUX全局版本请见：/usr/share/vim/vimrc
 " Version: 2.00
 
+""**********
 " 快捷键使用记录
-" quickfix模式:
-"	autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+" 注：<leader>为“\”键
+"
 " ycm:
-"	noremap <leader>gc :YcmCompleter GoToDeclaration<CR>
-"	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
-"	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"	GoToDeclaration: <leader>gc
+"	GoToDefinition : <leader>gf
+"	GoToDefinitionElseDeclaration: <leader>gg
+"	C函数全局补全: <c-space>
 " ultisnips:
-"	let g:UltiSnipsExpandTrigger="<c-j>"
-"	let g:UltiSnipsJumpForwardTrigger="<c-l>"
-"	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
+"	input:	<c-j>
+"	netx:	<c-l>
+"	back:	<c-h>
+"
 " vim-trailing-whitespace:
 "	map <leader>q<space> :FixWhitespace<cr>
 " nerdtree:
@@ -77,20 +80,22 @@ Plugin 'Valloric/YouCompleteMe'
 	let g:ycm_complete_in_strings = 1
 	" 注释和字符串中的文字也会被收入补全
 	let g:ycm_collect_identifiers_from_comments_and_strings = 1
+	" 设置不启动ycm的文件类型
 	let g:ycm_filetype_blacklist = {
-				\ 'tagbar' : 1,
-				\ 'qf' : 1,
-				\ 'notes' : 1,
-				\ 'markdown' : 1,
-				\ 'unite' : 1,
-				\ 'text' : 1,
-				\ 'vimwiki' : 1,
-				\ 'gitcommit' : 1,
+				\ 'tagbar':    1,
+				\ 'qf':        1,
+				\ 'notes':     1,
+				\ 'markdown':  1,
+				\ 'pandoc':    1,
+				\ 'unite':     1,
+				\ 'text':      1,
+				\ 'vimwiki':   1,
+				\ 'gitcommit': 1,
 				\}
 	" c函数全局补全
 	let g:ycm_key_invoke_completion = '<C-Space>'
 	" In this example, the rust source code zip has been extracted to
-	" /usr/local/rust/rustc-1.5.0
+	" /usr/local/rust/rustc-1.7.0
 	let g:ycm_rust_src_path = '/usr/local/rust/rustc-1.7.0/src'
 	let g:ycm_python_binary_path = '/usr/bin/python3'
 	" jump
