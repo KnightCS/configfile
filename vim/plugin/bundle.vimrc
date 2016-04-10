@@ -9,23 +9,30 @@
 " 快捷键使用记录
 " 注：<leader>为“\”键
 "
-" ycm:
+" ycm:自动补全
 "	GoToDeclaration: <leader>gc
 "	GoToDefinition : <leader>gf
 "	GoToDefinitionElseDeclaration: <leader>gg
 "	C函数全局补全: <c-space>
-" ultisnips:
+" ultisnips:模板补全
 "	input:	<c-j>
 "	netx:	<c-l>
 "	back:	<c-h>
-"
-" vim-trailing-whitespace:
+" vim-trailing-whitespace:去掉结尾空格/tab
 "	map <leader>q<space> :FixWhitespace<cr>
-" nerdtree:
-"	map <leader>tn :NERDTreeToggle<CR>
-" tagbar:
+" nerdtree:文件目录树
+"	map  <leader>tn :NERDTreeToggle<CR>
+" tagbar:tag列表
 "	nmap <leader>tb :TagbarToggle<cr>
-" a.vim:
+" taglist:tag列表
+"	map  <leader>tl :TlistToggle<cr>
+" nerdcommenter:
+"	<leader>cc :加注释
+"	<leader>cu :解开注释
+"	<leader>c<space> :加/解开注释，智能判断
+" vim-easy-align:对齐
+"	map <leader>a
+" a.vim:打开头文件
 "	map av :AV<cr>
 
 ""**********
@@ -200,6 +207,7 @@ Plugin 'jiangmiao/auto-pairs'
 ""**********
 " 快速注释
 Plugin 'scrooloose/nerdcommenter'
+	let g:NERDSpaceDelims=1
 
 ""vim scripts
 ""**********
