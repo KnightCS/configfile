@@ -208,18 +208,8 @@ Plugin 'vim-airline/vim-airline-themes'
 	let g:airline_powerline_fonts=1
 	" 是否打开tabline
 	let g:airline#extensions#tabline#enabled = 1
-	"let g:airline#extensions#tabline#left_sep = ' '
-	"let g:airline#extensions#tabline#left_alt_sep = '|'
-	if !exists('g:airline_symbols')
-		let g:airline_symbols = {}
-	endif
-	let g:airline_left_sep = ''
-	let g:airline_left_alt_sep = ''
-	let g:airline_right_sep = ''
-	let g:airline_right_alt_sep = ''
-	let g:airline_symbols.branch = ''
-	let g:airline_symbols.readonly = ''
-	let g:airline_symbols.linenr = ''
+	let g:airline#extensions#tabline#left_sep = ' '
+	let g:airline#extensions#tabline#left_alt_sep = '|'
 
 ""**********
 " for show no user whitespaces
@@ -303,19 +293,22 @@ Plugin 'a.vim'
 ""**********
 " 文件头&函数注释
 Plugin 'DoxygenToolkit.vim'
-"doxauthor,dox,doxblock
+	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:DoxygenToolkit_briefTag_pre="@Synopsis:  "
 	let g:DoxygenToolkit_paramTag_pre="@Param: "
 	let g:DoxygenToolkit_returnTag="@Returns:   "
 	let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
 	let g:DoxygenToolkit_blockFooter="--------------------------------------------------------------------------"
-	let g:DoxygenToolkit_authorName="KnightCS,chenshuomailbox@gmail.com"
+	let g:DoxygenToolkit_authorName="KnightCS"
 	let s:licenseTag="Copyright(C)\<enter>"
 	let s:licenseTag=s:licenseTag."For free\<enter>"
 	let s:licenseTag=s:licenseTag."All right recerved\<enter>"
 	let g:DoxygenToolkit_licenseTag=s:licenseTag
-	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
+	nmap <leader>da :DoxAuthor
+	nmap <leader>df :Dox
+	nmap <leader>db :DoxBlock
+	nmap <leader>dc O/** */<Left><Left>
 
 ""**********
 " 快速注释
