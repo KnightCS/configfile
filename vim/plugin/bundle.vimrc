@@ -34,6 +34,9 @@
 "	map <leader>a
 " a.vim:打开头文件
 "	map av :AV<cr>
+" vim-expand-region:视图模式下可伸缩选中部分
+"	vmap v :添加选中区域
+"	vmap V :减少选中区域
 
 ""**********
 " Vundle插件管理
@@ -160,17 +163,25 @@ Plugin 'rust-lang/rust.vim'
 
 ""**********
 " 装逼的状态栏
-Plugin 'bling/vim-airline'
-	set t_Co=256
-	let g:airline_powerline_fonts=0
-	"theme:serene\simple\luna\jellybeans\sol\
-"Plugin 'Lokaltog/vim-powerline'
-	"set guifont=PowerlineSymbols\ for\ Powerline
-	"set nocompatible
-	"set t_Co=256
-	"let g:Powerline_symbols = 'fancy'
-	"let g:Powerline_symbols = 'unicode'
-	"let Powerline_symbols='compatible'
+"Plugin 'bling/vim-airline'
+"	set t_Co=256
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+	let g:airline_powerline_fonts=1
+	" 是否打开tabline
+	let g:airline#extensions#tabline#enabled = 1
+	"let g:airline#extensions#tabline#left_sep = ' '
+	"let g:airline#extensions#tabline#left_alt_sep = '|'
+	if !exists('g:airline_symbols')
+		let g:airline_symbols = {}
+	endif
+	let g:airline_left_sep = ''
+	let g:airline_left_alt_sep = ''
+	let g:airline_right_sep = ''
+	let g:airline_right_alt_sep = ''
+	let g:airline_symbols.branch = ''
+	let g:airline_symbols.readonly = ''
+	let g:airline_symbols.linenr = ''
 
 ""**********
 " 文件目录树
@@ -214,6 +225,13 @@ Plugin 'scrooloose/nerdcommenter'
 " Unknown
 Bundle 'mru.vim'
 Bundle 'comments.vim'
+
+""**********
+" 视图模式下可伸缩选中部分
+Bundle 'terryma/vim-expand-region'
+	vmap v <Plug>(expand_region_expand)
+	vmap V <Plug>(expand_region_shrink)
+
 
 ""**********
 " 对齐文字
