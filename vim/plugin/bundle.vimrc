@@ -9,12 +9,16 @@
 " 快捷键使用记录
 " 注：<leader>为“\”键
 "
+" vim-easymotion:快速跳转
+"	<leader><leader>w :work
+"	<leader><leader>b :back
+"	<leader><leader>. :repeat
 " ycm:自动补全
-"	GoToDeclaration: <leader>gc
-"	GoToDefinition : <leader>gf
+"	GoToDeclaration              : <leader>gc
+"	GoToDefinition               : <leader>gf
 "	GoToDefinitionElseDeclaration: <leader>gg
 "	C函数全局补全: <c-space>
-" Syntastic:语法检查
+" syntastic:语法检查
 "	listerr: <Leader>ss
 "	nexterr: <Leader>sn
 "	preverr: <Leader>sp
@@ -25,11 +29,11 @@
 " vim-trailing-whitespace:去掉结尾空格/tab
 "	map <leader>q<space> :FixWhitespace<cr>
 " nerdtree:文件目录树
-"	map  <leader>tn :NERDTreeToggle<CR>
+"	map <leader>tn :NERDTreeToggle<CR>
 " tagbar:tag列表
-"	nmap <leader>tb :TagbarToggle<cr>
+"	map <leader>tb :TagbarToggle<cr>
 " taglist:tag列表
-"	map  <leader>tl :TlistToggle<cr>
+"	map <leader>tl :TlistToggle<cr>
 " nerdcommenter:
 "	<leader>cc 		:加注释
 "	<leader>cu 		:解开注释
@@ -77,8 +81,23 @@ Plugin 'VundleVim/Vundle.vim'
 ""**********
 " Unknown
 Plugin 'tpope/vim-fugitive'
+
+
+""**********
+" 快速跳转
 Plugin 'Lokaltog/vim-easymotion'
-Plugin 'tpope/vim-rails.git'
+	let g:EasyMotion_smartcase = 1
+	"let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+	"map <Leader><leader>h <Plug>(easymotion-linebackward)
+	"map <Leader><Leader>j <Plug>(easymotion-j)
+	"map <Leader><Leader>k <Plug>(easymotion-k)
+	"map <Leader><leader>l <Plug>(easymotion-lineforward)
+	" 重复上一次操作, 类似repeat插件, 很强大
+	map <Leader><leader>. <Plug>(easymotion-repeat)
+
+""**********
+" Rails插件
+"Plugin 'tpope/vim-rails.git'
 
 ""**********
 " 自动补全
