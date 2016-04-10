@@ -34,6 +34,8 @@
 "	map <leader>tb :TagbarToggle<cr>
 " taglist:tag列表
 "	map <leader>tl :TlistToggle<cr>
+" mru:预览最近打开文件
+"	map <leader>th :MRU<cr>
 " nerdcommenter:
 "	<leader>cc 		:加注释
 "	<leader>cu 		:解开注释
@@ -49,10 +51,11 @@
 "	<leader>a*<space> 所有空格依次对齐
 "	<leader>a<Enter>*<space>	右对齐
 " a.vim:打开头文件
-"	map av :AV<cr>
+"	map <leader>af :AV<cr>
 " vim-expand-region:视图模式下可伸缩选中部分
 "	vmap v :添加选中区域
 "	vmap V :减少选中区域
+"
 
 ""**********
 " Vundle插件管理
@@ -82,22 +85,12 @@ Plugin 'VundleVim/Vundle.vim'
 " Git插件
 Plugin 'tpope/vim-fugitive'
 
-
 ""**********
 " 快速跳转
 Plugin 'Lokaltog/vim-easymotion'
 	let g:EasyMotion_smartcase = 1
-	"let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
-	"map <Leader><leader>h <Plug>(easymotion-linebackward)
-	"map <Leader><Leader>j <Plug>(easymotion-j)
-	"map <Leader><Leader>k <Plug>(easymotion-k)
-	"map <Leader><leader>l <Plug>(easymotion-lineforward)
 	" 重复上一次操作, 类似repeat插件, 很强大
 	map <Leader><leader>. <Plug>(easymotion-repeat)
-
-""**********
-" Rails插件
-"Plugin 'tpope/vim-rails.git'
 
 ""**********
 " 自动补全
@@ -193,18 +186,10 @@ Plugin 'pyflakes.vim'
 
 ""**********
 " 快速插入代码片段
-Plugin 'vim-scripts/UltiSnips'
 Bundle 'SirVer/ultisnips'
-	autocmd FileType [ch],[ch]pp,cc nested :UltiSnipsAddFiletypes c
-	autocmd FileType python nested :UltiSnipsAddFiletypes python
-	" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-	"let g:UltiSnipsSnippetDirectories=['UltiSnips']
-	"let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 	let g:UltiSnipsExpandTrigger="<c-j>"
 	let g:UltiSnipsJumpForwardTrigger="<c-l>"
 	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
-	" If you want :UltiSnipsEdit to split your window.
-	let g:UltiSnipsEditSplit="vertical"
 
 ""**********
 " 代码片段配置
@@ -237,16 +222,6 @@ Plugin 'vim-airline/vim-airline-themes'
 	let g:airline_symbols.linenr = ''
 
 ""**********
-" 文件目录树
-Plugin 'scrooloose/nerdtree'
-	map <leader>tn :NERDTreeToggle<CR>
-	let NERDTreeHighlightCursorline=1
-	let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
-	let g:netrw_home='~/bak'
-	"close vim if the only window left open is a NERDTree
-	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-
-""**********
 " for show no user whitespaces
 Bundle 'bronson/vim-trailing-whitespace'
 	" \+空格去掉末尾的空格
@@ -255,36 +230,16 @@ Bundle 'bronson/vim-trailing-whitespace'
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
 
-Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
+""**********
+" zencoding for vim
+"Plugin 'rstacruz/sparkup',{'rtp': 'vim/'}
 " scripts from http://vim-scripts.org/vim/scripts.html
-
-""**********
-" 文件查找
-Plugin 'L9'
-Plugin 'FuzzyFinder'
-
-""**********
-" 自动补全括号、大括号等
-Plugin 'jiangmiao/auto-pairs'
-	"let g:AutoPairsFlyMode = 1
-
-""**********
-" 快速注释
-Plugin 'scrooloose/nerdcommenter'
-	let g:NERDSpaceDelims=1
-
-""vim scripts
-""**********
-" Unknown
-Bundle 'mru.vim'
-Bundle 'comments.vim'
 
 ""**********
 " 视图模式下可伸缩选中部分
 Bundle 'terryma/vim-expand-region'
 	vmap v <Plug>(expand_region_expand)
 	vmap V <Plug>(expand_region_shrink)
-
 
 ""**********
 " 对齐文字
@@ -297,19 +252,34 @@ Bundle 'junegunn/vim-easy-align'
 	let g:easy_align_delimiters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
 
 ""**********
+" 文件目录树
+Plugin 'scrooloose/nerdtree'
+	map <leader>tn :NERDTreeToggle<CR>
+	let NERDTreeHighlightCursorline=1
+	let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
+	let g:netrw_home='~/bak'
+	"close vim if the only window left open is a NERDTree
+	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+""**********
+" 文件查找
+Plugin 'L9'
+Plugin 'FuzzyFinder'
+
+""**********
 " taglist
-Bundle 'taglist.vim'
-	" 默认不打开Taglist
-	let Tlist_Auto_Open=0
-	let Tlist_Ctags_Cmd = '/usr/bin/ctags'
-	" 不同时显示多个文件的tag，只显示当前文件的
-	let Tlist_Show_One_File = 1
-	" 如果taglist窗口是最后一个窗口，则退出vim
-	let Tlist_Exit_OnlyWindow = 1
-	" 在左侧窗口中显示taglist窗口
-	let Tlist_Use_Right_Window = 0
-	" 函数列表开关
-	map <silent> <leader>tl :TlistToggle<cr>
+"Bundle 'taglist.vim'
+"	" 默认不打开Taglist
+"	let Tlist_Auto_Open=0
+"	let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+"	" 不同时显示多个文件的tag，只显示当前文件的
+"	let Tlist_Show_One_File = 1
+"	" 如果taglist窗口是最后一个窗口，则退出vim
+"	let Tlist_Exit_OnlyWindow = 1
+"	" 在左侧窗口中显示taglist窗口
+"	let Tlist_Use_Right_Window = 0
+"	" 函数列表开关
+"	map <silent> <leader>tl :TlistToggle<cr>
 
 ""**********
 " tagbar
@@ -328,7 +298,7 @@ Bundle 'grep.vim'
 ""**********
 " 在头文件以及源文件间跳转
 Plugin 'a.vim'
-	map av :AV<cr>
+	nmap <leader>af :AV<cr>
 
 ""**********
 " 文件头&函数注释
@@ -347,6 +317,20 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
 
+""**********
+" 快速注释
+Plugin 'scrooloose/nerdcommenter'
+	let g:NERDSpaceDelims=1
+
+""**********
+" 自动补全括号、大括号等
+Plugin 'jiangmiao/auto-pairs'
+	"let g:AutoPairsFlyMode = 1
+
+""**********
+" 预览最近打开文件
+Bundle 'mru.vim'
+	nmap <leader>th :MRU<cr>
 
 " git repos on your local machine (i.e. when working on your own plugin)
 "Plugin 'file:///home/gmarik/path/to/plugin'
