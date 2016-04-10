@@ -79,7 +79,7 @@ Plugin 'VundleVim/Vundle.vim'
 ""**********
 
 ""**********
-" Unknown
+" Git插件
 Plugin 'tpope/vim-fugitive'
 
 
