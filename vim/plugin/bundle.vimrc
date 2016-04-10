@@ -14,6 +14,10 @@
 "	GoToDefinition : <leader>gf
 "	GoToDefinitionElseDeclaration: <leader>gg
 "	C函数全局补全: <c-space>
+" Syntastic:语法检查
+"	listerr: <Leader>ss
+"	nexterr: <Leader>sn
+"	preverr: <Leader>sp
 " ultisnips:模板补全
 "	input:	<c-j>
 "	netx:	<c-l>
@@ -27,11 +31,19 @@
 " taglist:tag列表
 "	map  <leader>tl :TlistToggle<cr>
 " nerdcommenter:
-"	<leader>cc :加注释
-"	<leader>cu :解开注释
-"	<leader>c<space> :加/解开注释，智能判断
+"	<leader>cc 		:加注释
+"	<leader>cu 		:解开注释
+"	<leader>c<space>:加/解开注释，智能判断
 " vim-easy-align:对齐
 "	map <leader>a
+"	<leader>a=        对齐等号表达
+"	<leader>a:        对齐冒号表达式(json/map等)
+"	<leader>a<space>  首个空格对齐
+"	<leader>a2<space> 第二个空格对齐
+"	<leader>a-<space> 倒数第一个空格对齐
+"	<leader>a-2<space>倒数第二个空格对齐
+"	<leader>a*<space> 所有空格依次对齐
+"	<leader>a<Enter>*<space>	右对齐
 " a.vim:打开头文件
 "	map av :AV<cr>
 " vim-expand-region:视图模式下可伸缩选中部分
@@ -136,17 +148,39 @@ Plugin 'scrooloose/Syntastic'
 	" whether to show balloons
 	let g:syntastic_enable_highlighting = 1
 	let g:syntastic_enable_balloons = 1
+	" 外部插件，检查效率比较高
 	let g:syntastic_python_checkers=['pyflakes']
+	"let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+	"let g:syntastic_html_checkers=['tidy', 'jshint']
+	" to see error location list
+	let g:syntastic_always_populate_loc_list = 0
+	let g:syntastic_auto_loc_list = 0
+	let g:syntastic_loc_list_height = 5
+	function! ToggleErrors()
+		let old_last_winnr = winnr('$')
+		lclose
+		if old_last_winnr == winnr('$')
+			" Nothing was closed, open syntastic error location panel
+			Errors
+		endif
+	endfunction
+	nnoremap <Leader>ss :call ToggleErrors()<cr>
+	" nnoremap <Leader>sn :lnext<cr>
+	" nnoremap <Leader>sp :lprevious<cr>
+
+""**********
+" python实时语法检查
+Plugin 'pyflakes.vim'
 
 ""**********
 " 快速插入代码片段
-"Plugin 'vim-scripts/UltiSnips'
+Plugin 'vim-scripts/UltiSnips'
 Bundle 'SirVer/ultisnips'
 	autocmd FileType [ch],[ch]pp,cc nested :UltiSnipsAddFiletypes c
 	autocmd FileType python nested :UltiSnipsAddFiletypes python
 	" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-	let g:UltiSnipsSnippetDirectories=['UltiSnips']
-	let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
+	"let g:UltiSnipsSnippetDirectories=['UltiSnips']
+	"let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
 	let g:UltiSnipsExpandTrigger="<c-j>"
 	let g:UltiSnipsJumpForwardTrigger="<c-l>"
 	let g:UltiSnipsJumpBackwardTrigger="<c-h>"
@@ -275,7 +309,6 @@ Bundle 'grep.vim'
 ""**********
 " 在头文件以及源文件间跳转
 Plugin 'a.vim'
-	" a.vim配置
 	map av :AV<cr>
 
 ""**********
@@ -295,9 +328,6 @@ Plugin 'DoxygenToolkit.vim'
 	let g:DoxygenToolkit_briefTag_funcName="yes"
 	let g:Doxygen_enhanced_color=1
 
-""**********
-" python实时语法检查
-Plugin 'pyflakes.vim'
 
 " git repos on your local machine (i.e. when working on your own plugin)
 "Plugin 'file:///home/gmarik/path/to/plugin'
