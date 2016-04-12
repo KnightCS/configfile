@@ -62,7 +62,6 @@
 "
 "增强模式中那个的命令行自动完成操作
 set nocompatible              " be iMproved, required
-filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
