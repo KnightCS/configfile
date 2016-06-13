@@ -179,14 +179,7 @@ HISTIGNORE='ls:history:pwd'
 # user powerline
 USER_SHELL=`echo ${0}`
 PIP_DIR=`pip show powerline-status | grep "Location" | awk '{print $2}'`
-if [ ${USER_SHELL} == "/bin/bash" ] || [ ${USER_SHELL} == "-bash" ] && [ ${PIP_DIR} != "" ]; then
-	source ${PIP_DIR}/powerline/bindings/bash/powerline.sh
-fi
-
-# user powerline
-USER_SHELL=`echo ${0}`
-PIP_DIR=`pip show powerline-status | grep "Location" | awk '{print $2}'`
-if [ ${USER_SHELL} == "/bin/bash" ] || [ ${USER_SHELL} == "-bash" ] && [ ${PIP_DIR} != "" ]; then
+if [[ ${USER_SHELL} == "/bin/bash" || ${USER_SHELL} == "-bash" && ${PIP_DIR} != "" ]]; then
 	source ${PIP_DIR}/powerline/bindings/bash/powerline.sh
 fi
 
