@@ -9,6 +9,7 @@
 #       2. 记录python命令行历史
 
 import readline
+import rlcompleter
 import atexit
 import os
 
@@ -23,4 +24,4 @@ except IOError:
     pass
 atexit.register(readline.write_history_file, histfile)
 
-del os, histfile, readline
+del os, histfile, readline, rlcompleter
