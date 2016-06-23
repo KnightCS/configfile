@@ -177,20 +177,15 @@ HISTCONTROL=ignoreboth
 HISTIGNORE='ls:history:pwd'
 
 # user powerline
-USER_SHELL=`echo ${0}`
-PIP_DIR=`pip show powerline-status | grep "Location" | awk '{print $2}'`
-if [ ${USER_SHELL} == "/bin/bash" ] || [ ${USER_SHELL} == "-bash" ] && [ ${PIP_DIR} != "" ]; then
-	source ${PIP_DIR}/powerline/bindings/bash/powerline.sh
-fi
-
-# user powerline
-USER_SHELL=`echo ${0}`
-PIP_DIR=`pip show powerline-status | grep "Location" | awk '{print $2}'`
-if [ ${USER_SHELL} == "/bin/bash" ] || [ ${USER_SHELL} == "-bash" ] && [ ${PIP_DIR} != "" ]; then
-	source ${PIP_DIR}/powerline/bindings/bash/powerline.sh
+USER_SHELL=$0
+PIP_DIR=$(pip show powerline-status | grep "Location" | awk '{print $2}')
+if [ "${USER_SHELL}" == "/bin/bash" ] || [ "${USER_SHELL}" == "-bash" ] && [ "${PIP_DIR}" != "" ]; then
+	source "${PIP_DIR}"/powerline/bindings/bash/powerline.sh
 fi
 
 # set rust src dir
 export RUST_SRC_HOME=/usr/local/rust/rustc-1.7.0
 export RUST_SRT_PATH=${RUST_SRC_HOME}/src
 
+# ssh
+alias ssh118="ssh knight@121.42.50.118"
