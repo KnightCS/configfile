@@ -93,50 +93,64 @@ Plugin 'Lokaltog/vim-easymotion'
 
 ""**********
 " 自动补全
-Plugin 'Valloric/YouCompleteMe'
-	let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-	let g:ycm_collect_identifiers_from_tags_files = 1
-	let g:ycm_seed_identifiers_with_syntax = 1
-	let g:ycm_confirm_extra_conf = 0
-	let g:ycm_allow_changing_updatetime = 0
-	let g:ycm_use_ultisnips_completer=1
-	set updatetime=100
-	" 离开插入模式后自动关闭预览窗口
-	autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-	" 禁止缓存匹配项,每次都重新生成匹配项
-	let g:ycm_cache_omnifunc=0
-	" 语法关键字补全
-	let g:ycm_seed_identifiers_with_syntax=1
-	" 在注释输入中也能补全
-	let g:ycm_complete_in_comments = 1
-	" 在字符串输入中也能补全
-	let g:ycm_complete_in_strings = 1
-	" 注释和字符串中的文字也会被收入补全
-	let g:ycm_collect_identifiers_from_comments_and_strings = 1
-	" 设置不启动ycm的文件类型
-	let g:ycm_filetype_blacklist = {
-				\ 'tagbar':    1,
-				\ 'qf':        1,
-				\ 'notes':     1,
-				\ 'markdown':  1,
-				\ 'pandoc':    1,
-				\ 'unite':     1,
-				\ 'text':      1,
-				\ 'vimwiki':   1,
-				\ 'gitcommit': 1,
-				\}
-	" c函数全局补全
-	let g:ycm_key_invoke_completion = '<C-Space>'
-	" In this example, the rust source code zip has been extracted to
-	" /usr/local/rust/rustc-1.7.0
-	let g:ycm_rust_src_path = '/usr/local/rust/rustc-1.7.0/src'
-	let g:ycm_python_binary_path = '/usr/bin/python3'
-	" jump
-	" you can use ctrl+o jump back to where the previous tags you view
-	" and you also can use ctral+i jump to the next tags you want to view.
-	nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
-	nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
-	nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+if has("win32")
+	" Windows options
+else
+	if has("unix")
+		let s:uname = system("uname -o")
+		if s:uname == "Cygwin\n"
+			" Cygwin options
+		"elseif s:uname == "Darwin\n"
+			" Mac options
+		else
+			" Linux options
+			Plugin 'Valloric/YouCompleteMe'
+				let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+				let g:ycm_collect_identifiers_from_tags_files = 1
+				let g:ycm_seed_identifiers_with_syntax = 1
+				let g:ycm_confirm_extra_conf = 0
+				let g:ycm_allow_changing_updatetime = 0
+				let g:ycm_use_ultisnips_completer=1
+				set updatetime=100
+				" 离开插入模式后自动关闭预览窗口
+				autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+				" 禁止缓存匹配项,每次都重新生成匹配项
+				let g:ycm_cache_omnifunc=0
+				" 语法关键字补全
+				let g:ycm_seed_identifiers_with_syntax=1
+				" 在注释输入中也能补全
+				let g:ycm_complete_in_comments = 1
+				" 在字符串输入中也能补全
+				let g:ycm_complete_in_strings = 1
+				" 注释和字符串中的文字也会被收入补全
+				let g:ycm_collect_identifiers_from_comments_and_strings = 1
+				" 设置不启动ycm的文件类型
+				let g:ycm_filetype_blacklist = {
+							\ 'tagbar':    1,
+							\ 'qf':        1,
+							\ 'notes':     1,
+							\ 'markdown':  1,
+							\ 'pandoc':    1,
+							\ 'unite':     1,
+							\ 'text':      1,
+							\ 'vimwiki':   1,
+							\ 'gitcommit': 1,
+							\}
+				" c函数全局补全
+				let g:ycm_key_invoke_completion = '<C-Space>'
+				" In this example, the rust source code zip has been extracted to
+				" /usr/local/rust/rustc-1.7.0
+				let g:ycm_rust_src_path = '/usr/local/rust/rustc-1.7.0/src'
+				let g:ycm_python_binary_path = '/usr/bin/python3'
+				" jump
+				" you can use ctrl+o jump back to where the previous tags you view
+				" and you also can use ctral+i jump to the next tags you want to view.
+				nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>
+				nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+				nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+		endif
+	endif
+endif
 
 "Bundle 'OmniCppComplete'
 "Bundle 'winmanager'
