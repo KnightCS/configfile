@@ -163,6 +163,7 @@ Plugin 'scrooloose/Syntastic'
 	let g:syntastic_python_checkers=['pyflakes']
 	"let g:syntastic_javascript_checkers = ['jsl', 'jshint']
 	"let g:syntastic_html_checkers=['tidy', 'jshint']
+	let g:syntastic_shell_checkers=['shellcheck']
 	" to see error location list
 	let g:syntastic_always_populate_loc_list = 0
 	let g:syntastic_auto_loc_list = 0
@@ -200,8 +201,6 @@ Plugin 'rust-lang/rust.vim'
 
 ""**********
 " 装逼的状态栏
-"Plugin 'bling/vim-airline'
-"	set t_Co=256
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 	let g:airline_powerline_fonts=1
@@ -318,6 +317,10 @@ Plugin 'scrooloose/nerdcommenter'
 " 自动补全括号、大括号等
 Plugin 'jiangmiao/auto-pairs'
 	"let g:AutoPairsFlyMode = 1
+
+""**********
+" 快速给词加环绕符号
+Bundle 'tpope/vim-surround'
 
 ""**********
 " 预览最近打开文件
