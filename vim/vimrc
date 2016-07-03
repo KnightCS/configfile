@@ -215,7 +215,24 @@ set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
 
 " 2.10 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 "
-set mouse=a
+if has("win32")
+	" Windows options
+	set mouse=a
+else
+	if has("unix")
+		let s:uname = system("uname -o")
+		if s:uname == "Cygwin\n"
+			" Cygwin options
+			set mouse-=a
+		elseif s:uname == "Darwin\n"
+			" Mac options
+			set mouse=a
+		else
+			" Linux options
+			set mouse=a
+		endif
+	endif
+endif
 set selection=exclusive
 set selectmode=mouse,key
 
