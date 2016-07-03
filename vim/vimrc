@@ -113,12 +113,11 @@ if has("gui_running")
 endif
 "colorscheme monokai
 colorscheme desert
-" 如果使用的是vimdiff，则使用evening主题
-if &diff
-	colorscheme evening
-endif
 " 背景使用黑色
 "set background=dark
+if &diff
+	colorscheme slate
+endif
 "
 " 设置字体
 "set guifont=Courier_New:h10:cANSI
