@@ -23,7 +23,7 @@
 "	nexterr: <Leader>sn
 "	preverr: <Leader>sp
 " ultisnips:模板补全
-"	input:	<c-h>
+"	input:	<c-l>
 "	netx:	<c-j>
 "	back:	<c-k>
 " vim-trailing-whitespace:去掉结尾空格/tab
@@ -138,8 +138,8 @@ else
 				" <TAB>: completion.
 				inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 				" <C-h>, <BS>: close popup and delete backword char.
-				"inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-				"inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+				inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+				inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
 				" Close popup by <Space>.
 				"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
 
@@ -172,15 +172,10 @@ else
 				let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 			Plugin 'Shougo/neosnippet'
 				" Plugin key-mappings.
-				imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-				smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-				xmap <C-k>     <Plug>(neosnippet_expand_target)
+				imap <C-l>     <Plug>(neosnippet_expand_or_jump)
+				smap <C-l>     <Plug>(neosnippet_expand_or_jump)
+				xmap <C-l>     <Plug>(neosnippet_expand_target)
 
-				" SuperTab like snippets behavior.
-				"imap <expr><TAB>
-				" \ pumvisible() ? "\<C-n>" :
-				" \ neosnippet#expandable_or_jumpable() ?
-				" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 				smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 							\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
@@ -241,7 +236,7 @@ else
 			""**********
 			" 快速插入代码片段
 			Bundle 'SirVer/ultisnips'
-			let g:UltiSnipsExpandTrigger="<c-h>"
+			let h:UltiSnipsExpandTrigger="<c-l>"
 			let g:UltiSnipsJumpForwardTrigger="<c-j>"
 			let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
