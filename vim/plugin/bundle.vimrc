@@ -144,7 +144,7 @@ else
 				"inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
 
 				" AutoComplPop like behavior.
-				let g:neocomplete#enable_auto_select = 1
+				let g:neocomplete#enable_auto_select = 0
 
 				" Shell like behavior(not recommended).
 				"set completeopt+=longest
@@ -173,11 +173,15 @@ else
 			Plugin 'Shougo/neosnippet'
 				" Plugin key-mappings.
 				imap <C-l>     <Plug>(neosnippet_expand_or_jump)
-				smap <C-l>     <Plug>(neosnippet_expand_or_jump)
-				xmap <C-l>     <Plug>(neosnippet_expand_target)
+				"smap <C-l>     <Plug>(neosnippet_expand_or_jump)
+				"xmap <C-l>     <Plug>(neosnippet_expand_target)
 
-				smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-							\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+				" SuperTab like snippets behavior.
+				imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+				\ "\<Plug>(neosnippet_expand_or_jump)"
+				\: pumvisible() ? "\<C-n>" : "\<TAB>"
+				"smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+				"			\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 				" For conceal markers.
 				if has('conceal')
