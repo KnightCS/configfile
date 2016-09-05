@@ -241,7 +241,7 @@ else
 			""**********
 			" 快速插入代码片段
 			Bundle 'SirVer/ultisnips'
-			let h:UltiSnipsExpandTrigger="<c-l>"
+			let g:UltiSnipsExpandTrigger="<c-l>"
 			let g:UltiSnipsJumpForwardTrigger="<c-j>"
 			let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
