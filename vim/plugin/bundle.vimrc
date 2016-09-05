@@ -188,6 +188,11 @@ else
 				if has('conceal')
 				  set conceallevel=2 concealcursor=niv
 				endif
+
+				" Enable snipMate compatibility feature.
+				let g:neosnippet#enable_snipmate_compatibility = 1
+				" Tell Neosnippet about the other snippets
+				let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
 			Plugin 'Shougo/neosnippet-snippets'
 		"elseif s:uname == "Darwin\n"
 			" Mac options
@@ -241,16 +246,17 @@ else
 			""**********
 			" 快速插入代码片段
 			Bundle 'SirVer/ultisnips'
-			let g:UltiSnipsExpandTrigger="<c-l>"
-			let g:UltiSnipsJumpForwardTrigger="<c-j>"
-			let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+				let g:UltiSnipsExpandTrigger="<c-l>"
+				let g:UltiSnipsJumpForwardTrigger="<c-j>"
+				let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
-			""**********
-			" 代码片段配置
-			Plugin 'honza/vim-snippets'
 		endif
 	endif
 endif
+
+""**********
+" 代码片段配置
+Plugin 'honza/vim-snippets'
 
 ""**********
 " 语法检测
