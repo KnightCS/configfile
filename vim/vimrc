@@ -132,11 +132,12 @@ set colorcolumn=81
 " 字符间插入的像素行数目
 set linespace=0
 " 显示制表符
-"set list
+set list
 " 将制表符显示为'>---',将行尾空格显示为'-'
 "set listchars = tab:>-,trail:-
-" 将制表符显示为'.   '"
 "set listchars=tab:.\ ,trail:.
+"set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
+set listchars=tab:\|\ ,trail:.,extends:>,precedes:<
 
 " 2.5 光标
 "
@@ -209,9 +210,6 @@ set incsearch
 set ignorecase
 " 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
 set incsearch
-" 输入:set list命令是应该显示些啥？
-" set list
-set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
 
 " 2.10 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 "
@@ -305,22 +303,22 @@ filetype plugin indent on
 " 关掉智能补全时的预览窗口
 set completeopt=longest,menu
 " 新建.c,.h,.sh,.java文件，自动插入文件头
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs exec ":call SetTitle()"
+autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs normal G
+autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
 "定义函数SetTitle，自动插入文件头
 func SetTitle()
 	let user_name  = "KnightCS"
 	let user_email = ""
 	if &filetype == 'sh'
-		call setline(1,          "\#!/bin/bash")
+		call setline(1,          "\#!/usr/bin/env bash")
 		call append(line("."),   "\# >File Name   : ".expand("%"))
 		call append(line(".")+1, "\# >Author      : ".expand(user_name))
 		call append(line(".")+2, "\# >Description :")
 		call append(line(".")+3, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
 		call append(line(".")+4, "")
 	elseif &filetype == 'python'
-		call setline(1,          "\#!/usr/bin/python")
+		call setline(1,          "\#!/usr/bin/env python")
 		call append(line("."),   "\#-*- coding: UTF-8 -*-")
 		call append(line(".")+1, "\# >FileName    : ".expand("%"))
 		call append(line(".")+2, "\# >Author      : ".expand(user_name))
@@ -329,6 +327,13 @@ func SetTitle()
 		call append(line(".")+5, "")
 		call append(line(".")+6, "if __name__ == '__main__':")
 		call append(line(".")+7, "    pass")
+	elseif &filetype == 'lua'
+		call setline(1,          "\#!/usr/bin/env lua")
+		call append(line("."),   "-- >File Name   : ".expand("%"))
+		call append(line(".")+1, "-- >Author      : ".expand(user_name))
+		call append(line(".")+2, "-- >Description :")
+		call append(line(".")+3, "-- > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
+		call append(line(".")+4, "")
 	else
 		call setline(1,          "\/*")
 		call append(line("."),   " * File Name   : ".expand("%"))
