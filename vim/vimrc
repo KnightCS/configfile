@@ -1,24 +1,70 @@
-""**********
-" VIM增强设置
-" Autor:Knight_cs
-" DesCRiption:for Linux, GUI/Console
-" LINUX全局版本请见：/usr/share/vim/vimrc
-" Version: 2.00
+" File Name   : vimrc
+" Author      : KnightCS
+" Description : My vim config.
+"  version 1.0: **
+"   create.
+"  version 2.0: **
+"   add some config and grouping.
+"  version 3.0: 2017-01-27
+"   reorganize.
 
-""**********
+" 0. 使用说明
+" ==========
+" keyboard-symbols
+" http://www.ifreesite.com/typing/keyboard-symbols.htm
+" ❖ ⿰ ⿱ ⿲ ⿳ ⿴ ⿵ ⿶ ⿻ ☈ ◆ ◇ ⌥ • ❏ ❐ ❒ § « » ✗ ✓ ○ ● ◎ ≡ ∑
+" │ ─ ═ ┄ ┈ ﹊ ﹍ ☰ ┆ ┇ ┊ ┋
+"↑↓←→↖↗↙↘➻➼➽➸➳➺➻➴➵➶➷➹➩➪➫➬➭➮➯➱➲➾➔➘➙➚➛➜➝➞➟➠➡➢➣➤➥➦➧➨⇒⇔
+"
+" <leader>:' '
+" 编辑配置文件：<leader>ev
+" 折叠：
+"   zi:打开/关闭折叠
+"   zv:查看此行
+"   zm:关闭折叠
+"   zc、zC:折叠
+"   zo、zO:打开折叠
+" quickfix模式，写入并make：<leader><space>
+" 快速插入新版本：<leader>nv版本号
+
 " 1. 一般设置
-"
-" 1.0
-"
-" 不要使用vi的键盘模式，而是viｍ自己的
+" ==========
+
+" 1.0 全局变量设置
+" ----------
+" 当前模式数组
+let g:currentmode={
+    \ 'n'  : 'N ',
+    \ 'no' : 'N·Operator Pending ',
+    \ 'v'  : 'V ',
+    \ 'V'  : 'V·Line ',
+    \ '' : 'V·Block ',
+    \ 's'  : 'Select ',
+    \ 'S'  : 'S·Line ',
+    \ '^S' : 'S·Block ',
+    \ 'i'  : 'I ',
+    \ 'R'  : 'R ',
+    \ 'Rv' : 'V·Replace ',
+    \ 'c'  : 'Command ',
+    \ 'cv' : 'Vim Ex ',
+    \ 'ce' : 'Ex ',
+    \ 'r'  : 'Prompt ',
+    \ 'rm' : 'More ',
+    \ 'r?' : 'Confirm ',
+    \ '!'  : 'Shell ',
+    \ 't'  : 'Terminal '
+    \}
+let mapleader = ' '
+
+" 1.1
+" ----------
+" 不要使用vi的键盘模式，而是vim自己的
 " 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 set nocompatible
 " 启动的时候不显示那个援助索马里儿童的提示
 set shortmess=atl
 " 去掉输入错误的提示声音
 set noeb
-" 左下角的状态
-set showmode
 
 " history文件中需要记录的行数
 set history=1000
@@ -27,30 +73,40 @@ set clipboard+=unnamed
 "保存全局变量
 set viminfo +=!
 
-"增强模式中那个的命令行自动完成操作
-set wildmenu
 " 使回格键（backspace）正常处理indent, eol, start等
 set backspace=2
 " 允许backspace和光标键跨越行边界
-set whichwrap+=<,>,h,l
-" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set whichwrap+=<,>,h,l,b,s,[,]
+
+" 通过使用:substitute命令，告诉我们文件的哪一行被改变过
 set report=0
 " 编辑配置文件
-" nnoremap <leader>ev :edit $MYVIMRC<CR>
-" autocmd BufWritePost $MYVIMRC source %
+nnoremap <leader>ev :edit $MYVIMRC<CR>
+augroup vimrc
+    autocmd!
+    autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END
 " quickfix模式
-autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+"autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+" 拼写检查
+"set spell
 
-" 1.1 目录、文件
-"
+" 1.2 目录、文件
+" ----------
 " 载入文件类型插件
 filetype plugin on
 " 为特定文件类型载入相关缩进文件
 filetype indent on
+
 " 自动切换当前目录为当前文件所在的目录
 set autochdir
 " 设置当文件被改动时自动载入
 set autoread
+" 自动保存
+set autowrite
+" 在处理未保存或只读文件的时候，弹出确定
+set confirm
+
 " 覆盖文件时不备份
 " 禁止生成临时文件
 set nobackup
@@ -59,15 +115,9 @@ set noswapfile
 set noundofile
 " 设置备份时的行为为覆盖
 "set backupcopy=yes
-" 自动保存
-set autowrite
-" 代码补全
-set completeopt=preview,menu
-" 在处理未保存或只读文件的时候，弹出确定
-set confirm
 
-" 1.2 字符编码相关
-"
+" 1.3 字符编码
+" ----------
 " 内部使用字符编码方式
 set encoding=UTF-8
 set langmenu=zh_CN.UTF-8
@@ -80,18 +130,18 @@ set fileencoding=utf-8
 set fenc=UTF-8
 set fencs=UTF-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1S
 
-""**********
-" 2. 显示相关
-"
+" 2. 显示
+" ==========
+
 " 2.1 显示中文帮助
-"
+" ----------
 if version >= 603
-	set helplang=cn
-	set encoding=utf-8
+    set helplang=cn
+    set encoding=utf-8
 endif
 
 " 2.2 VIM外框设置
-"
+" ----------
 " 去掉边框
 set go=
 " 隐藏工具栏
@@ -100,149 +150,155 @@ set guioptions-=T
 set guioptions-=m
 
 " 2.3 设置魔术
-"
+" ----------
 " magic(\m)：除了 $ . * ^ 之外其他元字符都要加反斜杠。
 " nomagic(\M)：除了 $ ^ 之外其他元字符都要加反斜杠。
 set magic
 
 " 2.4 设置主题
-"
+" ----------
+" 语法高亮
+syntax enable
+syntax on
 " 如果使用gui，则设置为256色
 if has("gui_running")
-	set t_Co=256
+    set t_Co=256
 endif
-"colorscheme monokai
+" 使用desert主题
 colorscheme desert
-" 背景使用黑色
-"set background=dark
-if &diff
-	colorscheme slate
+if g:colors_name == "desert"
+    " diff
+    hi! DiffAdd ctermbg=022
+    hi! DiffChange ctermbg=234
+    hi! DiffDelete ctermbg=052
+    hi! DiffText ctermbg=094
+    " Pmenu
+    hi! Pmenu cterm=underline ctermbg=234 ctermfg=141
+    hi! PmenuSel cterm=underline ctermbg=233 ctermfg=135
+    " CursorLine
+    hi! CursorLine cterm=NONE ctermbg=054
+    hi! CursorLineNr cterm=NONE ctermbg=054 ctermfg=038
+    hi! LineNr term=NONE ctermbg=232 ctermfg=038
+    " Sign
+    hi! SignColumn ctermbg=234
+    hi! SyntasticErrorSign ctermfg=196
+    hi! SyntasticWarningSign ctermfg=202
+    hi! SyntasticStyleErrorSign ctermfg=001
+    hi! SyntasticStyleWarningSign ctermfg=226
 endif
-"
+
+" 突出显示当前行(下划线)
+set cursorline
+" 用浅色高亮当前行
+" 输入时用浅色高亮当前行
+autocmd InsertEnter * se cul
+" 非输入时，不用浅色高亮当前行
+"autocmd InsertLeave * se nocul
+
+" 高亮显示匹配的括号
+set showmatch
+" 匹配括号高亮的时间（单位是十分之一秒）
+set matchtime=5
+" 高亮字符，让其不受100列限制
+hi! OverLength ctermbg=red ctermfg=white guibg=red guifg=white
+match OverLength '\%120v.*'
+
 " 设置字体
 "set guifont=Courier_New:h10:cANSI
 "set guifont=Monaco:h9:cANSI
-set guifont=Monaco\ 12
+"set guifont=Monaco\ 12
+
 " 显示行号
 set number
+" 显示相对行号
+"set relativenumber
+
 "带有如下符号的单词不要被换行分割
 set iskeyword+=_,$,@,%,#,-
-" c/python到底80列的时候显示竖线
+
+" c/python在80列后显示竖线
 set colorcolumn=81
+
 " 字符间插入的像素行数目
 set linespace=0
+
 " 显示制表符
 set list
-" 将制表符显示为'>---',将行尾空格显示为'-'
-"set listchars = tab:>-,trail:-
-"set listchars=tab:.\ ,trail:.
-"set listchars=tab:\|\ ,trail:.,extends:>,precedes:<,eol:$
-set listchars=tab:\|\ ,trail:.,extends:>,precedes:<
+" 将制表符显示为'|',空格显示为'.'
+set listchars=tab:\→\ ,trail:.,extends:>,precedes:<
 
 " 2.5 光标
-"
+" ----------
 " 不要闪烁
 set novisualbell
-" 光标移动到buffer的顶部和底部时保持3行距离
-set scrolloff=3
+" 光标移动到buffer的顶部和底部时保持5行距离
+set scrolloff=5
 
 " 2.6 折叠
-"
+" ----------
 " 允许折叠
 set foldenable
 " 手动折叠
-"set foldmethod=manual
-"set foldmethod=indent
+set foldmethod=manual
+set foldmethod=indent
 " 把{{{和}}}之间的内容折叠
 set foldmethod=marker
 " 折行前空出4字符显示折行标识
 set foldcolumn=0
 set foldlevel=0
 
-" 2.7 高亮显示
-"
-" 语法高亮
-syntax enable
-syntax on
-" 突出显示当前行(下划线)
-set cursorline
-" 用浅色高亮当前行
-autocmd InsertEnter * se cul
-autocmd InsertLeave * se nocul
-" 高亮显示匹配的括号
-set showmatch
-" 匹配括号高亮的时间（单位是十分之一秒）
-set matchtime=5
-" 不要高亮被搜索的句子（phrases）
-set nohlsearch
-" 高亮字符，让其不受100列限制
-highlight OverLength ctermbg=red ctermfg=white guibg=red guifg=white
-match OverLength '\%101v.*'
-" 高亮显示普通txt文件（需要txt.vim脚本）
-"au BufRead,BufNewFile *  setfiletype txt
+" 代码补全
+set completeopt=preview,menu
 
-" 2.8 命令行、状态栏
-"
-" 启动显示状态行(1),总是显示状态行(2)
-set laststatus=2
-" 命令行（在状态行下）的高度，默认为1，这里是2
-set cmdheight=2
+" 2.7 命令行、状态栏
+" ----------
+" 左下角的状态
+set showmode
+"增强模式中那个的命令行自动完成操作
+set wildmenu
 " 输入的命令显示出来，看的清楚些
 set showcmd
+" 命令行（在状态行下）的高度，默认为1，这里是2
+set cmdheight=2
 " 打开状态栏标尺
 set ruler
-" 状态行颜色
-highlight StatusLine guifg=SlateBlue guibg=Yellow
-highlight StatusLineNC guifg=Gray guibg=White
-" 状态行显示的内容
-set statusline=%F%r%m%*%=[%{&ff}]%Y\ [%l,%v-%c][%p%%]%{strftime(\"%m/%y-%H:%M\")}
-"set statusline=%F%m%r%h%w%=[POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
-"set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
-"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\-\ %H:%M\")}
-"set statusline=[%F]%y%r%m%*
 
-" 2.9 搜索和匹配
+" 启动显示状态行(1),总是显示状态行(2)
+set laststatus=2
+" 启动table行
+set showtabline=2
+
+" 2.8 搜索和匹配
 "
 " 搜索逐字符高亮
 set hlsearch
-set incsearch
 " 在搜索的时候忽略大小写
 set ignorecase
 " 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
 set incsearch
+" 修改搜索时的颜色
+hi! Search ctermfg=White ctermbg=196
 
-" 2.10 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
+" 2.9 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 "
-if has("win32")
-	" Windows options
-	set mouse=a
+if has('win32unix') || has('wind64unix')
+    set mouse-=a
 else
-	if has("unix")
-		let s:uname = system("uname -o")
-		if s:uname == "Cygwin\n"
-			" Cygwin options
-			set mouse-=a
-		elseif s:uname == "Darwin\n"
-			" Mac options
-			set mouse=a
-		else
-			" Linux options
-			set mouse=a
-		endif
-	endif
+    set mouse=a
 endif
 set selection=exclusive
 set selectmode=mouse,key
 
-" 2.11 在被分割的窗口间显示空白，便于阅读
-set fillchars=vert:\ ,stl:\ ,stlnc:\
+" 2.10 在被分割的窗口间显示空白，便于阅读
+"set fillchars=stl:\ ,stlnc:\ ,vert:\┋,fold:-,diff:-
+set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:-,diff:-
+hi! vertSplit ctermfg=234 ctermbg=038
+hi! StatusLineNC ctermfg=239
 
-
-""**********
 " 3. 文本格式和排版
-"
+" ==========
 " 检测文件类型
-filetype on
+filetype plugin indent on
 " 自动格式化
 set formatoptions=tcrqn
 " 继承前一行的缩进方式，特别适用于多行注释
@@ -256,119 +312,97 @@ set tabstop=4
 " 统一缩进为4
 set softtabstop=4
 set shiftwidth=4
-" 不要用空格代替制表符
-set noexpandtab
+" 用空格代替制表符
+"set noexpandtab
+set expandtab
 " 不要换行
 set nowrap
+" 编辑时不自动换行
+set textwidth=0
 " 在行和段开始处使用制表符
 set smarttab
 " 行内替换
 set gdefault
+
 " 设置*.rs结尾的文件识别为rust文件
 autocmd BufNewFile,BufRead *.rs set filetype=rust
+
 " 重新打开文件时，光标定位到上次打开的位置
-autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <=
-			\ line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+augroup resCur
+    autocmd!
+    autocmd BufReadPost * call setpos(".", getpos("'\""))
+augroup END
 
-""**********
-" 4. CTags的设定
-"
-" 按照名称排序
-let Tlist_Sort_Type = "name"
-" 在右侧显示窗口
-let Tlist_Use_Right_Window = 1
-" 压缩方式
-let Tlist_Compart_Format = 1
-" 如果只有一个buffer，kill窗口也kill掉buffer
-let Tlist_Exist_OnlyWindow = 1
-" 不要关闭其他文件的tags
-let Tlist_File_Fold_Auto_Close = 1
-" 不要显示折叠树
-let Tlist_Enable_Fold_Column = 0
-" 不同时显示多个文件的tag，只显示当前文件的
-let Tlist_Show_One_File=1
-"设置tags
-set tags=tags;/
-set autochdir
-"autocmd FileType java set tags+=D:\tools\java\tags
-"autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags
+" 4. Load My Vim Plugin
+" ==========
+silent! call myplugin#begin()
 
-""**********
 " 5. 自定义函数
-" - c、c++、java、python、bash、rust等文件自动添加文件头
-" - 添加新的版本说明
+" ==========
+" - c、c++、java、python、bash、lua、rust等文件自动添加文件头
 "
-" 打开文件类型检测, 加了这句才可以用智能补全
-filetype plugin indent on
-" 关掉智能补全时的预览窗口
-set completeopt=longest,menu
-" 新建.c,.h,.sh,.java文件，自动插入文件头
+"定义函数SetTitle，自动插入文件头
+function! SetTitle()
+    let l:user_name  = "KnightCS"
+    let l:user_email = ""
+    let l:user = expand(l:user_name).' ('.expand(l:user_email).')'
+    if &filetype == 'sh'
+        call setline(1,          "\#!/bin/bash")
+        call append(line("."),   "\# >File Name   : ".expand("%"))
+        call append(line(".")+1, "\# >Author      : ".expand(l:user))
+        call append(line(".")+2, "\# >Description :")
+        call append(line(".")+3, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
+        call append(line(".")+4, "")
+    elseif &filetype == 'python'
+        call setline(1,          "\#!/usr/bin/python")
+        call append(line("."),   "\#-*- coding: UTF-8 -*-")
+        call append(line(".")+1, "\# >FileName    : ".expand("%"))
+        call append(line(".")+2, "\# >Author      : ".expand(l:user))
+        call append(line(".")+3, "\# >Description :")
+        call append(line(".")+4, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
+        call append(line(".")+5, "")
+        call append(line(".")+6, "if __name__ == '__main__':")
+        call append(line(".")+7, "    pass")
+    elseif &filetype == 'lua'
+        call setline(1,          "\#!/usr/bin/lua")
+        call append(line("."),   "-- >File Name   : ".expand("%"))
+        call append(line(".")+1, "-- >Author      : ".expand(l:user))
+        call append(line(".")+2, "-- >Description :")
+        call append(line(".")+3, "-- > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
+        call append(line(".")+4, "")
+    else
+        call setline(1,          "\/*")
+        call append(line("."),   " * File Name   : ".expand("%"))
+        call append(line(".")+1, " * Author      : ".expand(l:user))
+        call append(line(".")+2, " * Description :")
+        call append(line(".")+3, " *  version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
+        call append(line(".")+4, " */")
+        call append(line(".")+5, "")
+    endif
+endfun
+
+function! NewVersion(var)
+    if &filetype == 'sh'
+        call append(4, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+    elseif &filetype == 'python'
+        call append(5, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+    elseif &filetype == 'h' || &filetype == 'hpp' || &filetype == 'java' ||
+                \  &filetype == 'c' || &filetype == 'cpp' || &filetype == 'rust'
+        call append(4, " *  version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+    endif
+endfun
+
+" 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua exec ":call SetTitle()"
 " 新建文件后，自动定位到文件末尾
 autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
-"定义函数SetTitle，自动插入文件头
-func SetTitle()
-	let user_name  = "KnightCS"
-	let user_email = ""
-	if &filetype == 'sh'
-		call setline(1,          "\#!/usr/bin/env bash")
-		call append(line("."),   "\# >File Name   : ".expand("%"))
-		call append(line(".")+1, "\# >Author      : ".expand(user_name))
-		call append(line(".")+2, "\# >Description :")
-		call append(line(".")+3, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-		call append(line(".")+4, "")
-	elseif &filetype == 'python'
-		call setline(1,          "\#!/usr/bin/env python")
-		call append(line("."),   "\#-*- coding: UTF-8 -*-")
-		call append(line(".")+1, "\# >FileName    : ".expand("%"))
-		call append(line(".")+2, "\# >Author      : ".expand(user_name))
-		call append(line(".")+3, "\# >Description :")
-		call append(line(".")+4, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-		call append(line(".")+5, "")
-		call append(line(".")+6, "if __name__ == '__main__':")
-		call append(line(".")+7, "    pass")
-	elseif &filetype == 'lua'
-		call setline(1,          "\#!/usr/bin/env lua")
-		call append(line("."),   "-- >File Name   : ".expand("%"))
-		call append(line(".")+1, "-- >Author      : ".expand(user_name))
-		call append(line(".")+2, "-- >Description :")
-		call append(line(".")+3, "-- > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-		call append(line(".")+4, "")
-	else
-		call setline(1,          "\/*")
-		call append(line("."),   " * File Name   : ".expand("%"))
-		call append(line(".")+1, " * Author      : ".expand(user_name))
-		call append(line(".")+2, " * Description :")
-		call append(line(".")+3, " *  version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-		call append(line(".")+4, " */")
-		call append(line(".")+5, "")
-	endif
-endfun
-
-func NewVersion(var)
-	if &filetype == 'sh'
-		call append(4, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
-	elseif &filetype == 'python'
-		call append(5, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
-	elseif &filetype == 'h' || &filetype == 'hpp' || &filetype == 'java' ||
-		\  &filetype == 'c' || &filetype == 'cpp' || &filetype == 'rust'
-		call append(4, " *  version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
-	endif
-endfun
 nmap <leader>nv :call NewVersion()<Left>
 
-""**********
-" 6. Vim Plugin: Use vundle
-"
-so ~/.vim/plugin/bundle.vimrc
-
-""**********
-" 7. 快捷键记录
-" 注：<leader>键为“\”
-"
-" 编辑配置文件：<leader>ev
-" 折叠：
-"	zc、zC:折叠
-"	zo、zO:打开折叠
-" quickfix模式，写入并make：<leader><space>
-" 快速插入新版本：<leader>nv版本号
+" 6. Other
+" ==========
+" 6.1 Platform judgment
+" unix:Linux/MAC/Cygwin
+" macunix:MAC
+" win32unix/win64unix:Cygwin
+" win32/win64:Windows
+" Other is Unknow OS
