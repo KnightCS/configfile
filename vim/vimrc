@@ -10,20 +10,23 @@
 
 " 0. 使用说明
 " ==========
-" keyboard-symbols
-" http://www.ifreesite.com/typing/keyboard-symbols.htm
-" ❖ ⿰ ⿱ ⿲ ⿳ ⿴ ⿵ ⿶ ⿻ ☈ ◆ ◇ ⌥ • ❏ ❐ ❒ § « » ✗ ✓ ○ ● ◎ ≡ ∑
-" │ ─ ═ ┄ ┈ ﹊ ﹍ ☰ ┆ ┇ ┊ ┋
-"↑↓←→↖↗↙↘➻➼➽➸➳➺➻➴➵➶➷➹➩➪➫➬➭➮➯➱➲➾➔➘➙➚➛➜➝➞➟➠➡➢➣➤➥➦➧➨⇒⇔
-"
-" <leader>:' '
+" 0.1 快捷键
+" ----------
+" <leader>:';'
 " 编辑配置文件：<leader>ev
 " 折叠：
-"   zi:打开/关闭折叠
-"   zv:查看此行
-"   zm:关闭折叠
-"   zc、zC:折叠
-"   zo、zO:打开折叠
+"   <leader>z: 打开/关闭折叠
+"   zc: 折叠
+"   zC: 对所在范围内所有嵌套的折叠点进行折叠
+"   zo: 打开折叠
+"   zO: 对所在范围内所有嵌套的折叠点展开
+"   zv: 查看此行
+"   zm: 关闭所有折叠
+"   zM: 关闭所有折叠及其嵌套的折叠
+"   zj: 移动到下一个折叠
+"   zk: 移动到上一个折叠
+"   zn: 禁用折叠
+"   zN: 启用折叠
 " quickfix模式，写入并make：<leader><space>
 " 快速插入新版本：<leader>nv版本号
 
@@ -32,29 +35,7 @@
 
 " 1.0 全局变量设置
 " ----------
-" 当前模式数组
-let g:currentmode={
-    \ 'n'  : 'N ',
-    \ 'no' : 'N·Operator Pending ',
-    \ 'v'  : 'V ',
-    \ 'V'  : 'V·Line ',
-    \ '' : 'V·Block ',
-    \ 's'  : 'Select ',
-    \ 'S'  : 'S·Line ',
-    \ '^S' : 'S·Block ',
-    \ 'i'  : 'I ',
-    \ 'R'  : 'R ',
-    \ 'Rv' : 'V·Replace ',
-    \ 'c'  : 'Command ',
-    \ 'cv' : 'Vim Ex ',
-    \ 'ce' : 'Ex ',
-    \ 'r'  : 'Prompt ',
-    \ 'rm' : 'More ',
-    \ 'r?' : 'Confirm ',
-    \ '!'  : 'Shell ',
-    \ 't'  : 'Terminal '
-    \}
-let mapleader = ' '
+let mapleader = ';'
 
 " 1.1
 " ----------
@@ -84,7 +65,7 @@ set report=0
 nnoremap <leader>ev :edit $MYVIMRC<CR>
 augroup vimrc
     autocmd!
-    autocmd BufWritePost $MYVIMRC source $MYVIMRC
+    autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
 augroup END
 " quickfix模式
 "autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
@@ -168,23 +149,27 @@ endif
 colorscheme desert
 if g:colors_name == "desert"
     " diff
-    hi! DiffAdd ctermbg=022
+    hi! DiffAdd    ctermbg=022
+    hi! DiffText   ctermbg=094
     hi! DiffChange ctermbg=234
     hi! DiffDelete ctermbg=052
-    hi! DiffText ctermbg=094
     " Pmenu
-    hi! Pmenu cterm=underline ctermbg=234 ctermfg=141
+    hi! Pmenu    cterm=underline ctermbg=234 ctermfg=141
     hi! PmenuSel cterm=underline ctermbg=233 ctermfg=135
     " CursorLine
-    hi! CursorLine cterm=NONE ctermbg=054
+    hi! CursorLine   cterm=NONE ctermbg=054
     hi! CursorLineNr cterm=NONE ctermbg=054 ctermfg=038
-    hi! LineNr term=NONE ctermbg=232 ctermfg=038
+    hi! LineNr       cterm=NONE ctermbg=232 ctermfg=038
     " Sign
-    hi! SignColumn ctermbg=234
-    hi! SyntasticErrorSign ctermfg=196
-    hi! SyntasticWarningSign ctermfg=202
-    hi! SyntasticStyleErrorSign ctermfg=001
+    hi! SignColumn                ctermbg=234
+    hi! SyntasticErrorSign        ctermfg=196
+    hi! SyntasticWarningSign      ctermfg=202
+    hi! SyntasticStyleErrorSign   ctermfg=001
     hi! SyntasticStyleWarningSign ctermfg=226
+    hi! ALEErrorSign              ctermfg=196
+    hi! ALEWarningSign            ctermfg=202
+    hi! ALEStyleErrorSign         ctermfg=001
+    hi! ALEStyleWarningSign       ctermfg=226
 endif
 
 " 突出显示当前行(下划线)
@@ -224,7 +209,7 @@ set linespace=0
 
 " 显示制表符
 set list
-" 将制表符显示为'|',空格显示为'.'
+" 将制表符显示为'→',空格显示为'.'
 set listchars=tab:\→\ ,trail:.,extends:>,precedes:<
 
 " 2.5 光标
@@ -246,6 +231,10 @@ set foldmethod=marker
 " 折行前空出4字符显示折行标识
 set foldcolumn=0
 set foldlevel=0
+" 默认不折叠
+"set foldlevelstart=99
+" 映射折叠/不折叠键为 <leader>z
+nnoremap <silent> <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 
 " 代码补全
 set completeopt=preview,menu
@@ -269,7 +258,7 @@ set laststatus=2
 set showtabline=2
 
 " 2.8 搜索和匹配
-"
+" ----------
 " 搜索逐字符高亮
 set hlsearch
 " 在搜索的时候忽略大小写
@@ -280,7 +269,7 @@ set incsearch
 hi! Search ctermfg=White ctermbg=196
 
 " 2.9 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
-"
+" ----------
 if has('win32unix') || has('wind64unix')
     set mouse-=a
 else
@@ -324,9 +313,6 @@ set smarttab
 " 行内替换
 set gdefault
 
-" 设置*.rs结尾的文件识别为rust文件
-autocmd BufNewFile,BufRead *.rs set filetype=rust
-
 " 重新打开文件时，光标定位到上次打开的位置
 augroup resCur
     autocmd!
@@ -355,7 +341,7 @@ function! SetTitle()
         call append(line(".")+4, "")
     elseif &filetype == 'python'
         call setline(1,          "\#!/usr/bin/python")
-        call append(line("."),   "\#-*- coding: UTF-8 -*-")
+        call append(line("."),   "\# -*- coding: UTF-8 -*-")
         call append(line(".")+1, "\# >FileName    : ".expand("%"))
         call append(line(".")+2, "\# >Author      : ".expand(l:user))
         call append(line(".")+3, "\# >Description :")
@@ -381,6 +367,7 @@ function! SetTitle()
     endif
 endfun
 
+" 插入新的版本号
 function! NewVersion(var)
     if &filetype == 'sh'
         call append(4, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
@@ -392,11 +379,14 @@ function! NewVersion(var)
     endif
 endfun
 
-" 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua exec ":call SetTitle()"
-" 新建文件后，自动定位到文件末尾
-autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
-nmap <leader>nv :call NewVersion()<Left>
+augroup autoFileHead
+    autocmd!
+    " 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
+    autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua exec ":call SetTitle()"
+    " 新建文件后，自动定位到文件末尾
+    autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
+    nmap <leader>nv :call NewVersion()<Left>
+augroup END
 
 " 6. Other
 " ==========
@@ -406,3 +396,9 @@ nmap <leader>nv :call NewVersion()<Left>
 " win32unix/win64unix:Cygwin
 " win32/win64:Windows
 " Other is Unknow OS
+"
+" keyboard-symbols
+" http://www.ifreesite.com/typing/keyboard-symbols.htm
+" ❖ ⿰ ⿱ ⿲ ⿳ ⿴ ⿵ ⿶ ⿻ ☈ ◆ ◇ ⌥ • ❏ ❐ ❒ § « » ✗ ✓ ○ ● ◎ ≡ ∑
+" │ ─ ═ ┄ ┈ ﹊ ﹍ ☰ ┆ ┇ ┊ ┋
+"↑↓←→↖↗↙↘➻➼➽➸➳➺➻➴➵➶➷➹➩➪➫➬➭➮➯➱➲➾➔➘➙➚➛➜➝➞➟➠➡➢➣➤➥➦➧➨⇒⇔
