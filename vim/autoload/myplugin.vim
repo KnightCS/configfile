@@ -4,12 +4,13 @@
 "  version 3.0: 2017-01-27
 "   reorganize.
 "  version 2.0: **
-"   add some config and grouping.
+"   add some configure and grouping.
 "  version 1.0: **
 "   create.
 
 " 0. Plugin List
 " ==========
+" {{{
 " vim-plug: 插件管理
 " ----------
 " nerdtree: 文件目录树
@@ -52,13 +53,15 @@
 "   yss: add for whole line
 "   ySS: add the symbols up and down the whole line
 " nerdcommenter: 注释
-"    加注释:                <leader>cc
-"    解开注释:              <leader>cu
-"    加/解开注释，智能判断: <leader>c<space>
+"   加注释:                <leader>cc
+"   解开注释:              <leader>cu
+"   加/解开注释，智能判断: <leader>c<space>
+" pangu: 中文排版自动规范化插件
+"   排版并规范化: <leader>gq
 " ----------
 " vim-easymotion: 快速跳转
 "   move to char: <leader>ec
-"   move to {cahr}{char}: <leader>e2c
+"   move to {char}{char}: <leader>e2c
 "   move to line: <leader>el
 "   move to word: <leader>ew
 " vim-expand-region: 视图模式下可伸缩选中部分
@@ -69,9 +72,11 @@
 " matchit: 匹配跳转
 "   跳转: %
 " ----------
+" }}}
 
 " 1. Enter Function
 " ==========
+" {{{
 function! myplugin#begin()
     " auto download the plug.vim file
     if empty(glob('~/.vim/autoload/plug.vim'))
@@ -81,30 +86,39 @@ function! myplugin#begin()
     endif
 endfunction
 call plug#begin('~/.vim/plugged')
+" }}}
 
 " 2. Plugin
 " ==========
 " 2.1 UI
 " ----------
-" 状态栏&标题栏，使用更高效率的lightline
+" 状态栏&标题栏，使用更高效率的 lightline
 Plug 'itchyny/lightline.vim'
 " {{{
 let g:lightline = {
             \ 'colorscheme': 'solarized',
             \ 'mode_map': { 'c': 'NORMAL' },
-            \ 'active':  {
-            \   'left':  [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-            \   'right': [ [ 'syntastic', 'lineinfo' ], ['percent'], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ 'active':   {
+            \   'left':   [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+            \   'right':  [ [ 'syntastic', 'lineinfo' ], ['percent'],
+            \       [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ },
+            \ 'inactive': {
+            \   'left': [ ['filename'] ],
+            \   'right': [  ],
             \ },
             \ 'component_function': {
-            \   'modified':     'LightlineModified',
+            \   'mode':         'LightlineMode',
             \   'readonly':     'LightlineReadonly',
             \   'fugitive':     'LightlineFugitive',
+            \   'modified':     'LightlineModified',
             \   'filename':     'LightlineFilename',
+            \   'syntastic':    'LightlineSyntastic',
+            \   'lineinfo':     'LightlineLineInfo',
+            \   'percent':      'LightlinePercent',
             \   'fileformat':   'LightlineFileformat',
-            \   'filetype':     'LightlineFiletype',
             \   'fileencoding': 'LightlineFileencoding',
-            \   'mode':         'LightlineMode',
+            \   'filetype':     'LightlineFiletype',
             \ },
             \ 'component_expand': {
             \   'syntastic': 'ALEGetStatusLine',
@@ -125,12 +139,16 @@ function! LightlineReadonly()
 endfunction
 
 function! LightlineFilename()
-    return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-                \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-                \  &ft == 'unite' ? unite#get_status_string() :
-                \  &ft == 'vimshell' ? vimshell#get_status_string() :
-                \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
-                \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+    let fname = expand('%:t')
+      return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
+        \ fname == '__Tagbar__' ? g:lightline.fname :
+        \ fname =~ '__Gundo\|NERD_tree' ? '' :
+        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \ &ft == 'unite' ? unite#get_status_string() :
+        \ &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+        \ ('' != fname ? fname : '[No Name]') .
+        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
 function! LightlineFugitive()
@@ -153,29 +171,61 @@ function! LightlineFileencoding()
     return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
 endfunction
 
+function! LightlineLineInfo() abort
+    return winwidth(0) > 35 ? printf(" %03d:%-2d", line('.'), col('.')) : ''
+endfunction
+
+function! LightlinePercent() abort
+    return winwidth(0) > 35 ? (100 * line('.') / line('$')).'%' : ''
+endfunction
+
+function! LightlineSyntastic() abort
+    return ''
+endfunction
+
 function! LightlineMode()
-    return winwidth(0) > 60 ? lightline#mode() : ''
+    let fname = expand('%:t')
+    return fname == '__Tagbar__' ? 'Tagbar' :
+                \ fname == 'ControlP' ? 'CtrlP' :
+                \ fname == '__Gundo__' ? 'Gundo' :
+                \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+                \ fname =~ 'NERD_tree' ? 'NERDTree' :
+                \ &ft == 'unite' ? 'Unite' :
+                \ &ft == 'vimfiler' ? 'VimFiler' :
+                \ &ft == 'vimshell' ? 'VimShell' :
+                \ winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 " }}}
 
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 " {{{
-let NERDTreeShowLineNumbers       = 1
 let NERDTreeAutoCenter            = 1
-let NERDTreeHighlightCursorline   = 1
-let g:NERDTreeDirArrowExpandable  = '△'
-let g:NERDTreeDirArrowCollapsible = '▽'
+let NERDTreeMinimalUI             = 1
+let NERDTreeShowHidden            = 0
+let g:NERDTreeDirArrowExpandable  = '➧'
+let g:NERDTreeDirArrowCollapsible = '☇'
+let NERDTreeAutoDeleteBuffer      = 1
 let NERDTreeWinSize               = 30
-let NERDTreeShowBookmarks         = 1
 let NERDTreeIgnore                = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$',
             \ '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
 let g:netrw_home                  = '~/.cache/nerdtree'
-"close vim if the only window left open is a NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" 自动打开
+autocmd VimEnter * if !argc() || isdirectory(argv(0)) | NERDTree | wincmd p | bd | wincmd p
+
+" 快捷键
 map <leader>nt :NERDTreeToggle<cr>
 " }}}
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
-"{{{
+
+" nerdtree 增强
+Plug 'jistr/vim-nerdtree-tabs', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+" {{{
+g:nerdtree_tabs_open_on_console_startup = 2
+g:nerdtree_tabs_autofind                = 1
+" }}}
+
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+" {{{
 let g:NERDTreeShowIgnoredStatus  = 1
 let g:NERDTreeIndicatorMapCustom = {
             \ "Modified"  : "✹",
@@ -188,17 +238,34 @@ let g:NERDTreeIndicatorMapCustom = {
             \ "Clean"     : "✔︎",
             \ "Unknown"   : "?"
             \ }
-"}}}
+" }}}
+
+" 调用外部命令运行当前文件
+Plug 'nerdtree-execute', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+
+" 给 nerdtree 增加搜索功能
+Plug 'NERDTree-ack', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+
 " tagbar
-Plug "Tagbar", { 'on': 'TagbarToggle' }
-"{{{
+Plug 'Tagbar', { 'on': 'TagbarToggle' }
+" {{{
 " auto open when open a c++ file
 "autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
 " set the window's width
 let g:tagbar_width = 20
 let g:tagbar_ctags_bin='/usr/bin/ctags'
 nmap <leader>tb :TagbarToggle<cr>
-"}}}
+" }}}
+
+" git插件
+Plug 'cohama/agit.vim'
+" {{{
+let g:agit_no_default_mappings = 1
+let g:agit_ignore_spaces       = 0
+" }}}
+
+" 显示当前文件跟仓库的差异
+Plug 'mhinz/vim-signify'
 
 " 2.2 File Type
 " ----------
@@ -208,7 +275,7 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 " 2.3 complete
 " ----------
 Plug 'Shougo/neocomplete.vim'
-"{{{
+" {{{
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
 let g:neocomplete#enable_at_startup = 1
@@ -272,14 +339,21 @@ autocmd FileType xml           setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplete#sources#omni#input_patterns')
     let g:neocomplete#sources#omni#input_patterns = {}
 endif
-let g:neocomplete#sources#omni#input_patterns.php  = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.c    = '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplete#sources#omni#input_patterns.cpp  = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-"}}}
+let g:neocomplete#sources#omni#input_patterns.php
+            \   = '[^. \t]->\h\w*\|\h\w*::'
+let g:neocomplete#sources#omni#input_patterns.c
+            \   = '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplete#sources#omni#input_patterns.cpp
+            \   = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplete#sources#omni#input_patterns.perl
+            \   = '\h\w*->\h\w*\|\h\w*::'
+" }}}
+
 " 快速插入代码片段 & 代码片段配置
-Plug 'Shougo/neosnippet' | Plug 'Shougo/neosnippet-snippets' | Plug 'honza/vim-snippets'
-"{{{
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+Plug 'honza/vim-snippets'
+" {{{
 " Plugin key-mappings.
 imap <C-l> <Plug>(neosnippet_expand_or_jump)
 smap <C-l> <Plug>(neosnippet_expand_or_jump)
@@ -301,10 +375,10 @@ endif
 " Enable snipMate compatibility feature.
 let g:neosnippet#enable_snipmate_compatibility = 1
 " Tell Neosnippet about the other snippets
-if empty(g:plug_home)
+if !empty(g:plug_home)
     let g:neosnippet#snippets_directory = g:plug_home.expand('/vim-snippets/snippets')
 endif
-"}}}
+" }}}
 
 " 显示函数参数
 Plug 'Shougo/echodoc.vim'
@@ -313,7 +387,7 @@ Plug 'Shougo/echodoc.vim'
 " ----------
 if version < 800 && !has('nvim')
     Plug 'scrooloose/Syntastic'
-    "{{{
+    " {{{
     let g:syntastic_check_on_open             = 1
     let g:syntastic_cpp_include_dirs          = ['/usr/include/']
     let g:syntastic_cpp_remove_include_errors = 1
@@ -322,7 +396,7 @@ if version < 800 && !has('nvim')
     let g:syntastic_cpp_compiler_options      = '-std=c++11 -stdlib=libstdc++'
     " whether to show balloons
     let g:syntastic_enable_balloons = 1
-    "set error or warning signs
+    " set error or warning signs
     let g:syntastic_error_symbol         = '✗'
     let g:syntastic_warning_symbol       = '•'
     let g:syntastic_style_error_symbol   = '✗'
@@ -354,16 +428,16 @@ if version < 800 && !has('nvim')
     nnoremap <Leader>sl :call ToggleErrors()<cr>
     nnoremap <Leader>sp :lprevious<cr>
     nnoremap <Leader>sn :lnext<cr>
-    "}}}
+    " }}}
 else
     Plug 'w0rp/ale'
-    "{{{
+    " {{{
     let g:ale_sign_column_always   = 1
     let g:ale_lint_on_save         = 1
     let g:ale_sign_open_list       = 1
     let g:ale_sign_error           = '✗'
     let g:ale_sign_warning         = '•'
-    let g:ale_statusline_format    = ['✗ %d', '• %d', '✓']
+    let g:ale_statusline_format    = ['✘ %d', '• %d', '✔']
     let g:ale_echo_msg_error_str   = 'E'
     let g:ale_echo_msg_warning_str = 'W'
     let g:ale_echo_msg_format      = '[%linter%] %s [%severity%]'
@@ -399,50 +473,88 @@ else
     nmap <silent> <Leader>sl :call ToggleErrors()<cr>
     nmap <silent> <Leader>sp <Plug>(ale_previous_wrap)
     nmap <silent> <Leader>sn <Plug>(ale_next_wrap)
-    "}}}
+    " }}}
 endif
 
 " 2.5 Unite
 " ----------
 Plug 'Shougo/denite.nvim'
-"{{{
+" {{{
 map <leader>d :Denite<space>
-"}}}
+" }}}
 
 " 2.6 Code Formatting
 " ----------
 " 快速对齐
 Plug 'junegunn/vim-easy-align'
-"{{{
+" {{{
 vmap <Leader>a <Plug>(EasyAlign)
-"}}}
+" }}}
+
 " 末尾空格
 Plug 'bronson/vim-trailing-whitespace'
-"{{{
+" {{{
 map <Leader>d<space> :FixWhitespace<cr>
-"}}}
+" }}}
+
 " 自动补全成对符号
 Plug 'jiangmiao/auto-pairs'
-"{{{
-"let g:AutoPairsFlyMode = 1
-"}}}
+" {{{
+let g:AutoPairsShortcurToggle     = ''
+let g:AutoPairsShortcutFastWrap   = ''
+let g:AutoPairsShortcutJump       = ''
+let g:AutoPairsShortcutBackInsert = ''
+let g:AutoPairsCenterLine         = 0
+let g:AutoPairsMultilineClose     = 0
+let g:AutoPairsMapBS              = 1
+let g:AutoPairsMapCh              = 0
+let g:AutoPairsMapCR              = 0
+let g:AutoPairsCenterLine         = 0
+let g:AutoPairsMapSpace           = 0
+let g:AutoPairsFlyMode            = 0
+let g:AutoPairsMultilineClose     = 0
+" }}}
+
 " 快速给词加环绕符号
 Plug 'tpope/vim-surround'
+
 " 快速注释
 Plug 'scrooloose/nerdcommenter'
-"{{{
+" {{{
 let g:NERDSpaceDelims = 1
-"}}}
+" }}}
+
+" 中文排版自动规范化插件
+Plug 'hotoo/pangu.vim', { 'for': ['markdown', 'text', 'wiki', 'cnx'] }
+" {{{
+" 对文本文档进行自动换行
+function! AutoWrapWithText() abort
+    if &filetype == 'markdown' || &filetype == 'text'
+        " 设置换行
+        set textwidth=78
+        " 中文字符适应 textwidth 换行
+        set formatoptions+=Mm
+        " 错误线提到79行
+        set colorcolumn=79
+        " 添加拼写检查
+        set spell
+        " 添加快捷键进行排版 + 格式纠错
+        nmap <silent> <leader>gq :Pangu<c-r>gggqG2<c-o>
+    endif
+endfunction
+autocmd! BufWinEnter * call AutoWrapWithText()
+" }}}
 
 " 2.7 Operating
 " ----------
 " 快速移动
 Plug 'easymotion/vim-easymotion'
-"{{{
+" {{{
 " <Leader>c{char} to move to {char}
 map  <Leader>ec <Plug>(easymotion-bd-f)
 nmap <Leader>ec <Plug>(easymotion-overwin-f)
 " s{char}{char} to move to {char}{char}
+map  <Leader>e2c <Plug>(easymotion-bd-f2)
 nmap <Leader>e2c <Plug>(easymotion-overwin-f2)
 " Move to line
 map  <Leader>el <Plug>(easymotion-bd-jk)
@@ -450,11 +562,11 @@ nmap <Leader>el <Plug>(easymotion-overwin-line)
 " Move to word
 map  <Leader>ew <Plug>(easymotion-bd-w)
 nmap <Leader>ew <Plug>(easymotion-overwin-w)
-"}}}
+" }}}
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
-"{{{
+" {{{
 " EasyMotion.
 function! s:incsearch_config(...) abort
     return incsearch#util#deepextend(deepcopy({
@@ -480,27 +592,24 @@ function! s:config_easyfuzzymotion(...) abort
 endfunction
 
 noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
-"}}}
+" }}}
+
 " 视图模式下伸缩选中部分
 Plug 'terryma/vim-expand-region'
-"{{{
+" {{{
 vmap v <Plug>(expand_region_expand)
 vmap V <Plug>(expand_region_shrink)
-"}}}
+" }}}
+
 " 选择窗口
 Plug 't9md/vim-choosewin'
-"{{{
+" {{{
 " Like tmux，"perfix + q" to show windows number, vim's prefix is <C-w>
 nmap <C-w>q <Plug>(choosewin)
-"}}}
-Plug 'vim-scripts/matchit.zip'
-"{{{
-" '%' 跳转到匹配位置
-"}}}
+" }}}
 
 " 2.8 Other tools
 " ----------
-"Plug 'mhinz/vim-signify'
 " 文件搜索
 "Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 

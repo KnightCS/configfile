@@ -1,10 +1,10 @@
 " File Name   : vimrc
 " Author      : KnightCS
-" Description : My vim config.
+" Description : My vim configure.
 "  version 1.0: **
 "   create.
 "  version 2.0: **
-"   add some config and grouping.
+"   add some configure and grouping.
 "  version 3.0: 2017-01-27
 "   reorganize.
 
@@ -16,17 +16,23 @@
 " 编辑配置文件：<leader>ev
 " 折叠：
 "   <leader>z: 打开/关闭折叠
-"   zc: 折叠
+"   <leader>Z: 打开/关闭全部折叠
 "   zC: 对所在范围内所有嵌套的折叠点进行折叠
-"   zo: 打开折叠
 "   zO: 对所在范围内所有嵌套的折叠点展开
 "   zv: 查看此行
-"   zm: 关闭所有折叠
-"   zM: 关闭所有折叠及其嵌套的折叠
 "   zj: 移动到下一个折叠
 "   zk: 移动到上一个折叠
 "   zn: 禁用折叠
 "   zN: 启用折叠
+" 拼写检查：
+"   ]s: 下一个拼写错误
+"   [s: 上一个拼写错误
+"   z=: 拼写纠正建议
+"   zg: 拼写正确，添加到用户字典
+"   zG: 在会话中当作正确拼写
+"   zw: 拼写错误，添加到用户错误字典
+"   zW: 在会话中当作错误拼写
+"   :spellr: 重新进行拼写检查
 " quickfix模式，写入并make：<leader><space>
 " 快速插入新版本：<leader>nv版本号
 
@@ -51,13 +57,13 @@ set noeb
 set history=1000
 " 共享剪贴板
 set clipboard+=unnamed
-"保存全局变量
+" 保存全局变量
 set viminfo +=!
 
 " 使回格键（backspace）正常处理indent, eol, start等
 set backspace=2
 " 允许backspace和光标键跨越行边界
-set whichwrap+=<,>,h,l,b,s,[,]
+"set whichwrap+=<,>,h,l,b,s,[,]
 
 " 通过使用:substitute命令，告诉我们文件的哪一行被改变过
 set report=0
@@ -69,8 +75,12 @@ augroup vimrc
 augroup END
 " quickfix模式
 "autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+
 " 拼写检查
-"set spell
+set nospell
+nnoremap <leader>sp inspell
+" 拼写检查的语言：英文+中文
+set spelllang=en_us,cjk
 
 " 1.2 目录、文件
 " ----------
@@ -100,16 +110,19 @@ set noundofile
 " 1.3 字符编码
 " ----------
 " 内部使用字符编码方式
-set encoding=UTF-8
-set langmenu=zh_CN.UTF-8
-language message zh_CN.UTF-8
+set encoding=utf-8
+set langmenu=zh_CN.utf-8
+language message zh_CN.utf-8
 " 屏幕显示编码
-set termencoding=UTF-8
+set termencoding=utf-8
 " 设定默认解码
 set fileencodings=ucs-bom,utf-8,cp936
 set fileencoding=utf-8
-set fenc=UTF-8
-set fencs=UTF-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1S
+set fenc=utf-8
+set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1s
+
+" 设置字体
+"set guifont=Courier_New:h10:cANSI,Monaco:h9:cANSI,Monaco\ 12
 
 " 2. 显示
 " ==========
@@ -123,12 +136,15 @@ endif
 
 " 2.2 VIM外框设置
 " ----------
-" 去掉边框
-set go=
-" 隐藏工具栏
-set guioptions-=T
-" 隐藏菜单栏
-set guioptions-=m
+if has('gui_running')
+    " 去掉边框
+    set go=
+    " 隐藏工具栏
+    set guioptions-=T
+    " 隐藏菜单栏
+    set guioptions-=m
+
+endif
 
 " 2.3 设置魔术
 " ----------
@@ -160,6 +176,12 @@ if g:colors_name == "desert"
     hi! CursorLine   cterm=NONE ctermbg=054
     hi! CursorLineNr cterm=NONE ctermbg=054 ctermfg=038
     hi! LineNr       cterm=NONE ctermbg=232 ctermfg=038
+    " ColorColumn
+    hi! ColorColumn     cterm=NONE ctermbg=232 ctermfg=196
+    " ExtraWhitespace
+    hi! ExtraWhitespace cterm=NONE ctermbg=196 ctermfg=234
+    " 修改搜索时的颜色
+    hi! Search ctermfg=White ctermbg=196
     " Sign
     hi! SignColumn                ctermbg=234
     hi! SyntasticErrorSign        ctermfg=196
@@ -170,7 +192,14 @@ if g:colors_name == "desert"
     hi! ALEWarningSign            ctermfg=202
     hi! ALEStyleErrorSign         ctermfg=001
     hi! ALEStyleWarningSign       ctermfg=226
+    " 分隔符
+    hi! vertSplit ctermfg=234 ctermbg=038
+    " 状态栏中间状态
+    "hi! StatusLineNC ctermfg=239
 endif
+
+" 标记代码中未被用作缩进的制表符
+call matchadd('ColorColumn', '[^\t]\zs\t\+')
 
 " 突出显示当前行(下划线)
 set cursorline
@@ -185,23 +214,20 @@ set showmatch
 " 匹配括号高亮的时间（单位是十分之一秒）
 set matchtime=5
 " 高亮字符，让其不受100列限制
-hi! OverLength ctermbg=red ctermfg=white guibg=red guifg=white
-match OverLength '\%120v.*'
-
-" 设置字体
-"set guifont=Courier_New:h10:cANSI
-"set guifont=Monaco:h9:cANSI
-"set guifont=Monaco\ 12
+hi! OverLength ctermbg=196 ctermfg=232 guibg=red guifg=white
+call matchadd('OverLength', '\%120v.*')
 
 " 显示行号
 set number
 " 显示相对行号
 "set relativenumber
+" 行号大小
+set numberwidth=1
 
-"带有如下符号的单词不要被换行分割
+" 带有如下符号的单词不要被换行分割
 set iskeyword+=_,$,@,%,#,-
 
-" c/python在80列后显示竖线
+" 在80列后显示竖线
 set colorcolumn=81
 
 " 字符间插入的像素行数目
@@ -209,8 +235,11 @@ set linespace=0
 
 " 显示制表符
 set list
-" 将制表符显示为'→',空格显示为'.'
-set listchars=tab:\→\ ,trail:.,extends:>,precedes:<
+" 将制表符显示为'➧',结尾空格显示为'…',左侧超出部分显示为'«',右侧超出部分显示为'»'
+set listchars=tab:\➧\ ,trail:\…\,precedes:«,extends:»
+
+" 代码补全
+set completeopt=preview,menu
 
 " 2.5 光标
 " ----------
@@ -235,15 +264,14 @@ set foldlevel=0
 "set foldlevelstart=99
 " 映射折叠/不折叠键为 <leader>z
 nnoremap <silent> <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
-
-" 代码补全
-set completeopt=preview,menu
+" 映射全部折叠/不折叠键为 <leader>Z
+nnoremap <silent> <leader>Z @=((foldclosed(line('.')) < 0) ? 'zM' : 'zR')<CR>
 
 " 2.7 命令行、状态栏
 " ----------
 " 左下角的状态
 set showmode
-"增强模式中那个的命令行自动完成操作
+" 增强模式中那个的命令行自动完成操作
 set wildmenu
 " 输入的命令显示出来，看的清楚些
 set showcmd
@@ -265,8 +293,6 @@ set hlsearch
 set ignorecase
 " 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
 set incsearch
-" 修改搜索时的颜色
-hi! Search ctermfg=White ctermbg=196
 
 " 2.9 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 " ----------
@@ -281,8 +307,6 @@ set selectmode=mouse,key
 " 2.10 在被分割的窗口间显示空白，便于阅读
 "set fillchars=stl:\ ,stlnc:\ ,vert:\┋,fold:-,diff:-
 set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:-,diff:-
-hi! vertSplit ctermfg=234 ctermbg=038
-hi! StatusLineNC ctermfg=239
 
 " 3. 文本格式和排版
 " ==========
