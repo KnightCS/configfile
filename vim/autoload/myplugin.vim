@@ -141,7 +141,7 @@ endfunction
 function! LightlineFilename()
     let fname = expand('%:t')
       return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
-        \ fname == '__Tagbar__' ? g:lightline.fname :
+        \ fname == '__Tagbar__' && has_key(g:lightline, 'fname') ? g:lightline.fname :
         \ fname =~ '__Gundo\|NERD_tree' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
@@ -209,10 +209,8 @@ let NERDTreeWinSize               = 30
 let NERDTreeIgnore                = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$',
             \ '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
 let g:netrw_home                  = '~/.cache/nerdtree'
-
 " 自动打开
 autocmd VimEnter * if !argc() || isdirectory(argv(0)) | NERDTree | wincmd p | bd | wincmd p
-
 " 快捷键
 map <leader>nt :NERDTreeToggle<cr>
 " }}}
@@ -252,9 +250,16 @@ Plug 'Tagbar', { 'on': 'TagbarToggle' }
 " auto open when open a c++ file
 "autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
 " set the window's width
-let g:tagbar_width = 20
+let g:tagbar_width = 30
 let g:tagbar_ctags_bin='/usr/bin/ctags'
-nmap <leader>tb :TagbarToggle<cr>
+" if open nerdtree, then close nerdtree before open tagbar
+function! JustTagbar() abort
+    if exists("b:NERDTree")
+        call g:NERDTree.Close()
+    endif
+    TagbarToggle
+endfunction
+nmap <leader>tb :call JustTagbar()<cr>
 " }}}
 
 " git插件
@@ -500,19 +505,7 @@ map <Leader>d<space> :FixWhitespace<cr>
 " 自动补全成对符号
 Plug 'jiangmiao/auto-pairs'
 " {{{
-let g:AutoPairsShortcurToggle     = ''
-let g:AutoPairsShortcutFastWrap   = ''
-let g:AutoPairsShortcutJump       = ''
-let g:AutoPairsShortcutBackInsert = ''
-let g:AutoPairsCenterLine         = 0
-let g:AutoPairsMultilineClose     = 0
-let g:AutoPairsMapBS              = 1
-let g:AutoPairsMapCh              = 0
-let g:AutoPairsMapCR              = 0
-let g:AutoPairsCenterLine         = 0
-let g:AutoPairsMapSpace           = 0
-let g:AutoPairsFlyMode            = 0
-let g:AutoPairsMultilineClose     = 0
+let g:AutoPairsFlyMode = 0
 " }}}
 
 " 快速给词加环绕符号
@@ -539,7 +532,7 @@ function! AutoWrapWithText() abort
         " 添加拼写检查
         set spell
         " 添加快捷键进行排版 + 格式纠错
-        nmap <silent> <leader>gq :Pangu<c-r>gggqG2<c-o>
+        nmap <silent> <leader>gq :Pangu<cr>gggqG2<c-o>
     endif
 endfunction
 autocmd! BufWinEnter * call AutoWrapWithText()

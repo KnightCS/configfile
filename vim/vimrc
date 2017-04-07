@@ -143,7 +143,8 @@ if has('gui_running')
     set guioptions-=T
     " 隐藏菜单栏
     set guioptions-=m
-
+    " 设置为256色
+    set t_Co=256
 endif
 
 " 2.3 设置魔术
@@ -157,10 +158,7 @@ set magic
 " 语法高亮
 syntax enable
 syntax on
-" 如果使用gui，则设置为256色
-if has("gui_running")
-    set t_Co=256
-endif
+
 " 使用desert主题
 colorscheme desert
 if g:colors_name == "desert"
@@ -195,48 +193,60 @@ if g:colors_name == "desert"
     " 分隔符
     hi! vertSplit ctermfg=234 ctermbg=038
     " 状态栏中间状态
-    "hi! StatusLineNC ctermfg=239
+    hi! StatusLineNC ctermfg=239
+    " SpellLocal
+    hi! SpellLocal cterm=NONE ctermbg=038
+    " MatchParen
+    hi! link MatchParen Search
+    " OverLength
+    hi! OverLength ctermbg=196 ctermfg=232 guibg=red guifg=white
 endif
 
 " 标记代码中未被用作缩进的制表符
 call matchadd('ColorColumn', '[^\t]\zs\t\+')
+" 高亮字符，让其不受100列限制
+call matchadd('OverLength', '\%120v.*')
 
-" 突出显示当前行(下划线)
+" 突出显示当前行
 set cursorline
-" 用浅色高亮当前行
-" 输入时用浅色高亮当前行
-autocmd InsertEnter * se cul
-" 非输入时，不用浅色高亮当前行
-"autocmd InsertLeave * se nocul
+" 在80列后显示竖线
+set colorcolumn=81
+" 非活动窗口不高亮
+augroup BgHightlight
+    autocmd!
+    autocmd WinEnter * set cursorline
+    autocmd WinEnter * set colorcolumn=81
+    autocmd WinLeave * set nocursorline
+    autocmd WinLeave * set colorcolumn=0
+augroup end
 
 " 高亮显示匹配的括号
 set showmatch
 " 匹配括号高亮的时间（单位是十分之一秒）
 set matchtime=5
-" 高亮字符，让其不受100列限制
-hi! OverLength ctermbg=196 ctermfg=232 guibg=red guifg=white
-call matchadd('OverLength', '\%120v.*')
 
 " 显示行号
 set number
 " 显示相对行号
 "set relativenumber
 " 行号大小
-set numberwidth=1
-
-" 带有如下符号的单词不要被换行分割
-set iskeyword+=_,$,@,%,#,-
-
-" 在80列后显示竖线
-set colorcolumn=81
+set numberwidth=4
 
 " 字符间插入的像素行数目
 set linespace=0
+" 带有如下符号的单词不要被换行分割
+set iskeyword+=_,$,@,%,#,-
 
 " 显示制表符
 set list
-" 将制表符显示为'➧',结尾空格显示为'…',左侧超出部分显示为'«',右侧超出部分显示为'»'
-set listchars=tab:\➧\ ,trail:\…\,precedes:«,extends:»
+" 将制表符显示为'➧'
+set listchars=tab:\➧\ 
+" 结尾空格显示为'…'
+set listchars+=trail:\…
+" 左侧超出部分显示为'«'
+set listchars+=precedes:«
+" 右侧超出部分显示为'»'
+set listchars+=extends:»
 
 " 代码补全
 set completeopt=preview,menu
@@ -253,8 +263,8 @@ set scrolloff=5
 " 允许折叠
 set foldenable
 " 手动折叠
-set foldmethod=manual
-set foldmethod=indent
+"set foldmethod=manual
+"set foldmethod=indent
 " 把{{{和}}}之间的内容折叠
 set foldmethod=marker
 " 折行前空出4字符显示折行标识
@@ -276,7 +286,7 @@ set wildmenu
 " 输入的命令显示出来，看的清楚些
 set showcmd
 " 命令行（在状态行下）的高度，默认为1，这里是2
-set cmdheight=2
+set cmdheight=1
 " 打开状态栏标尺
 set ruler
 
@@ -305,6 +315,7 @@ set selection=exclusive
 set selectmode=mouse,key
 
 " 2.10 在被分割的窗口间显示空白，便于阅读
+" ----------
 "set fillchars=stl:\ ,stlnc:\ ,vert:\┋,fold:-,diff:-
 set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:-,diff:-
 
@@ -350,7 +361,7 @@ silent! call myplugin#begin()
 " 5. 自定义函数
 " ==========
 " - c、c++、java、python、bash、lua、rust等文件自动添加文件头
-"
+" ----------
 "定义函数SetTitle，自动插入文件头
 function! SetTitle()
     let l:user_name  = "KnightCS"
@@ -411,6 +422,23 @@ augroup autoFileHead
     autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
     nmap <leader>nv :call NewVersion()<Left>
 augroup END
+
+" Zoom / Restore window.
+" ----------
+function! s:ZoomToggle() abort
+    if exists('t:zoomed') && t:zoomed
+        execute t:zoom_winrestcmd
+        let t:zoomed = 0
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+        let t:zoomed = 1
+    endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+" like tmux used 'prefix + z' to zoom, and vim is used '<c-w> + z' to zoom.
+nnoremap <silent> <c-w>z :ZoomToggle<cr>
 
 " 6. Other
 " ==========
