@@ -250,8 +250,9 @@ Plug 'Tagbar', { 'on': 'TagbarToggle' }
 " auto open when open a c++ file
 "autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
 " set the window's width
-let g:tagbar_width = 30
-let g:tagbar_ctags_bin='/usr/bin/ctags'
+let g:tagbar_width     = 30
+let g:tagbar_ctags_bin = '/usr/bin/ctags'
+let g:tagbar_left      = 1
 " if open nerdtree, then close nerdtree before open tagbar
 function! JustTagbar() abort
     if exists("b:NERDTree")
