@@ -208,9 +208,9 @@ call matchadd('ColorColumn', '[^\t]\zs\t\+')
 call matchadd('OverLength', '\%120v.*')
 
 " 突出显示当前行
-set cursorline
+set nocursorline
 " 在80列后显示竖线
-set colorcolumn=81
+set colorcolumn=0
 " 非活动窗口不高亮
 augroup BgHightlight
     autocmd!
