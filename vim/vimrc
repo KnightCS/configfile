@@ -159,6 +159,10 @@ set magic
 syntax enable
 syntax on
 
+" 减小移动时的延迟
+set ttyfast
+set lazyredraw
+
 " 使用desert主题
 colorscheme desert
 if g:colors_name == "desert"
