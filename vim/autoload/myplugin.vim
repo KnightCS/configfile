@@ -218,8 +218,7 @@ map <leader>nt :NERDTreeToggle<cr>
 " nerdtree 增强
 Plug 'jistr/vim-nerdtree-tabs', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 " {{{
-g:nerdtree_tabs_open_on_console_startup = 2
-g:nerdtree_tabs_autofind                = 1
+let g:nerdtree_tabs_open_on_console_startup = 2
 " }}}
 
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
@@ -356,7 +355,7 @@ let g:neocomplete#sources#omni#input_patterns.perl
 
 " 快速插入代码片段 & 代码片段配置
 Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
+"Plug 'Shougo/neosnippet-snippets'
 Plug 'honza/vim-snippets'
 " {{{
 " Plugin key-mappings.
@@ -382,6 +381,9 @@ let g:neosnippet#enable_snipmate_compatibility = 1
 " Tell Neosnippet about the other snippets
 if !empty(g:plug_home)
     let g:neosnippet#snippets_directory = g:plug_home.expand('/vim-snippets/snippets')
+    let g:neosnippet#disable_runtime_snippets = {
+                \   '_': 1,
+                \ }
 endif
 " }}}
 
@@ -440,12 +442,15 @@ else
     let g:ale_sign_column_always   = 1
     let g:ale_lint_on_save         = 1
     let g:ale_sign_open_list       = 1
+    let g:ale_lint_delay           = 500
     let g:ale_sign_error           = '✗'
     let g:ale_sign_warning         = '•'
     let g:ale_statusline_format    = ['✘ %d', '• %d', '✔']
     let g:ale_echo_msg_error_str   = 'E'
     let g:ale_echo_msg_warning_str = 'W'
     let g:ale_echo_msg_format      = '[%linter%] %s [%severity%]'
+    " Some linter option
+    let g:ale_linters_sh_shellcheck_exclusions = '-x'
     function! ToggleErrors()
         let old_last_winnr = winnr('$')
         lclose
@@ -605,6 +610,24 @@ nmap <C-w>q <Plug>(choosewin)
 " ----------
 " 文件搜索
 "Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+" 关键词搜索
+Plug 'dyng/ctrlsf.vim', { 'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordPath', 'CtrlSF'] }
+" {{{
+"let g:ctrlsf_default_root = 'project'
+let g:ctrlsf_regex_pattern = 1
+let g:ctrlsf_position      = 'bottom'
+let g:ctrlsf_winsize       = '40%'
+let g:ctrlsf_mapping       = {
+    \ "next": "n",
+    \ "prev": "N",
+   \ }
+" 搜索当前词
+nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
+" }}}
+
+" Man 手册，:Man Keyword 触发
+Plug 'idbrii/vim-man'
 
 " 3. END
 " ==========
