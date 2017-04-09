@@ -17,6 +17,8 @@
 "   open/close NERDTree: <leader>nt
 " tagbar: tag列表
 "   open/close tagbar: <leader>tb
+" ZoomWin: 最大化当前窗口
+"   最大化/复原: <c-o>
 " ----------
 " neocomplete: 补全插件
 "   (ycm由于不支持cygwin，同时更新时需要重编译，所以去掉了)
@@ -262,6 +264,15 @@ endfunction
 nmap <leader>tb :call JustTagbar()<cr>
 " }}}
 
+" 显示当前文件跟仓库的差异
+Plug 'mhinz/vim-signify'
+" {{{
+let g:signify_vcs_cmds = {
+            \   'git': 'git diff --no-color --no-ext-diff -U0 HEAD -- %f',
+            \ }
+" }}}
+" Git增强
+Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 " git插件
 Plug 'cohama/agit.vim'
 " {{{
@@ -269,8 +280,8 @@ let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
 " }}}
 
-" 显示当前文件跟仓库的差异
-Plug 'mhinz/vim-signify'
+" 最大化当前窗口
+Plug 'vim-scripts/ZoomWin'
 
 " 2.2 File Type
 " ----------
@@ -356,7 +367,7 @@ let g:neocomplete#sources#omni#input_patterns.perl
 
 " 快速插入代码片段 & 代码片段配置
 Plug 'Shougo/neosnippet'
-"Plug 'Shougo/neosnippet-snippets'
+Plug 'Shougo/neosnippet-snippets'
 Plug 'honza/vim-snippets'
 " {{{
 " Plugin key-mappings.
@@ -382,9 +393,9 @@ let g:neosnippet#enable_snipmate_compatibility = 1
 " Tell Neosnippet about the other snippets
 if !empty(g:plug_home)
     let g:neosnippet#snippets_directory = g:plug_home.expand('/vim-snippets/snippets')
-    let g:neosnippet#disable_runtime_snippets = {
-                \   '_': 1,
-                \ }
+"    let g:neosnippet#disable_runtime_snippets = {
+"                \   '_': 1,
+"                \ }
 endif
 " }}}
 
