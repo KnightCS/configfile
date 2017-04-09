@@ -69,7 +69,7 @@ set backspace=2
 set report=0
 " 编辑配置文件
 nnoremap <leader>ev :edit $MYVIMRC<CR>
-augroup vimrc
+augroup AutoSourceVimrc
     autocmd!
     autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
 augroup END
@@ -203,26 +203,30 @@ if g:colors_name == "desert"
     " MatchParen
     hi! link MatchParen Search
     " OverLength
-    hi! OverLength ctermbg=196 ctermfg=232 guibg=red guifg=white
+    hi! OverLength ctermbg=234
 endif
 
 " 标记代码中未被用作缩进的制表符
 call matchadd('ColorColumn', '[^\t]\zs\t\+')
 " 高亮字符，让其不受100列限制
-call matchadd('OverLength', '\%120v.*')
+call matchadd('OverLength', '\%100v.*')
 
-" 突出显示当前行
-set nocursorline
-" 在80列后显示竖线
-set colorcolumn=0
-" 非活动窗口不高亮
-augroup BgHightlight
+" 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
+augroup HightlightActiveWindow
     autocmd!
-    autocmd WinEnter * set cursorline
-    autocmd WinEnter * set colorcolumn=81
-    autocmd WinLeave * set nocursorline
-    autocmd WinLeave * set colorcolumn=0
-augroup end
+    autocmd BufWinEnter * if argc() < 2 | setlocal cursorline | endif
+    autocmd BufWinEnter * if argc() < 2 | setlocal colorcolumn=+1,+21 | endif
+    autocmd WinEnter * setlocal cursorline
+    autocmd WinEnter * setlocal colorcolumn=+1,+21
+    autocmd WinLeave * setlocal nocursorline
+    autocmd WinLeave * setlocal colorcolumn=0
+augroup END
+
+" 重新打开文件时，光标定位到上次打开的位置
+augroup resCur
+    autocmd!
+    autocmd BufReadPost * call setpos(".", getpos("'\""))
+augroup END
 
 " 高亮显示匹配的括号
 set showmatch
@@ -345,18 +349,12 @@ set shiftwidth=4
 set expandtab
 " 不要换行
 set nowrap
-" 编辑时不自动换行
-set textwidth=0
+" 设置宽度为80，这样可以设置两个 colorcolumn
+set textwidth=80
 " 在行和段开始处使用制表符
 set smarttab
 " 行内替换
 set gdefault
-
-" 重新打开文件时，光标定位到上次打开的位置
-augroup resCur
-    autocmd!
-    autocmd BufReadPost * call setpos(".", getpos("'\""))
-augroup END
 
 " 4. Load My Vim Plugin
 " ==========
@@ -409,40 +407,28 @@ endfun
 " 插入新的版本号
 function! NewVersion(var)
     if &filetype == 'sh'
-        call append(4, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+        call append(4, "\# > version ".expand(string(a:var)).expand(": ")
+                    \.strftime("%Y-%m-%d %H:%M:%S"))
     elseif &filetype == 'python'
-        call append(5, "\# > version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+        call append(5, "\# > version ".expand(string(a:var)).expand(": ")
+                    \.strftime("%Y-%m-%d %H:%M:%S"))
     elseif &filetype == 'h' || &filetype == 'hpp' || &filetype == 'java' ||
                 \  &filetype == 'c' || &filetype == 'cpp' || &filetype == 'rust'
-        call append(4, " *  version ".expand(string(a:var)).expand(": ").strftime("%Y-%m-%d %H:%M:%S"))
+        call append(4, " *  version ".expand(string(a:var)).expand(": ")
+                    \.strftime("%Y-%m-%d %H:%M:%S"))
     endif
 endfun
 
+" 自动插入文件头
 augroup autoFileHead
     autocmd!
     " 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
-    autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua exec ":call SetTitle()"
+    autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
+                \   exec ":call SetTitle()"
     " 新建文件后，自动定位到文件末尾
     autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
     nmap <leader>nv :call NewVersion()<Left>
 augroup END
-
-" Zoom / Restore window.
-" ----------
-function! s:ZoomToggle() abort
-    if exists('t:zoomed') && t:zoomed
-        execute t:zoom_winrestcmd
-        let t:zoomed = 0
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-        let t:zoomed = 1
-    endif
-endfunction
-command! ZoomToggle call s:ZoomToggle()
-" like tmux used 'prefix + z' to zoom, and vim is used '<c-w> + z' to zoom.
-nnoremap <silent> <c-w>z :ZoomToggle<cr>
 
 " 6. Other
 " ==========
