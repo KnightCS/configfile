@@ -256,6 +256,7 @@ let g:tagbar_width     = 30
 let g:tagbar_ctags_bin = '/usr/bin/ctags'
 let g:tagbar_left      = 1
 let g:tagbar_compact   = 1
+let g:tagbar_iconchars = ['➧', '☇']
 " 设置 ctags 对哪些代码标识符生成标签
 let g:tagbar_type_cpp = {
     \ 'kinds' : [
