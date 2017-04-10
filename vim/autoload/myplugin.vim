@@ -692,7 +692,7 @@ Plug 'vim-scripts/vimprj'
 " 默认 --fields=+iaS 不满足 YCM 要求，需改为 --fields=+iaSl
 let g:indexer_ctagsCommandLineOptions = "--c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v
             \ --fields=+iaSl --extra=+q"
-let g:indexer_indexerListFilename = "~/.local/.indexer_files"
+let g:indexer_indexerListFilename = "~/.config/.indexer_files"
 " }}}
 
 " 关键词搜索
