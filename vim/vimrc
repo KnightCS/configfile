@@ -112,7 +112,7 @@ set noundofile
 " 内部使用字符编码方式
 set encoding=utf-8
 set langmenu=zh_CN.utf-8
-language message zh_CN.utf-8
+language message en_US.utf-8
 " 屏幕显示编码
 set termencoding=utf-8
 " 设定默认解码
