@@ -276,6 +276,24 @@ let g:signify_vcs_cmds = {
 " 最大化当前窗口
 Plug 'vim-scripts/ZoomWin'
 
+" My UI Plugin Costom Command
+" -----
+" 启动 vim 时启用的插件
+function! VimEnterDealArgument() abort
+    if !argc() || (argc() == 1 && isdirectory(argv(0)))
+        Startify
+        NERDTree
+        setlocal nocursorline
+        wincmd p
+        setlocal cursorline
+        setlocal colorcolumn=+1,+21
+    endif
+endfunction
+augroup DealArgument
+    autocmd!
+    autocmd VimEnter * :call VimEnterDealArgument()
+augroup END
+
 " 2.2 File Type
 " ----------
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
