@@ -318,11 +318,7 @@ set incsearch
 
 " 2.9 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 " ----------
-if has('win32unix') || has('wind64unix')
-    set mouse-=a
-else
-    set mouse=a
-endif
+set mouse+=a
 set selection=exclusive
 set selectmode=mouse,key
 
