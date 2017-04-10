@@ -199,7 +199,15 @@ function! LightlineMode()
 endfunction
 " }}}
 
+" 有趣的开始导航
+Plug 'mhinz/vim-startify'
+
+" 文件夹导航
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+Plug 'tyok/nerdtree-ack', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+Plug 'jistr/vim-nerdtree-tabs', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+Plug 'vim-scripts/nerdtree-execute', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 " {{{
 let NERDTreeAutoCenter            = 1
 let NERDTreeMinimalUI             = 1
@@ -211,20 +219,16 @@ let NERDTreeWinSize               = 30
 let NERDTreeIgnore                = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$',
             \ '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
 let g:netrw_home                  = '~/.cache/nerdtree'
-" 自动打开
-autocmd VimEnter * if !argc() || isdirectory(argv(0)) | NERDTree | wincmd p | bd | wincmd p
 " 快捷键
 map <leader>nt :NERDTreeToggle<cr>
-" }}}
 
-" nerdtree 增强
-Plug 'jistr/vim-nerdtree-tabs', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
-" {{{
+" nerdtree-ack
+" 给 nerdtree 增加搜索功能
+
+" vim-nerdtree-tabs
 let g:nerdtree_tabs_open_on_console_startup = 2
-" }}}
 
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
-" {{{
+" nerdtree-git-plugin
 let g:NERDTreeShowIgnoredStatus  = 1
 let g:NERDTreeIndicatorMapCustom = {
             \ "Modified"  : "✹",
@@ -237,13 +241,10 @@ let g:NERDTreeIndicatorMapCustom = {
             \ "Clean"     : "✔︎",
             \ "Unknown"   : "?"
             \ }
-" }}}
 
+" nerdtree-execute
 " 调用外部命令运行当前文件
-Plug 'nerdtree-execute', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
-
-" 给 nerdtree 增加搜索功能
-Plug 'NERDTree-ack', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+" }}}
 
 " tagbar
 Plug 'Tagbar', { 'on': 'TagbarToggle' }
