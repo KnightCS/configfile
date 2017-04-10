@@ -272,14 +272,6 @@ let g:signify_vcs_cmds = {
             \   'git': 'git diff --no-color --no-ext-diff -U0 HEAD -- %f',
             \ }
 " }}}
-" Git增强
-Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
-" git插件
-Plug 'cohama/agit.vim'
-" {{{
-let g:agit_no_default_mappings = 1
-let g:agit_ignore_spaces       = 0
-" }}}
 
 " 最大化当前窗口
 Plug 'vim-scripts/ZoomWin'
@@ -623,6 +615,15 @@ nmap <C-w>q <Plug>(choosewin)
 " ----------
 " 文件搜索
 "Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+" Git Plugin
+" -----
+Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
+Plug 'cohama/agit.vim'
+" {{{
+let g:agit_no_default_mappings = 1
+let g:agit_ignore_spaces       = 0
+" }}}
 
 " 关键词搜索
 Plug 'dyng/ctrlsf.vim', { 'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordPath', 'CtrlSF'] }
