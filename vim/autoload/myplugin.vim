@@ -249,12 +249,44 @@ let g:NERDTreeIndicatorMapCustom = {
 " tagbar
 Plug 'Tagbar', { 'on': 'TagbarToggle' }
 " {{{
-" auto open when open a c++ file
-"autocmd FileType [ch],[ch]pp,cc nested :TagbarOpen
-" set the window's width
 let g:tagbar_width     = 30
 let g:tagbar_ctags_bin = '/usr/bin/ctags'
 let g:tagbar_left      = 1
+let g:tagbar_compact   = 1
+" 设置 ctags 对哪些代码标识符生成标签
+let g:tagbar_type_cpp = {
+    \ 'kinds' : [
+         \ 'c:classes:0:1',
+         \ 'd:macros:0:1',
+         \ 'e:enumerators:0:0',
+         \ 'f:functions:0:1',
+         \ 'g:enumeration:0:1',
+         \ 'l:local:0:1',
+         \ 'm:members:0:1',
+         \ 'n:namespaces:0:1',
+         \ 'p:functions_prototypes:0:1',
+         \ 's:structs:0:1',
+         \ 't:typedefs:0:1',
+         \ 'u:unions:0:1',
+         \ 'v:global:0:1',
+         \ 'x:external:0:1'
+     \ ],
+     \ 'sro'        : '::',
+     \ 'kind2scope' : {
+         \ 'g' : 'enum',
+         \ 'n' : 'namespace',
+         \ 'c' : 'class',
+         \ 's' : 'struct',
+         \ 'u' : 'union'
+     \ },
+     \ 'scope2kind' : {
+         \ 'enum'      : 'g',
+         \ 'namespace' : 'n',
+         \ 'class'     : 'c',
+         \ 'struct'    : 's',
+         \ 'union'     : 'u'
+     \ }
+\ }
 " if open nerdtree, then close nerdtree before open tagbar
 function! JustTagbar() abort
     if exists("b:NERDTree")
@@ -647,6 +679,20 @@ Plug 'cohama/agit.vim'
 " {{{
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
+" }}}
+
+" Ctags Plugin
+" -----
+Plug 'vim-scripts/indexer.tar.gz'
+Plug 'vim-scripts/DfrankUtil'
+Plug 'vim-scripts/vimprj'
+" {{{
+" 设置插件 indexer 调用 ctags 的参数
+" 默认 --c++-kinds=+p+l，重新设置为 --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v
+" 默认 --fields=+iaS 不满足 YCM 要求，需改为 --fields=+iaSl
+let g:indexer_ctagsCommandLineOptions = "--c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v
+            \ --fields=+iaSl --extra=+q"
+let g:indexer_indexerListFilename = "~/.local/.indexer_files"
 " }}}
 
 " 关键词搜索
