@@ -74,6 +74,9 @@
 " matchit: 匹配跳转
 "   跳转: %
 " ----------
+" gina: git 增强插件
+"   查看 git 状态: <leader>gs
+"   提交 git 修改: <leader>gm
 " }}}
 
 " 1. Enter Function
@@ -677,6 +680,10 @@ nmap <C-w>q <Plug>(choosewin)
 Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 Plug 'cohama/agit.vim'
 " {{{
+" gina
+nnoremap <leader>gs :Gina<space>status<cr>
+nnoremap <leader>gm :Gina<space>commit<cr>
+" agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
 " }}}
