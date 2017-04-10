@@ -1,13 +1,25 @@
 [user]
-	name =
+	name  =
 	email =
 [core]
-	editor = vim
+	editor       = vim
+	trustctime   = false
+	filemode     = false
+	excludesfile = ~/.config/gitignore
 [merge]
 	tool = vimdiff
 [alias]
-	st = status
+	cp = cherry-pick
 	co = checkout
+	cl = clone
 	ci = commit
+	st = status
+	br = branch
+	dc = diff --cached
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative --all
+	last    = log -l --stat
+	unstage = reset HEAD --
 [color]
 	ui = true
+[push]
+	default = matching
