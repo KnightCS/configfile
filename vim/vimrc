@@ -206,10 +206,14 @@ if g:colors_name == "desert"
     hi! OverLength ctermbg=234
 endif
 
-" 标记代码中未被用作缩进的制表符
-call matchadd('ColorColumn', '[^\t]\zs\t\+')
-" 高亮字符，让其不受100列限制
-call matchadd('OverLength', '\%100v.*')
+" 定制配置字符的颜色
+augroup CustomMatch
+    autocmd!
+    " 标记代码中未被用作缩进的制表符
+    autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
+    " 高亮字符，让其不受100列限制
+    autocmd WinEnter,BufWinEnter * :call matchadd('OverLength', '\%100v.*')
+augroup END
 
 " 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
 augroup HightlightActiveWindow
