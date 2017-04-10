@@ -551,14 +551,20 @@ Plug 'hotoo/pangu.vim', { 'for': ['markdown', 'text', 'wiki', 'cnx'] }
 " 对文本文档进行自动换行
 function! AutoWrapWithText() abort
     if &filetype == 'markdown' || &filetype == 'text'
-        " 设置换行
-        set textwidth=78
+        if &filetype == 'markdown'
+            setlocal comments=fb:*,fb:-,fb:+,n:>
+            setlocal commentstring=<!--%s-->
+            setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:
+        endif
         " 中文字符适应 textwidth 换行
-        set formatoptions+=Mm
-        " 错误线提到79行
-        set colorcolumn=79
+        setlocal formatoptions+=tcqlnMm
+        setlocal formatoptions-=ro
+        " 设置换行
+        setlocal textwidth=78
+        " 79行有错误提示
+        setlocal colorcolumn=+1
         " 添加拼写检查
-        set spell
+        setlocal spell
         " 添加快捷键进行排版 + 格式纠错
         nmap <silent> <leader>gq :Pangu<cr>gggqG2<c-o>
     endif
