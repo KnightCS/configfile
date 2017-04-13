@@ -28,13 +28,13 @@
 "    back: <c-k>
 " ----------
 " syntastic: 语法检查
-"   listerr: <Leader>sl
-"   nexterr: <Leader>sn
-"   preverr: <Leader>sp
+"   listerr: <leader>sl
+"   nexterr: <leader>sn
+"   preverr: <leader>sp
 " ale: 语法检查
-"   list_err:  <Leader>sl
-"   prev_wrap: <Leader>sp
-"   next_wrap: <Leader>sn
+"   list_err:  <leader>sl
+"   prev_wrap: <leader>sp
+"   next_wrap: <leader>sn
 " ----------
 " unite:
 "   open unite:  <leader>u
@@ -146,7 +146,7 @@ endfunction
 function! LightlineFilename()
     let fname = expand('%:t')
       return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
-        \ fname == '__Tagbar__' && has_key(g:lightline, 'fname') ? g:lightline.fname :
+        \ fname == '__Tagbar__' ? has_key(g:lightline, 'fname') ? g:lightline.fname : 'Tagbar' :
         \ fname =~ '__Gundo\|NERD_tree' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
@@ -203,7 +203,7 @@ endfunction
 " }}}
 
 " 有趣的开始导航
-Plug 'mhinz/vim-startify'
+Plug 'mhinz/vim-startify', { 'on': 'Startify' }
 
 " 文件夹导航
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
@@ -222,8 +222,6 @@ let NERDTreeWinSize               = 30
 let NERDTreeIgnore                = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$',
             \ '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
 let g:netrw_home                  = '~/.cache/nerdtree'
-" 快捷键
-map <leader>nt :NERDTreeToggle<cr>
 
 " nerdtree-ack
 " 给 nerdtree 增加搜索功能
@@ -250,7 +248,7 @@ let g:NERDTreeIndicatorMapCustom = {
 " }}}
 
 " tagbar
-Plug 'Tagbar', { 'on': 'TagbarToggle' }
+Plug 'Tagbar', { 'on': ['TagbarToggle', 'TagbarOpen'] }
 " {{{
 let g:tagbar_width     = 30
 let g:tagbar_ctags_bin = '/usr/bin/ctags'
@@ -291,14 +289,6 @@ let g:tagbar_type_cpp = {
          \ 'union'     : 'u'
      \ }
 \ }
-" if open nerdtree, then close nerdtree before open tagbar
-function! JustTagbar() abort
-    if exists("b:NERDTree")
-        call g:NERDTree.Close()
-    endif
-    TagbarToggle
-endfunction
-nmap <leader>tb :call JustTagbar()<cr>
 " }}}
 
 " 显示当前文件跟仓库的差异
@@ -312,8 +302,9 @@ let g:signify_vcs_cmds = {
 " 最大化当前窗口
 Plug 'vim-scripts/ZoomWin'
 
-" My UI Plugin Costom Command
+" Start vim ui
 " -----
+"{{{
 " 启动 vim 时启用的插件
 function! VimEnterDealArgument() abort
     if !argc() || (argc() == 1 && isdirectory(argv(0)))
@@ -329,6 +320,40 @@ augroup DealArgument
     autocmd!
     autocmd VimEnter * :call VimEnterDealArgument()
 augroup END
+"}}}
+
+" Deal with NERDTree and Tagbar like this
+" +-----------+-------------+
+" | NERDTree  |             |
+" | contents  |             |
+" +-----------+    File     |
+" | Tagbar    |             |
+" | contents  |             |
+" +-----------+-------------+
+function! ToggleNERDTreeAndTagbar(plugin) abort
+    if a:plugin == 'nerdtree'
+        NERDTreeToggle
+    endif
+    if a:plugin == 'tagbar'
+        TagbarToggle
+    endif
+    let s:nerdtree_open = (bufwinnr('NERD_tree')  != -1)
+    let s:tagbar_open   = (bufwinnr('__Tagbar__') != -1)
+    let s:winheight     = winheight(0)
+    let s:winwidth      = g:tagbar_width
+    if s:nerdtree_open && s:tagbar_open
+        wincmd K
+        wincmd b
+        wincmd L
+        wincmd h
+        exe 'resize '.(s:winheight * 3 / 10)
+        exe 'vertical resize '.(s:winwidth)
+    endif
+endfunction
+" Toggle Tagbar
+nnoremap <leader>tb :call ToggleNERDTreeAndTagbar('tagbar')<cr>
+" Toggle NERDTree
+nnoremap <leader>nt :call ToggleNERDTreeAndTagbar('nerdtree')<cr>
 
 " 2.2 File Type
 " ----------
@@ -369,15 +394,16 @@ let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 " <cr>: close popup and save indent.
 inoremap <silent> <cr> <c-r>=<sid>my_cr_function()<cr>
 function! s:my_cr_function()
-    return (pumvisible() ? "\<c-y>" : "" ) . "\<cr>"
+    "return (pumvisible() ? "\<c-y>" : "" ) . "\<cr>"
     " For no inserting <cr> key.
-    "return pumvisible() ? "\<c-y>" : "\<cr>"
+    return pumvisible() ? "\<c-y>" : "\<cr>"
 endfunction
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<c-n>" : "\<tab>"
+inoremap <expr><TAB>   pumvisible() ? "\<c-n>" : "\<tab>"
+inoremap <expr><S-TAB> pumvisible() ? "\<c-p>" : "\<tab>"
 " <C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><c-h> neocomplete#smart_close_popup()."\<c-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<c-h>"
+inoremap <expr><BS>  neocomplete#smart_close_popup()."\<c-h>"
 " Close popup by <Space>.
 "inoremap <expr><space> pumvisible() ? "\<c-y>" : "\<space>"
 
@@ -432,7 +458,7 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 
 " For conceal markers.
 if has('conceal')
-    set conceallevel=2 concealcursor=niv
+    set conceallevel=1 concealcursor=niv
 endif
 
 " Enable snipMate compatibility feature.
@@ -440,10 +466,10 @@ let g:neosnippet#enable_snipmate_compatibility = 1
 " Tell Neosnippet about the other snippets
 if !empty(g:plug_home)
     let g:neosnippet#snippets_directory = g:plug_home.expand('/vim-snippets/snippets')
-"    let g:neosnippet#disable_runtime_snippets = {
-"                \   '_': 1,
-"                \ }
 endif
+
+" Define which files will disable the neosnippet-snippets plugin
+autocmd! BufWinEnter *.sh let g:neosnippet#disable_runtime_snippets = {'_': 1,}
 " }}}
 
 " 显示函数参数
@@ -491,9 +517,9 @@ if version < 800 && !has('nvim')
         endif
     endfunction
     " Keyword
-    nnoremap <Leader>sl :call ToggleErrors()<cr>
-    nnoremap <Leader>sp :lprevious<cr>
-    nnoremap <Leader>sn :lnext<cr>
+    nnoremap <leader>sl :call ToggleErrors()<cr>
+    nnoremap <leader>sp :lprevious<cr>
+    nnoremap <leader>sn :lnext<cr>
     " }}}
 else
     Plug 'w0rp/ale'
@@ -510,13 +536,14 @@ else
     let g:ale_echo_msg_format      = '[%linter%] %s [%severity%]'
     " Some linter option
     let g:ale_linters_sh_shellcheck_exclusions = '-x'
+    let g:ale_error_location_hight = 5
     function! ToggleErrors()
         let old_last_winnr = winnr('$')
         lclose
         if old_last_winnr == winnr('$')
             " Nothing was closed, open ale error location panel
             lopen
-            4 wincmd _
+            exec 'resize '.g:ale_error_location_hight
             wincmd p
         endif
     endfunction
@@ -539,9 +566,9 @@ else
         autocmd User ALELint call Update_light()
     augroup END
     " Keyword
-    nmap <silent> <Leader>sl :call ToggleErrors()<cr>
-    nmap <silent> <Leader>sp <Plug>(ale_previous_wrap)
-    nmap <silent> <Leader>sn <Plug>(ale_next_wrap)
+    nnoremap <silent> <leader>sl :call ToggleErrors()<cr>
+    nnoremap <silent> <leader>sp <Plug>(ale_previous_wrap)
+    nnoremap <silent> <leader>sn <Plug>(ale_next_wrap)
     " }}}
 endif
 
@@ -549,7 +576,7 @@ endif
 " ----------
 Plug 'Shougo/denite.nvim'
 " {{{
-map <leader>d :Denite<space>
+nnoremap <leader>d :Denite<space>
 " }}}
 
 " 2.6 Code Formatting
@@ -557,13 +584,13 @@ map <leader>d :Denite<space>
 " 快速对齐
 Plug 'junegunn/vim-easy-align'
 " {{{
-vmap <Leader>a <Plug>(EasyAlign)
+vmap <leader>a <Plug>(EasyAlign)
 " }}}
 
 " 末尾空格
 Plug 'bronson/vim-trailing-whitespace'
 " {{{
-map <Leader>d<space> :FixWhitespace<cr>
+nnoremap <leader>d<space> :FixWhitespace<cr>
 " }}}
 
 " 自动补全成对符号
@@ -613,18 +640,18 @@ autocmd! BufWinEnter * call AutoWrapWithText()
 " 快速移动
 Plug 'easymotion/vim-easymotion'
 " {{{
-" <Leader>c{char} to move to {char}
-map  <Leader>ec <Plug>(easymotion-bd-f)
-nmap <Leader>ec <Plug>(easymotion-overwin-f)
+" <leader>c{char} to move to {char}
+map  <leader>ec <Plug>(easymotion-bd-f)
+nmap <leader>ec <Plug>(easymotion-overwin-f)
 " s{char}{char} to move to {char}{char}
-map  <Leader>e2c <Plug>(easymotion-bd-f2)
-nmap <Leader>e2c <Plug>(easymotion-overwin-f2)
+map  <leader>e2c <Plug>(easymotion-bd-f2)
+nmap <leader>e2c <Plug>(easymotion-overwin-f2)
 " Move to line
-map  <Leader>el <Plug>(easymotion-bd-jk)
-nmap <Leader>el <Plug>(easymotion-overwin-line)
+map  <leader>el <Plug>(easymotion-bd-jk)
+nmap <leader>el <Plug>(easymotion-overwin-line)
 " Move to word
-map  <Leader>ew <Plug>(easymotion-bd-w)
-nmap <Leader>ew <Plug>(easymotion-overwin-w)
+map  <leader>ew <Plug>(easymotion-bd-w)
+nmap <leader>ew <Plug>(easymotion-overwin-w)
 " }}}
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-easymotion.vim'
@@ -668,7 +695,7 @@ vmap V <Plug>(expand_region_shrink)
 Plug 't9md/vim-choosewin'
 " {{{
 " Like tmux，"perfix + q" to show windows number, vim's prefix is <C-w>
-nmap <C-w>q <Plug>(choosewin)
+nmap <c-w>q <Plug>(choosewin)
 " }}}
 
 " 2.8 Other tools
@@ -679,28 +706,14 @@ nmap <C-w>q <Plug>(choosewin)
 " Git Plugin
 " -----
 Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
-Plug 'cohama/agit.vim'
+Plug 'cohama/agit.vim', { 'on': ['Agit'] }
 " {{{
 " gina
-nnoremap <leader>gs :Gina<space>status<cr>
-nnoremap <leader>gm :Gina<space>commit<cr>
+nnoremap <leader>gst :Gina<space>status<cr>
+nnoremap <leader>gmi :Gina<space>commit<cr>
 " agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
-" }}}
-
-" Ctags Plugin
-" -----
-Plug 'vim-scripts/indexer.tar.gz'
-Plug 'vim-scripts/DfrankUtil'
-Plug 'vim-scripts/vimprj'
-" {{{
-" 设置插件 indexer 调用 ctags 的参数
-" 默认 --c++-kinds=+p+l，重新设置为 --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v
-" 默认 --fields=+iaS 不满足 YCM 要求，需改为 --fields=+iaSl
-let g:indexer_ctagsCommandLineOptions = "--c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v
-            \ --fields=+iaSl --extra=+q"
-let g:indexer_indexerListFilename = "~/.config/.indexer_files"
 " }}}
 
 " 关键词搜索
@@ -719,7 +732,12 @@ nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
 " }}}
 
 " Man 手册，:Man Keyword 触发
-Plug 'idbrii/vim-man'
+if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
+    so "$VIMRUNTIME/ftplugin/man.vim"
+else
+    Plug 'idbrii/vim-man', { 'on': 'Man' }
+endif
+nnoremap <leader>man :Man 3 <cword><cr>
 
 " 3. END
 " ==========
