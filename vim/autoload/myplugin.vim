@@ -709,8 +709,8 @@ Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 Plug 'cohama/agit.vim', { 'on': ['Agit'] }
 " {{{
 " gina
-nnoremap <leader>gst :Gina<space>status<cr>
-nnoremap <leader>gmi :Gina<space>commit<cr>
+nnoremap <leader>gs :Gina<space>status<cr>
+nnoremap <leader>gc :Gina<space>commit<cr>
 " agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
