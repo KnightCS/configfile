@@ -206,31 +206,36 @@ if g:colors_name == "desert"
     hi! OverLength ctermbg=234
 endif
 
-" 定制配置字符的颜色
-augroup CustomMatch
-    autocmd!
-    " 标记代码中未被用作缩进的制表符
-    autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
-    " 高亮字符，让其不受100列限制
-    autocmd WinEnter,BufWinEnter * :call matchadd('OverLength', '\%100v.*')
-augroup END
+if has("autocmd")
+    " 定制配置字符的颜色
+    augroup CustomMatch
+        autocmd!
+        " 标记代码中未被用作缩进的制表符
+        autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
+        " 高亮字符，让其不受100列限制
+        autocmd WinEnter,BufWinEnter * :call matchadd('OverLength', '\%100v.*')
+    augroup END
 
-" 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
-augroup HightlightActiveWindow
-    autocmd!
-    autocmd BufWinEnter * if argc() < 2 | setlocal cursorline | endif
-    autocmd BufWinEnter * if argc() < 2 | setlocal colorcolumn=+1,+21 | endif
-    autocmd WinEnter * setlocal cursorline
-    autocmd WinEnter * setlocal colorcolumn=+1,+21
-    autocmd WinLeave * setlocal nocursorline
-    autocmd WinLeave * setlocal colorcolumn=0
-augroup END
+    " 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
+    augroup HightlightActiveWindow
+        autocmd!
+        autocmd BufWinEnter * if argc() < 2 | setlocal cursorline | endif
+        autocmd BufWinEnter * if argc() < 2 | setlocal colorcolumn=+1,+21 | endif
+        autocmd WinEnter * setlocal cursorline
+        autocmd WinEnter * setlocal colorcolumn=+1,+21
+        autocmd WinLeave * setlocal nocursorline
+        autocmd WinLeave * setlocal colorcolumn=0
+    augroup END
 
-" 重新打开文件时，光标定位到上次打开的位置
-augroup resCur
-    autocmd!
-    autocmd BufReadPost * call setpos(".", getpos("'\""))
-augroup END
+    " 重新打开文件时，光标定位到上次打开的位置
+    augroup resCur
+        autocmd!
+        autocmd BufReadPost *
+                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                    \   call setpos(".", getpos("'\"")) |
+                    \ endif
+    augroup END
+endif
 
 " 高亮显示匹配的括号
 set showmatch
@@ -358,7 +363,9 @@ set gdefault
 
 " 4. Load My Vim Plugin
 " ==========
-silent! call myplugin#begin()
+if !empty(glob("~/.vim/autoload/myplugin.vim"))
+    silent! call myplugin#begin()
+endif
 
 " 5. 自定义函数
 " ==========
@@ -419,16 +426,19 @@ function! NewVersion(var)
     endif
 endfun
 
-" 自动插入文件头
-augroup autoFileHead
-    autocmd!
-    " 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
-    autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
-                \   exec ":call SetTitle()"
-    " 新建文件后，自动定位到文件末尾
-    autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua normal G
-    nmap <leader>nv :call NewVersion()<Left>
-augroup END
+if has("autocmd")
+    " 自动插入文件头
+    augroup autoFileHead
+        autocmd!
+        " 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
+        autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
+                    \   exec ":call SetTitle()"
+        " 新建文件后，自动定位到文件末尾
+        autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
+                    \   normal G
+        nnoremap <leader>nv :call NewVersion()<Left>
+    augroup END
+endif
 
 " 6. Other
 " ==========
