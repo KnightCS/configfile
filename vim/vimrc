@@ -45,8 +45,7 @@ let mapleader = ';'
 
 " 1.1
 " ----------
-" 不要使用vi的键盘模式，而是vim自己的
-" 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
+" 不强制兼容vi
 set nocompatible
 " 启动的时候不显示那个援助索马里儿童的提示
 set shortmess=atl
