@@ -260,7 +260,11 @@ let g:NERDTreeIndicatorMapCustom = {
 Plug 'Tagbar', { 'on': ['TagbarToggle', 'TagbarOpen'] }
 " {{{
 let g:tagbar_width     = 30
-let g:tagbar_ctags_bin = '/usr/bin/ctags'
+if exists("g:ctags_bin")
+    let g:tagbar_ctags_bin = g:ctags_bin
+else
+    let g:tagbar_ctags_bin = '/usr/bin/ctags'
+endif
 let g:tagbar_left      = 1
 let g:tagbar_compact   = 1
 let g:tagbar_iconchars = ['➧', '☇']

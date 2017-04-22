@@ -360,13 +360,22 @@ set smarttab
 " 行内替换
 set gdefault
 
-" 4. Load My Vim Plugin
+" 4. Tags
+" ==========
+let g:ctags_bin = substitute(system('which ctags'), '\n', '', '')
+if g:ctags_bin !~ "ctags$"
+    let g:ctags_bin = ""
+endif
+" find tags to root "/"
+set tags+=/
+
+" 5. Load My Vim Plugin
 " ==========
 if !empty(glob("~/.vim/autoload/myplugin.vim"))
     silent! call myplugin#begin()
 endif
 
-" 5. 自定义函数
+" 6. 自定义函数
 " ==========
 " - c、c++、java、python、bash、lua、rust等文件自动添加文件头
 " ----------
@@ -445,9 +454,9 @@ if has("autocmd")
     augroup END
 endif
 
-" 6. Other
+" 7. Other
 " ==========
-" 6.1 Platform judgment
+" 7.1 Platform judgment
 " unix:Linux/MAC/Cygwin
 " macunix:MAC
 " win32unix/win64unix:Cygwin
