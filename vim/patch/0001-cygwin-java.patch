@@ -1,0 +1,34 @@
+From 8c1659d94139316982410d0eb97cd99cec3ac4b0 Mon Sep 17 00:00:00 2001
+From: KnightCS <chenshuomailbox@gmail.com>
+Date: Sat, 22 Apr 2017 12:34:20 +0800
+Subject: [PATCH] =?UTF-8?q?=E8=A7=A3=E5=86=B3cygwin=E4=B8=ADjava=E7=9A=84?=
+ =?UTF-8?q?=E8=B7=AF=E5=BE=84=E9=97=AE=E9=A2=98?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ autoload/slumlord.vim | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/autoload/slumlord.vim b/autoload/slumlord.vim
+index 58877be..33154e6 100644
+--- a/autoload/slumlord.vim
++++ b/autoload/slumlord.vim
+@@ -15,8 +15,12 @@ function! slumlord#updatePreview(args) abort
+     call s:mungeDiagramInTmpFile(tmpfname)
+     let b:slumlord_preview_fname = fnamemodify(tmpfname,  ':r') . '.utxt'
+ 
++    if has("win32unix") || has("win64unix")
++        let s:jar_path = substitute(system('cygpath -w "'.s:jar_path.'"'), "\n", '', '')
++        let tmpfname   = substitute(system('cygpath -w "'.tmpfname.'"'), "\n", '', '')
++    endif
+ 
+-    let cmd = "java -jar ". s:jar_path ." -tutxt " . tmpfname
++    let cmd = 'java -jar "'.s:jar_path.'" -charset utf-8 -tutxt "'.tmpfname.'"'
+ 
+     let write = has_key(a:args, 'write') && a:args["write"] == 1
+     if exists("*jobstart")
+-- 
+2.8.3
+
