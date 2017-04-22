@@ -709,6 +709,9 @@ endfunction
 noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 " }}}
 
+" 重复操作
+Plug 'tpope/vim-repeat'
+
 " 视图模式下伸缩选中部分
 Plug 'terryma/vim-expand-region'
 " {{{
