@@ -571,15 +571,23 @@ else
         lclose
         if old_last_winnr == winnr('$')
             " Nothing was closed, open ale error location panel
-            lopen
+            silent! lopen
+            if len(getloclist(0)) == 0
+                echomsg "No warning or error"
+                return
+            endif
             exec 'resize '.g:ale_error_location_hight
             wincmd p
+            ALENext
         endif
     endfunction
     function! AutoClose()
         " Auto close location list
         if len(getloclist(0)) == 0
             lclose
+        endif
+        if tabpagenr() == 1 && winnr('$') == 1 && &buftype ==# 'quickfix'
+            q
         endif
     endfunction
     function! Update_light()
@@ -592,6 +600,7 @@ else
     augroup update_after_alelint
         autocmd!
         autocmd User ALELint call AutoClose()
+        autocmd WinEnter   * call AutoClose()
         autocmd User ALELint call Update_light()
     augroup END
     " Keyword
