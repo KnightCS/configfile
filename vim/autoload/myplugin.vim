@@ -494,6 +494,9 @@ autocmd! BufWinEnter *.sh let g:neosnippet#disable_runtime_snippets = {'_': 1,}
 " 显示函数参数
 Plug 'Shougo/echodoc.vim'
 
+" 下划线当前词
+Plug 'itchyny/vim-cursorword'
+
 " 2.4 语法检测
 " ----------
 if version < 800 && !has('nvim')
@@ -752,8 +755,6 @@ nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
 
 " Man 手册，:Man Keyword 触发
 if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
-"    let g:man_plug=$VIMRUNTIME/ftplugin/man.vim
-"    Plug 'g:man_plug', { 'on': 'Man' }
     plug#load($VIMRUNTIME/ftplugin/man.vim)
 else
     Plug 'idbrii/vim-man', { 'on': 'Man' }
