@@ -378,6 +378,9 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'aklt/plantuml-syntax', { 'for': ['pu', 'uml', 'plantuml'] }
 Plug 'scrooloose/vim-slumlord', { 'for': ['pu', 'uml', 'plantuml'] }
 
+" H 文件
+Plug 'vim-scripts/a.vim'
+
 " 2.3 complete
 " ----------
 Plug 'Shougo/neocomplete.vim'
@@ -755,7 +758,7 @@ nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
 
 " Man 手册，:Man Keyword 触发
 if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
-    plug#load($VIMRUNTIME/ftplugin/man.vim)
+    so $VIMRUNTIME/ftplugin/man.vim
 else
     Plug 'idbrii/vim-man', { 'on': 'Man' }
 endif
