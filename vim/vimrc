@@ -399,6 +399,10 @@ function! SetTitle()
         call append(line(".")+2, "-- >Description :")
         call append(line(".")+3, "-- > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
         call append(line(".")+4, "")
+    elseif &filetype == 'plantuml'
+        call setline(1,          "@startuml")
+        call append(line("."),   "")
+        call append(line(".")+1, "@enduml")
     else
         call setline(1,          "\/*")
         call append(line("."),   " * File Name   : ".expand("%"))
@@ -432,9 +436,11 @@ if has("autocmd")
         " 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
         autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
                     \   exec ":call SetTitle()"
+        autocmd BufNewFile *.pu,*.uml,*.plantuml exec ":call SetTitle()"
         " 新建文件后，自动定位到文件末尾
         autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
                     \   normal G
+        autocmd BufNewFile *.pu,*.uml,*.plantuml normal 2G
         nnoremap <leader>nv :call NewVersion()<Left>
     augroup END
 endif
