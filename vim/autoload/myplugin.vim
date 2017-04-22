@@ -204,11 +204,20 @@ endfunction
 
 " 有趣的开始导航
 Plug 'mhinz/vim-startify', { 'on': 'Startify' }
+" {{{
+let g:startify_custom_header = [
+            \ '     @@@@  @@@@',
+            \ '      @@  @@@  @@  @@@a.a@@a.a@@.',
+            \ '      @@ @@@        @@@@@@@@@@@@@',
+            \ '      @@a@@    @@  ,@@ ,@@  ,@@@',
+            \ '      @@@`     @@  @@@ @@@  @@@@@'
+            \ ]
+" }}}
 
 " 文件夹导航
 Plug 'scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
-Plug 'tyok/nerdtree-ack', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 Plug 'jistr/vim-nerdtree-tabs', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
+Plug 'vim-scripts/nerdtree-ack', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 Plug 'vim-scripts/nerdtree-execute', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 " {{{
@@ -304,16 +313,19 @@ Plug 'vim-scripts/ZoomWin'
 
 " Start vim ui
 " -----
-"{{{
 " 启动 vim 时启用的插件
-function! VimEnterDealArgument() abort
-    if !argc() || (argc() == 1 && isdirectory(argv(0)))
-        Startify
-        NERDTree
-        setlocal nocursorline
-        wincmd p
-        setlocal cursorline
-        setlocal colorcolumn=+1,+21
+function! VimEnterDealArgument() abort "{{{
+    if !argc() || isdirectory(argv(0))
+        if exists(":Startify")
+            Startify
+        endif
+        if exists(":NERDTree")
+            NERDTree
+            setlocal nocursorline
+            wincmd p
+            setlocal cursorline
+            setlocal colorcolumn=+1,+21
+        endif
     endif
 endfunction
 augroup DealArgument
@@ -330,11 +342,11 @@ augroup END
 " | Tagbar    |             |
 " | contents  |             |
 " +-----------+-------------+
-function! ToggleNERDTreeAndTagbar(plugin) abort
-    if a:plugin == 'nerdtree'
+function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
+    if a:plugin == 'nerdtree' && exists(':NERDTree')
         NERDTreeToggle
     endif
-    if a:plugin == 'tagbar'
+    if a:plugin == 'tagbar' && exists(':TagbarToggle')
         TagbarToggle
     endif
     let s:nerdtree_open = (bufwinnr('NERD_tree')  != -1)
@@ -350,6 +362,8 @@ function! ToggleNERDTreeAndTagbar(plugin) abort
         exe 'vertical resize '.(s:winwidth)
     endif
 endfunction
+" }}}
+
 " Toggle Tagbar
 nnoremap <leader>tb :call ToggleNERDTreeAndTagbar('tagbar')<cr>
 " Toggle NERDTree
@@ -359,6 +373,10 @@ nnoremap <leader>nt :call ToggleNERDTreeAndTagbar('nerdtree')<cr>
 " ----------
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+
+" Plantuml
+Plug 'aklt/plantuml-syntax', { 'for': ['pu', 'uml', 'plantuml'] }
+Plug 'scrooloose/vim-slumlord', { 'for': ['pu', 'uml', 'plantuml'] }
 
 " 2.3 complete
 " ----------
@@ -400,12 +418,12 @@ function! s:my_cr_function()
 endfunction
 " <TAB>: completion.
 inoremap <expr><TAB>   pumvisible() ? "\<c-n>" : "\<tab>"
-inoremap <expr><S-TAB> pumvisible() ? "\<c-p>" : "\<tab>"
+inoremap <expr><S-TAB> pumvisible() ? "\<c-p>" : "\<s-tab>"
 " <C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><c-h> neocomplete#smart_close_popup()."\<c-h>"
 inoremap <expr><BS>  neocomplete#smart_close_popup()."\<c-h>"
 " Close popup by <Space>.
-"inoremap <expr><space> pumvisible() ? "\<c-y>" : "\<space>"
+inoremap <expr><space> pumvisible() ? "\<c-y>" : "\<space>"
 
 " AutoComplPop like behavior.
 " No AutoComplPop
@@ -452,13 +470,14 @@ xmap <C-l> <Plug>(neosnippet_expand_target)
 imap <expr><TAB>
             \ pumvisible() ? "\<C-n>" :
             \ neosnippet#expandable_or_jumpable() ?
-            \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-            \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+            \   "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB>
+            \ neosnippet#expandable_or_jumpable() ?
+            \   "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " For conceal markers.
 if has('conceal')
-    set conceallevel=1 concealcursor=niv
+    set conceallevel=2 concealcursor=niv
 endif
 
 " Enable snipMate compatibility feature.
@@ -709,8 +728,8 @@ Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 Plug 'cohama/agit.vim', { 'on': ['Agit'] }
 " {{{
 " gina
-nnoremap <leader>gs :Gina<space>status<cr>
-nnoremap <leader>gc :Gina<space>commit<cr>
+nmap <leader>gst :Gina<space>status<cr>
+nmap <leader>gci :Gina<space>commit<cr>
 " agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
@@ -733,11 +752,13 @@ nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
 
 " Man 手册，:Man Keyword 触发
 if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
-    so "$VIMRUNTIME/ftplugin/man.vim"
+"    let g:man_plug=$VIMRUNTIME/ftplugin/man.vim
+"    Plug 'g:man_plug', { 'on': 'Man' }
+    plug#load($VIMRUNTIME/ftplugin/man.vim)
 else
     Plug 'idbrii/vim-man', { 'on': 'Man' }
 endif
-nnoremap <leader>man :Man 3 <cword><cr>
+nmap <leader>man :Man <c-r>=expand("<cword>")<cr>
 
 " 3. END
 " ==========
