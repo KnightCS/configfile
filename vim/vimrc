@@ -1,19 +1,25 @@
 " File Name   : vimrc
 " Author      : KnightCS
 " Description : My vim configure.
-"  version 1.0: **
-"   create.
-"  version 2.0: **
-"   add some configure and grouping.
+" -------------
 "  version 3.0: 2017-01-27
 "   reorganize.
+" -------------
+"  version 2.0: **
+"   add some configure and grouping.
+" -------------
+"  version 1.0: **
+"   create.
 
 " 0. 使用说明
 " ==========
 " 0.1 快捷键
 " ----------
 " <leader>:';'
-" 编辑配置文件：<leader>ev
+" <leader>ev: 编辑配置文件
+" <leader>isp: invspell
+" <leader><space>: quickfix模式，写入并make
+" <leader>nv: 插入新的版本描述
 " 折叠：
 "   <leader>z: 打开/关闭折叠
 "   <leader>Z: 打开/关闭全部折叠
@@ -33,8 +39,6 @@
 "   zw: 拼写错误，添加到用户错误字典
 "   zW: 在会话中当作错误拼写
 "   :spellr: 重新进行拼写检查
-" quickfix模式，写入并make：<leader><space>
-" 快速插入新版本：<leader>nv版本号
 
 " 1. 一般设置
 " ==========
@@ -67,19 +71,15 @@ set backspace=2
 " 通过使用:substitute命令，告诉我们文件的哪一行被改变过
 set report=0
 " 编辑配置文件
-nnoremap <leader>ev :edit $MYVIMRC<CR>
-augroup AutoSourceVimrc
-    autocmd!
-    autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
-augroup END
+nmap <leader>ev :edit $MYVIMRC<CR>
 " quickfix模式
 "autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 
 " 拼写检查
 set nospell
-nnoremap <leader>sp inspell
 " 拼写检查的语言：英文+中文
 set spelllang=en_us,cjk
+nmap <silent> <leader>isp :setlocal invspell<cr>
 
 " 1.2 目录、文件
 " ----------
@@ -120,9 +120,6 @@ set fileencoding=utf-8
 set fenc=utf-8
 set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1s
 
-" 设置字体
-"set guifont=Courier_New:h10:cANSI,Monaco:h9:cANSI,Monaco\ 12
-
 " 2. 显示
 " ==========
 
@@ -130,7 +127,6 @@ set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1s
 " ----------
 if version >= 603
     set helplang=cn
-    set encoding=utf-8
 endif
 
 " 2.2 VIM外框设置
@@ -144,6 +140,8 @@ if has('gui_running')
     set guioptions-=m
     " 设置为256色
     set t_Co=256
+    " 设置字体
+    set guifont=Courier_New:h10:cANSI,Monaco:h9:cANSI,Monaco\ 12
 endif
 
 " 2.3 设置魔术
@@ -164,7 +162,7 @@ set lazyredraw
 
 " 使用desert主题
 colorscheme desert
-if g:colors_name == "desert"
+if g:colors_name == "desert" && !&termguicolors
     " diff
     hi! DiffAdd    ctermbg=022
     hi! DiffText   ctermbg=094
@@ -201,45 +199,12 @@ if g:colors_name == "desert"
     hi! SpellLocal cterm=NONE ctermbg=038
     " MatchParen
     hi! link MatchParen Search
-    " OverLength
-    hi! OverLength ctermbg=234
-endif
-
-if has("autocmd")
-    " 定制配置字符的颜色
-    augroup CustomMatch
-        autocmd!
-        " 标记代码中未被用作缩进的制表符
-        autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
-        " 高亮字符，让其不受100列限制
-        autocmd WinEnter,BufWinEnter * :call matchadd('OverLength', '\%100v.*')
-    augroup END
-
-    " 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
-    augroup HightlightActiveWindow
-        autocmd!
-        autocmd BufWinEnter * if argc() < 2 | setlocal cursorline | endif
-        autocmd BufWinEnter * if argc() < 2 | setlocal colorcolumn=+1,+21 | endif
-        autocmd WinEnter * setlocal cursorline
-        autocmd WinEnter * setlocal colorcolumn=+1,+21
-        autocmd WinLeave * setlocal nocursorline
-        autocmd WinLeave * setlocal colorcolumn=0
-    augroup END
-
-    " 重新打开文件时，光标定位到上次打开的位置
-    augroup resCur
-        autocmd!
-        autocmd BufReadPost *
-                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
-                    \   call setpos(".", getpos("'\"")) |
-                    \ endif
-    augroup END
 endif
 
 " 高亮显示匹配的括号
 set showmatch
 " 匹配括号高亮的时间（单位是十分之一秒）
-set matchtime=5
+set matchtime=1
 
 " 显示行号
 set number
@@ -247,11 +212,6 @@ set number
 "set relativenumber
 " 行号大小
 set numberwidth=4
-
-" 字符间插入的像素行数目
-set linespace=0
-" 带有如下符号的单词不要被换行分割
-set iskeyword+=_,$,@,%,#,-
 
 " 显示制表符
 set list
@@ -289,9 +249,9 @@ set foldlevel=0
 " 默认不折叠
 "set foldlevelstart=99
 " 映射折叠/不折叠键为 <leader>z
-nnoremap <silent> <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+nmap <silent> <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 " 映射全部折叠/不折叠键为 <leader>Z
-nnoremap <silent> <leader>Z @=((foldclosed(line('.')) < 0) ? 'zM' : 'zR')<CR>
+nmap <silent> <leader>Z @=(&foldlevel ? 'zM' : 'zR')<CR>
 
 " 2.7 命令行、状态栏
 " ----------
@@ -328,8 +288,12 @@ set selectmode=mouse,key
 
 " 2.10 在被分割的窗口间显示空白，便于阅读
 " ----------
-"set fillchars=stl:\ ,stlnc:\ ,vert:\┋,fold:-,diff:-
-set fillchars=stl:\ ,stlnc:\ ,vert:\ ,fold:-,diff:-
+set fillchars=stl:\ 
+set fillchars+=stlnc:\ 
+"set fillchars+=vert:\┋
+set fillchars+=vert:\ 
+set fillchars+=fold:-
+set fillchars+=diff:\ 
 
 " 3. 文本格式和排版
 " ==========
@@ -348,13 +312,20 @@ set tabstop=4
 " 统一缩进为4
 set softtabstop=4
 set shiftwidth=4
+
 " 用空格代替制表符
-"set noexpandtab
 set expandtab
 " 不要换行
 set nowrap
-" 设置宽度为80，这样可以设置两个 colorcolumn
-set textwidth=80
+" 设置默认自动换行宽度为120
+set textwidth=120
+" 字符间插入的像素行数目
+set linespace=0
+" 带有如下符号的单词不要被换行分割
+set iskeyword+=_,$,@,%,#,-
+" 设置标志线的位置，默认
+set colorcolumn=81,101,121
+
 " 在行和段开始处使用制表符
 set smarttab
 " 行内替换
@@ -366,8 +337,7 @@ let g:ctags_bin = substitute(system('which ctags'), '\n', '', '')
 if g:ctags_bin !~ "ctags$"
     let g:ctags_bin = ""
 endif
-" find tags to root "/"
-set tags+=/
+set tags+=./tags;
 
 " 5. Load My Vim Plugin
 " ==========
@@ -379,78 +349,164 @@ endif
 " ==========
 " - c、c++、java、python、bash、lua、rust等文件自动添加文件头
 " ----------
-"定义函数SetTitle，自动插入文件头
-function! SetTitle()
-    let l:user_name  = "KnightCS"
-    let l:user_email = ""
-    let l:user = expand(l:user_name).' ('.expand(l:user_email).')'
+
+""
+" @brief  插入文件头
+"
+" @return NULL
+"
+function! AddFileTitle()
+    let l:support_filetype = ['c', 'cpp', 'python', 'sh', 'java', 'rust', 'lua', 'plantuml']
+    if index(l:support_filetype, &filetype) < 0
+        return
+    endif
+
+    let l:file_name   = expand("%:r")
+    let l:user_name   = "KnightCS"
+    let l:user_email  = ""
+    let l:user        = l:user_name . ' (' . l:user_email . ')'
+    let l:create_time = strftime("%Y-%m-%d %H:%M:%S")
+
     if &filetype == 'sh'
         call setline(1,          "\#!/bin/bash")
-        call append(line("."),   "\# >File Name   : ".expand("%"))
-        call append(line(".")+1, "\# >Author      : ".expand(l:user))
+        call append(line("."),   "\# >File Name   : ".l:file_name)
+        call append(line(".")+1, "\# >Author      : ".l:user)
         call append(line(".")+2, "\# >Description :")
-        call append(line(".")+3, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-        call append(line(".")+4, "")
+        call append(line(".")+3, "\# >#############")
+        call append(line(".")+4, "\# > version 1.0: ".l:create_time)
+        call append(line(".")+5, "\#       >")
+        call append(line(".")+6, "")
+        normal! G
     elseif &filetype == 'python'
         call setline(1,          "\#!/usr/bin/python")
         call append(line("."),   "\# -*- coding: UTF-8 -*-")
-        call append(line(".")+1, "\# >FileName    : ".expand("%"))
-        call append(line(".")+2, "\# >Author      : ".expand(l:user))
+        call append(line(".")+1, "\# >File Name   : ".l:file_name)
+        call append(line(".")+2, "\# >Author      : ".l:user)
         call append(line(".")+3, "\# >Description :")
-        call append(line(".")+4, "\# > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-        call append(line(".")+5, "")
-        call append(line(".")+6, "if __name__ == '__main__':")
-        call append(line(".")+7, "    pass")
+        call append(line(".")+4, "\# >#############")
+        call append(line(".")+5, "\# > version 1.0: ".l:create_time)
+        call append(line(".")+6, "\#       >")
+        call append(line(".")+7, "")
+        call append(line(".")+8, "if __name__ == '__main__':")
+        call append(line(".")+9, "    pass")
+        normal! 9G
     elseif &filetype == 'lua'
         call setline(1,          "\#!/usr/bin/lua")
-        call append(line("."),   "-- >File Name   : ".expand("%"))
-        call append(line(".")+1, "-- >Author      : ".expand(l:user))
+        call append(line("."),   "-- >File Name   : ".l:file_name)
+        call append(line(".")+1, "-- >Author      : ".l:user)
         call append(line(".")+2, "-- >Description :")
-        call append(line(".")+3, "-- > version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-        call append(line(".")+4, "")
+        call append(line(".")+3, "-- >-------------")
+        call append(line(".")+4, "-- > version 1.0: ".l:create_time)
+        call append(line(".")+5, "--      >")
+        call append(line(".")+6, "")
+        normal! G
     elseif &filetype == 'plantuml'
         call setline(1,          "@startuml")
         call append(line("."),   "")
         call append(line(".")+1, "@enduml")
+        normal! 2G
     else
-        call setline(1,          "\/*")
-        call append(line("."),   " * File Name   : ".expand("%"))
-        call append(line(".")+1, " * Author      : ".expand(l:user))
+        call setline(1,          "\/**")
+        call append(line("."),   " * File Name   : ".l:file_name)
+        call append(line(".")+1, " * Author      : ".l:user)
         call append(line(".")+2, " * Description :")
-        call append(line(".")+3, " *  version 1.0: ".strftime("%Y-%m-%d %H:%M:%S"))
-        call append(line(".")+4, " */")
-        call append(line(".")+5, "")
+        call append(line(".")+3, " * *************")
+        call append(line(".")+4, " *  version 1.0: ".l:create_time)
+        call append(line(".")+5, " *      >")
+        call append(line(".")+6, " **/")
+        call append(line(".")+7, "")
+        normal! G
     endif
 endfun
 
-" 插入新的版本号
+""
+" @brief     插入新版本描述
+"
+" @param[in] 新版本号
+"
+" @return    NULL
+"
 function! NewVersion(var)
+    let l:support_filetype = ['c', 'cpp', 'python', 'sh', 'java', 'rust', 'lua']
+    if index(l:support_filetype, &filetype) < 0
+        return
+    endif
+
+    " 没有文件头的文件直接返回
+    if (&magic && search('version [0-9]\+\.[0-9]\+:', 'ncp') <= 0)
+                \ || (!&magic && search('version \[0-9]\+.\[0-9]\+:', 'ncp') <=0)
+            return
+    endif
+
+    let l:create_time = strftime("%Y-%m-%d %H:%M:%S")
     if &filetype == 'sh'
-        call append(4, "\# > version ".expand(string(a:var)).expand(": ")
-                    \.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(5, "\# > version " . string(a:var) . ": " . l:create_time)
+        call append(6, "\#       >" )
+        call append(7, "\# >#############")
+        normal! 7G$
     elseif &filetype == 'python'
-        call append(5, "\# > version ".expand(string(a:var)).expand(": ")
-                    \.strftime("%Y-%m-%d %H:%M:%S"))
-    elseif &filetype == 'h' || &filetype == 'hpp' || &filetype == 'java' ||
-                \  &filetype == 'c' || &filetype == 'cpp' || &filetype == 'rust'
-        call append(4, " *  version ".expand(string(a:var)).expand(": ")
-                    \.strftime("%Y-%m-%d %H:%M:%S"))
+        call append(6, "\# > version " . string(a:var) . ": " . l:create_time)
+        call append(7, "\#       >" )
+        call append(8, "\# >#############")
+        normal! 8G$
+    elseif &filetype == 'lua'
+        call append(4, "-- >-------------")
+        call append(5, "-- > version " . string(a:var) . ": " . l:create_time)
+        call append(6, "--      >")
+        normal! 7G$
+    else
+        call append(5, " *  version " . string(a:var) . ": " . l:create_time)
+        call append(6, " *      >" )
+        call append(7, " * *************")
+        normal! 7G$
     endif
 endfun
+nmap <leader>nv :call NewVersion()<Left>
 
 if has("autocmd")
-    " 自动插入文件头
+    " 重新打开文件时，光标定位到上次打开的位置
+    augroup resCur
+        autocmd!
+        autocmd BufReadPost *
+                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                    \   call setpos(".", getpos("'\"")) |
+                    \ endif
+    augroup END
+
+    " 定制配置字符的颜色
+    augroup CustomMatch
+        autocmd!
+        " 标记代码中未被用作缩进的制表符
+        autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
+    augroup END
+
+    " 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
+    augroup HightlightActiveWindow
+        autocmd!
+        autocmd BufWinEnter *
+                    \ let w:old_colorlumn=&l:colorcolumn |
+                    \ if argc() < 2 |
+                    \   setlocal cursorline |
+                    \ endif
+        autocmd WinEnter *
+                    \ setlocal cursorline |
+                    \ if exists("w:old_colorlumn") |
+                    \   let &l:colorcolumn=w:old_colorlumn |
+                    \ endif
+        autocmd WinLeave *
+                    \ setlocal nocursorline |
+                    \ let &l:colorcolumn=0
+    augroup END
+
+    augroup AutoSourceVimrc
+        autocmd!
+        autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
+    augroup END
+
     augroup autoFileHead
         autocmd!
-        " 新建.c,.h,.sh,.java.rs,.lua文件，自动插入文件头
-        autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
-                    \   exec ":call SetTitle()"
-        autocmd BufNewFile *.pu,*.uml,*.plantuml exec ":call SetTitle()"
-        " 新建文件后，自动定位到文件末尾
-        autocmd BufNewFile *.[ch]pp,*.cc,*.[ch],*.py,*.sh,*.java,*.rs,*.lua
-                    \   normal G
-        autocmd BufNewFile *.pu,*.uml,*.plantuml normal 2G
-        nnoremap <leader>nv :call NewVersion()<Left>
+        " 新建文件时，识别支持的文件自动加入文件头
+        autocmd BufNewFile * call AddFileTitle()
     augroup END
 endif
 
