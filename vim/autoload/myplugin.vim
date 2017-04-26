@@ -506,7 +506,8 @@ Plug 'itchyny/vim-cursorword'
 
 " 2.4 语法检测
 " ----------
-if version < 800 && !has('nvim')
+if !(has('timers') && exists('*job_start') && exists('*ch_close_in')) " Vim8
+            \  && !(has('nvim') && has('timers')) " NeoVim >= 0.1.5
     Plug 'scrooloose/Syntastic'
     " {{{
     let g:syntastic_check_on_open             = 1
@@ -663,14 +664,14 @@ function! AutoWrapWithText() abort
         " 设置换行
         setlocal textwidth=78
         " 79行有错误提示
-        setlocal colorcolumn=+1
+        setlocal colorcolumn=79
         " 添加拼写检查
         setlocal spell
         " 添加快捷键进行排版 + 格式纠错
         nmap <silent> <leader>gq :Pangu<cr>gggqG2<c-o>
     endif
 endfunction
-autocmd! BufWinEnter * call AutoWrapWithText()
+autocmd! BufWinEnter * :call AutoWrapWithText()
 " }}}
 
 " 2.7 Operating
