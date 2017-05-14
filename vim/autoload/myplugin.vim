@@ -206,12 +206,21 @@ endfunction
 Plug 'mhinz/vim-startify', { 'on': 'Startify' }
 " {{{
 let g:startify_custom_header = [
-            \ '     @@@@  @@@@',
-            \ '      @@  @@@  @@@  @@@a.a@@a.a@@.',
-            \ '      @@ @@@        @@@@@@@@@@@@@',
-            \ '      @@a@@    @@@  ,@@ ,@@  ,@@@',
-            \ '      @@@`     @@@  @@@ @@@  @@@@@'
+            \ '@@@@   @@@@',
+            \ ' @@   @@@   @@    @@@@a.a@@a.a@@.',
+            \ ' @@  @@@           @@@@@@@@@@@@@@',
+            \ ' @@ @@@    `@@     @@   @@   @@@',
+            \ ' @@a@@      @@   ,@@  ,@@  ,@@@',
+            \ ' @@@`      @@@@  @@@  @@@  @@@@@'
             \ ]
+function! s:filter_header(lines) abort
+    let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
+    let l:winwidth     = winwidth("$")
+    let centered_lines = map(copy(a:lines),
+                \ 'repeat(" ", (&columns / 2) - longest_line ) . v:val')
+    return centered_lines
+endfunction
+let g:startify_custom_header = s:filter_header(g:startify_custom_header)
 " }}}
 
 " 文件夹导航
@@ -257,7 +266,7 @@ let g:NERDTreeIndicatorMapCustom = {
 " }}}
 
 " tagbar
-Plug 'Tagbar', { 'on': ['TagbarToggle', 'TagbarOpen'] }
+Plug 'majutsushi/tagbar', { 'on': ['TagbarToggle', 'TagbarOpen'] }
 " {{{
 let g:tagbar_width     = 30
 if exists("g:ctags_bin")
@@ -304,6 +313,15 @@ let g:tagbar_type_cpp = {
 \ }
 " }}}
 
+" Buffer view
+Plug 'jeetsukumaran/vim-buffergator'
+" {{{
+"let g:buffergator_autodismiss_on_select = 0
+let g:buffergator_autoupdate            = 1
+let g:buffergator_vsplit_size           = 30
+let g:buffergator_suppress_keymaps      = 1
+" }}}
+
 " 显示当前文件跟仓库的差异
 Plug 'mhinz/vim-signify'
 " {{{
@@ -319,16 +337,16 @@ Plug 'vim-scripts/ZoomWin'
 " -----
 " 启动 vim 时启用的插件
 function! VimEnterDealArgument() abort "{{{
-    if !argc() || isdirectory(argv(0))
-        if exists(":Startify")
-            Startify
-        endif
+    if !argc() || isdirectory(argv()[0])
         if exists(":NERDTree")
-            NERDTree
+            exe 'NERDTree '.expand(!argc()?'':isdirectory(argv()[0])?argv()[0]:'')
             setlocal nocursorline
             wincmd p
-            setlocal cursorline
-            setlocal colorcolumn=+1,+21
+            ene
+        endif
+        if exists(":Startify")
+            Startify
+            nnoremap <buffer> q :qa<cr>
         endif
     endif
 endfunction
@@ -355,14 +373,15 @@ function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
     endif
     let s:nerdtree_open = (bufwinnr('NERD_tree')  != -1)
     let s:tagbar_open   = (bufwinnr('__Tagbar__') != -1)
-    let s:winheight     = winheight(0)
+    let s:height        = &lines
     let s:winwidth      = g:tagbar_width
     if s:nerdtree_open && s:tagbar_open
+        NERDTreeFocus
         wincmd K
         wincmd b
         wincmd L
-        wincmd h
-        exe 'resize '.(s:winheight * 3 / 10)
+        NERDTreeFocus
+        exe 'resize '.(s:height * 3 / 10)
         exe 'vertical resize '.(s:winwidth)
     endif
 endfunction
@@ -375,12 +394,52 @@ nnoremap <leader>nt :call ToggleNERDTreeAndTagbar('nerdtree')<cr>
 
 " 2.2 File Type
 " ----------
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+Plug 'gabrielelana/vim-markdown', { 'for': 'markdown' }
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
 " Plantuml
 Plug 'aklt/plantuml-syntax', { 'for': ['pu', 'uml', 'plantuml'] }
+" {{{
+let g:plantuml_path = ''
+function! Uml2png() abort
+    call system('java -version')
+    if v:shell_error != 0
+        echomsg string("No java execute found!")
+        return
+    endif
+
+    if empty(g:plantuml_path)
+        let g:plantuml_path = g:plug_home."/vim-slumlord/plantuml.jar"
+    endif
+    if empty(glob(g:plantuml_path))
+        echomsg string("No plantuml.jar found!")
+        return
+    endif
+
+    let l:file_name = expand("%:p")
+    let l:jar_path  = g:plantuml_path
+    if has("win32unix") || has("win64unix")
+        let l:file_name = substitute(system('cygpath -w "'.l:file_name.'"'), "\n", '', '')
+        let l:jar_path  = substitute(system('cygpath -w "'.l:jar_path.'"'), "\n", '', '')
+    endif
+
+    let l:cmd = 'java -jar "'.l:jar_path.'" -charset utf-8 "'.l:file_name.'"'
+    if exists("*jobstart")
+        call jobstart(cmd, "in_io": "null", "out_io": "null", "error_io", "null")
+    else
+        call system(cmd)
+    endif
+endfunction
+nmap <silent> <leader>cup :call Uml2png()<cr>
+" }}}
 Plug 'scrooloose/vim-slumlord', { 'for': ['pu', 'uml', 'plantuml'] }
+" {{{
+let g:slumlord_au_created = 0
+nmap <silent> <leader>cut :if exists("*jobstart") \|
+            \   call slumlord#updatePreview({}) \|
+            \ endif \|
+            \ call slumlord#updatePreview({'write': 1})<cr><cr>
+" }}}
 
 " H 文件
 Plug 'vim-scripts/a.vim'
@@ -397,6 +456,7 @@ let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 1
 let g:neocomplete#lock_buffer_name_pattern          = '\*ku\*'
+let g:neocomplete#sources#tags#cache_limit_size     = 50000000
 
 " Define dictionary.
 let g:neocomplete#sources#dictionary#dictionaries = {
@@ -653,11 +713,11 @@ Plug 'hotoo/pangu.vim', { 'for': ['markdown', 'text', 'wiki', 'cnx'] }
 " 对文本文档进行自动换行
 function! AutoWrapWithText() abort
     if &filetype == 'markdown' || &filetype == 'text'
-        if &filetype == 'markdown'
-            setlocal comments=fb:*,fb:-,fb:+,n:>
-            setlocal commentstring=<!--%s-->
-            setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:
-        endif
+"        if &filetype == 'markdown'
+"            setlocal comments=fb:*,fb:-,fb:+,n:>
+"            setlocal commentstring=<!--%s-->
+"            setlocal formatlistpat=^\\s*\\d\\+\\.\\s\\+\\\|^[-*+]\\s\\+\\\|^\\[^\\ze[^\\]]\\+\\]:
+"        endif
         " 中文字符适应 textwidth 换行
         setlocal formatoptions+=tcqlnMm
         setlocal formatoptions-=ro
@@ -723,6 +783,10 @@ endfunction
 noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 " }}}
 
+" 替换可视化 & tab 自动选择
+Plug 'osyo-manga/vim-over', { 'on': 'OverCommandLine' }
+nnoremap <leader>co :OverCommandLine<cr>:%s/
+
 " 重复操作
 Plug 'tpope/vim-repeat'
 
@@ -737,7 +801,7 @@ vmap V <Plug>(expand_region_shrink)
 Plug 't9md/vim-choosewin'
 " {{{
 " Like tmux，"perfix + q" to show windows number, vim's prefix is <C-w>
-nmap <c-w>q <Plug>(choosewin)
+nmap <c-w><c-w> <Plug>(choosewin)
 " }}}
 
 " 2.8 Other tools
@@ -745,14 +809,18 @@ nmap <c-w>q <Plug>(choosewin)
 " 文件搜索
 "Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
+" vimproc
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+
 " Git Plugin
 " -----
-Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 Plug 'cohama/agit.vim', { 'on': ['Agit'] }
+Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 " {{{
+nmap <leader>cag :Agit<cr>
 " gina
-nmap <leader>gst :Gina<space>status<cr>
-nmap <leader>gci :Gina<space>commit<cr>
+nmap <leader>cgs :Gina<space>status<cr>
+nmap <leader>cgc :Gina<space>commit<cr>
 " agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
@@ -773,13 +841,14 @@ let g:ctrlsf_mapping       = {
 nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
 " }}}
 
-" Man 手册，:Man Keyword 触发
+" Man 手册，:Man Keyword 触发 {{{
 if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
     so $VIMRUNTIME/ftplugin/man.vim
 else
     Plug 'idbrii/vim-man', { 'on': 'Man' }
 endif
-nmap <leader>man :Man <c-r>=expand("<cword>")<cr>
+nmap <leader>cm :Man <c-r>=expand("<cword>")<cr>
+" }}}
 
 " 3. END
 " ==========
