@@ -388,9 +388,9 @@ endfunction
 " }}}
 
 " Toggle Tagbar
-nnoremap <leader>tb :call ToggleNERDTreeAndTagbar('tagbar')<cr>
+nmap <leader>tb :call ToggleNERDTreeAndTagbar('tagbar')<cr>
 " Toggle NERDTree
-nnoremap <leader>nt :call ToggleNERDTreeAndTagbar('nerdtree')<cr>
+nmap <leader>nt :call ToggleNERDTreeAndTagbar('nerdtree')<cr>
 
 " 2.2 File Type
 " ----------
@@ -430,12 +430,12 @@ function! Uml2png() abort
         call system(cmd)
     endif
 endfunction
-nmap <silent> <leader>cup :call Uml2png()<cr>
+nmap <silent> <leader>utp :call Uml2png()<cr>
 " }}}
 Plug 'scrooloose/vim-slumlord', { 'for': ['pu', 'uml', 'plantuml'] }
 " {{{
 let g:slumlord_au_created = 0
-nmap <silent> <leader>cut :if exists("*jobstart") \|
+nmap <silent> <leader>utt :if exists("*jobstart") \|
             \   call slumlord#updatePreview({}) \|
             \ endif \|
             \ call slumlord#updatePreview({'write': 1})<cr><cr>
@@ -607,9 +607,9 @@ if !(has('timers') && exists('*job_start') && exists('*ch_close_in')) " Vim8
         endif
     endfunction
     " Keyword
-    nnoremap <leader>sl :call ToggleErrors()<cr>
-    nnoremap <leader>sp :lprevious<cr>
-    nnoremap <leader>sn :lnext<cr>
+    nmap <leader>sl :call ToggleErrors()<cr>
+    nmap <leader>sp :lprevious<cr>
+    nmap <leader>sn :lnext<cr>
     " }}}
 else
     Plug 'w0rp/ale'
@@ -665,9 +665,9 @@ else
         autocmd User ALELint call Update_light()
     augroup END
     " Keyword
-    nnoremap <silent> <leader>sl :call ToggleErrors()<cr>
-    nnoremap <silent> <leader>sp <Plug>(ale_previous_wrap)
-    nnoremap <silent> <leader>sn <Plug>(ale_next_wrap)
+    nmap <silent> <leader>sl :call ToggleErrors()<cr>
+    nmap <silent> <leader>sp <Plug>(ale_previous_wrap)
+    nmap <silent> <leader>sn <Plug>(ale_next_wrap)
     " }}}
 endif
 
@@ -675,7 +675,7 @@ endif
 " ----------
 Plug 'Shougo/denite.nvim'
 " {{{
-nnoremap <leader>d :Denite<space>
+nmap <leader>dt :Denite<space>
 " }}}
 
 " 2.6 Code Formatting
@@ -683,13 +683,15 @@ nnoremap <leader>d :Denite<space>
 " 快速对齐
 Plug 'junegunn/vim-easy-align'
 " {{{
-vmap <leader>a <Plug>(EasyAlign)
+xmap <leader>ga <Plug>(EasyAlign)
+nmap <leader>ga <Plug>(EasyAlign)
+vmap <leader>ga <Plug>(EasyAlign)
 " }}}
 
 " 末尾空格
 Plug 'bronson/vim-trailing-whitespace'
 " {{{
-nnoremap <leader>d<space> :FixWhitespace<cr>
+nmap <leader>d<space> :FixWhitespace<cr>
 " }}}
 
 " 自动补全成对符号
@@ -785,7 +787,8 @@ noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 
 " 替换可视化 & tab 自动选择
 Plug 'osyo-manga/vim-over', { 'on': 'OverCommandLine' }
-nnoremap <leader>co :OverCommandLine<cr>:%s/
+nmap <leader>co  :OverCommandLine<cr>
+nmap <leader>cos :OverCommandLine<cr>:%s/
 
 " 重复操作
 Plug 'tpope/vim-repeat'
@@ -817,10 +820,10 @@ Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'cohama/agit.vim', { 'on': ['Agit'] }
 Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 " {{{
-nmap <leader>cag :Agit<cr>
+nmap <leader>ga :Agit<cr>
 " gina
-nmap <leader>cgs :Gina<space>status<cr>
-nmap <leader>cgc :Gina<space>commit<cr>
+nmap <leader>gst :Gina<space>status<cr>
+nmap <leader>gci :Gina<space>commit<cr>
 " agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
@@ -847,7 +850,7 @@ if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
 else
     Plug 'idbrii/vim-man', { 'on': 'Man' }
 endif
-nmap <leader>cm :Man <c-r>=expand("<cword>")<cr>
+nmap <leader>man :Man <c-r>=expand("<cword>")<cr>
 " }}}
 
 " 3. END
