@@ -110,13 +110,14 @@ let g:lightline = {
             \ },
             \ 'inactive': {
             \   'left': [ ['filename'] ],
-            \   'right': [  ],
+            \   'right': [ ['path'] ],
             \ },
             \ 'component_function': {
             \   'mode':         'LightlineMode',
             \   'readonly':     'LightlineReadonly',
             \   'fugitive':     'LightlineFugitive',
             \   'modified':     'LightlineModified',
+            \   'path':         'LightlinePath',
             \   'filename':     'LightlineFilename',
             \   'syntastic':    'LightlineSyntastic',
             \   'lineinfo':     'LightlineLineInfo',
@@ -154,6 +155,10 @@ function! LightlineFilename()
         \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
         \ ('' != fname ? fname : '[No Name]') .
         \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+endfunction
+
+function! LightlinePath() abort
+    return winwidth(0) > 60 ? expand('%:p:h') : ''
 endfunction
 
 function! LightlineFugitive()
@@ -314,12 +319,15 @@ let g:tagbar_type_cpp = {
 " }}}
 
 " Buffer view
-Plug 'jeetsukumaran/vim-buffergator'
+Plug 'jeetsukumaran/vim-buffergator', { 'on': ['BuffergatorOpen', 'BuffergatorTabsOpen'] }
 " {{{
-"let g:buffergator_autodismiss_on_select = 0
-let g:buffergator_autoupdate            = 1
+let g:buffergator_viewport_split_policy = 'T'
+let g:buffergator_split_size            = 5
 let g:buffergator_vsplit_size           = 30
-let g:buffergator_suppress_keymaps      = 1
+let g:buffergator_autodismiss_on_select = 1
+let g:buffergator_autoupdate            = 1
+
+nnoremap <leader>bf BuffergatorOpen<cr>
 " }}}
 
 " 显示当前文件跟仓库的差异
@@ -358,31 +366,35 @@ augroup END
 
 " Deal with NERDTree and Tagbar like this
 " +-----------+-------------+
-" | NERDTree  |             |
+" | Tagbar    |             |
 " | contents  |             |
 " +-----------+    File     |
-" | Tagbar    |             |
+" | NERDTree  |             |
 " | contents  |             |
 " +-----------+-------------+
 function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
-    if a:plugin == 'nerdtree' && exists(':NERDTree')
-        NERDTreeToggle
-    endif
-    if a:plugin == 'tagbar' && exists(':TagbarToggle')
-        TagbarToggle
-    endif
+    let s:plugin        = a:plugin
+    let s:height        = &lines
     let s:nerdtree_open = (bufwinnr('NERD_tree')  != -1)
     let s:tagbar_open   = (bufwinnr('__Tagbar__') != -1)
-    let s:height        = &lines
-    let s:winwidth      = g:tagbar_width
-    if s:nerdtree_open && s:tagbar_open
-        NERDTreeFocus
-        wincmd K
-        wincmd b
-        wincmd L
-        NERDTreeFocus
-        exe 'resize '.(s:height * 3 / 10)
-        exe 'vertical resize '.(s:winwidth)
+    if s:plugin == 'nerdtree' && exists(':NERDTree')
+        if !s:nerdtree_open && s:tagbar_open
+            let s:plugin = 'tagbar'
+            TagbarClose
+        endif
+        NERDTreeToggle
+        let s:nerdtree_open = 1
+    endif
+    if s:plugin == 'tagbar' && exists(':TagbarToggle')
+        if s:nerdtree_open
+            let g:tagbar_vertical = s:height * 6 / 10
+            NERDTreeFocus
+        endif
+        TagbarToggle
+        if s:nerdtree_open
+            let g:tagbar_vertical = 0
+            NERDTreeFocusToggle
+        endif
     endif
 endfunction
 " }}}
@@ -430,12 +442,12 @@ function! Uml2png() abort
         call system(cmd)
     endif
 endfunction
-nmap <silent> <leader>cup :call Uml2png()<cr>
+nmap <silent> <leader>ctp :call Uml2png()<cr>
 " }}}
 Plug 'scrooloose/vim-slumlord', { 'for': ['pu', 'uml', 'plantuml'] }
 " {{{
 let g:slumlord_au_created = 0
-nmap <silent> <leader>cut :if exists("*jobstart") \|
+nmap <silent> <leader>ctt :if exists("*jobstart") \|
             \   call slumlord#updatePreview({}) \|
             \ endif \|
             \ call slumlord#updatePreview({'write': 1})<cr><cr>
@@ -683,7 +695,7 @@ nnoremap <leader>d :Denite<space>
 " 快速对齐
 Plug 'junegunn/vim-easy-align'
 " {{{
-vmap <leader>a <Plug>(EasyAlign)
+vmap <leader>ga <Plug>(EasyAlign)
 " }}}
 
 " 末尾空格
@@ -785,7 +797,9 @@ noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 
 " 替换可视化 & tab 自动选择
 Plug 'osyo-manga/vim-over', { 'on': 'OverCommandLine' }
-nnoremap <leader>co :OverCommandLine<cr>:%s/
+" {{{
+nnoremap <leader>ocl :OverCommandLine<cr>:%s/
+" }}}
 
 " 重复操作
 Plug 'tpope/vim-repeat'
@@ -798,10 +812,11 @@ vmap V <Plug>(expand_region_shrink)
 " }}}
 
 " 选择窗口
-Plug 't9md/vim-choosewin'
+Plug 't9md/vim-choosewin', { 'on': 'ChooseWin' }
 " {{{
-" Like tmux，"perfix + q" to show windows number, vim's prefix is <C-w>
-nmap <c-w><c-w> <Plug>(choosewin)
+" rebind <c-w><c-w>
+nnoremap <expr><silent> <c-w><c-w> winnr('$') < 3 ?
+            \   ':wincmd p<cr>' : ':ChooseWin<cr>'
 " }}}
 
 " 2.8 Other tools
@@ -817,13 +832,13 @@ Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'cohama/agit.vim', { 'on': ['Agit'] }
 Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 " {{{
-nmap <leader>cag :Agit<cr>
 " gina
-nmap <leader>cgs :Gina<space>status<cr>
-nmap <leader>cgc :Gina<space>commit<cr>
+nmap <leader>gst :Gina<space>status<cr>
+nmap <leader>gcm :Gina<space>commit<cr>
 " agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
+nmap <leader>agit :Agit<cr>
 " }}}
 
 " 关键词搜索
@@ -847,7 +862,7 @@ if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
 else
     Plug 'idbrii/vim-man', { 'on': 'Man' }
 endif
-nmap <leader>cm :Man <c-r>=expand("<cword>")<cr>
+nmap <leader>man :Man <c-r>=expand("<cword>")<cr>
 " }}}
 
 " 3. END
