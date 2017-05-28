@@ -146,8 +146,8 @@ endfunction
 
 function! LightlineFilename()
     let fname = expand('%:t')
-      return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
-        \ fname == '__Tagbar__' ? has_key(g:lightline, 'fname') ? g:lightline.fname : 'Tagbar' :
+      return fname =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
+        \ fname =~ '__Tagbar__' ? has_key(g:lightline, 'fname') ? g:lightline.fname : 'Tagbar' :
         \ fname =~ '__Gundo\|NERD_tree' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
@@ -195,10 +195,10 @@ endfunction
 
 function! LightlineMode()
     let fname = expand('%:t')
-    return fname == '__Tagbar__' ? 'Tagbar' :
-                \ fname == 'ControlP' ? 'CtrlP' :
-                \ fname == '__Gundo__' ? 'Gundo' :
-                \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+    return fname =~ '__Tagbar__' ? 'Tagbar' :
+                \ fname =~ 'ControlP' ? 'CtrlP' :
+                \ fname =~ '__Gundo__' ? 'Gundo' :
+                \ fname =~ '__Gundo_Preview__' ? 'Gundo Preview' :
                 \ fname =~ 'NERD_tree' ? 'NERDTree' :
                 \ &ft == 'unite' ? 'Unite' :
                 \ &ft == 'vimfiler' ? 'VimFiler' :
@@ -387,7 +387,7 @@ function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
     endif
     if s:plugin == 'tagbar' && exists(':TagbarToggle')
         if s:nerdtree_open
-            let g:tagbar_vertical = s:height * 6 / 10
+            let g:tagbar_vertical = s:height * 4 / 10
             NERDTreeFocus
         endif
         TagbarToggle
