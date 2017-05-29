@@ -468,8 +468,8 @@ if has("autocmd")
     augroup resCur
         autocmd!
         autocmd BufReadPost *
-                    \ if line("'\"") > 0 && line("'\"") <= line("$") |
-                    \   call setpos(".", getpos("'\"")) |
+                    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+                    \   exec "normal! g`\""|
                     \ endif
     augroup END
 
