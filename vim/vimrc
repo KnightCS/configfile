@@ -45,16 +45,16 @@
 
 " 1.0 全局变量设置
 " ----------
-let mapleader = ';'
+let g:mapleader = ';'
 
 " 1.1
 " ----------
 " 不强制兼容vi
-set nocompatible
+"set nocompatible
 " 启动的时候不显示那个援助索马里儿童的提示
 set shortmess=atl
 " 去掉输入错误的提示声音
-set noeb
+set noerrorbells
 
 " history文件中需要记录的行数
 set history=1000
@@ -117,15 +117,15 @@ set termencoding=utf-8
 " 设定默认解码
 set fileencodings=ucs-bom,utf-8,cp936
 set fileencoding=utf-8
-set fenc=utf-8
-set fencs=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1s
+set fileencoding=utf-8
+set fileencodings=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1s
 
 " 2. 显示
 " ==========
 
 " 2.1 显示中文帮助
 " ----------
-if version >= 603
+if v:version >= 603
     set helplang=cn
 endif
 
@@ -133,7 +133,7 @@ endif
 " ----------
 if has('gui_running')
     " 去掉边框
-    set go=
+    set guioptions=
     " 隐藏工具栏
     set guioptions-=T
     " 隐藏菜单栏
@@ -162,7 +162,7 @@ set lazyredraw
 
 " 使用desert主题
 colorscheme desert
-if g:colors_name == "desert" && !&termguicolors
+if g:colors_name ==# 'desert' && !&termguicolors
     " diff
     hi! DiffAdd    ctermbg=022
     hi! DiffText   ctermbg=094
@@ -333,25 +333,34 @@ set gdefault
 
 " 4. Tags
 " ==========
-let g:ctags_bin = substitute(system('which ctags'), '\n', '', '')
-if g:ctags_bin !~ "ctags$"
-    let g:ctags_bin = ""
-endif
 set tags+=./tags;
 
 " 5. Load My Vim Plugin
 " ==========
-if !empty(glob("~/.vim/autoload/myplugin.vim"))
+if !empty(glob('~/.vim/autoload/myplugin.vim'))
     silent! call myplugin#begin()
 endif
 
 " 6. 自定义函数
 " ==========
-" - c、c++、java、python、bash、lua、rust等文件自动添加文件头
-" ----------
 
 ""
-" @brief  插入文件头
+" @brief     获取外部可执行程序
+"
+" @param[in] 程序名
+"
+" @return    NULL，会定义“g:name_bin”全局变量
+"
+function! GetExternalBinary(name) abort
+    let l:bin = system('which '.a:name)
+    if v:shell_error == 0
+        let l:bin = substitute(l:bin, '\n', '', '')
+        exec 'let g:'.a:name.'_bin = "'.l:bin.'"'
+    endif
+endfunction
+
+""
+" @brief  c/c++/java/python/bash/lua/rust等文件插入文件头
 "
 " @return NULL
 "
@@ -361,60 +370,60 @@ function! AddFileTitle()
         return
     endif
 
-    let l:file_name   = expand("%:r")
-    let l:user_name   = "KnightCS"
-    let l:user_email  = ""
+    let l:file_name   = expand('%:r')
+    let l:user_name   = 'KnightCS'
+    let l:user_email  = ''
     let l:user        = l:user_name . ' (' . l:user_email . ')'
-    let l:create_time = strftime("%Y-%m-%d %H:%M:%S")
+    let l:create_time = strftime('%Y-%m-%d %H:%M:%S')
 
-    if &filetype == 'sh'
-        call setline(1,          "\#!/bin/bash")
-        call append(line("."),   "\# >File Name   : ".l:file_name)
-        call append(line(".")+1, "\# >Author      : ".l:user)
-        call append(line(".")+2, "\# >Description :")
-        call append(line(".")+3, "\# >#############")
-        call append(line(".")+4, "\# > version 1.0: ".l:create_time)
-        call append(line(".")+5, "\#       >")
-        call append(line(".")+6, "")
+    if &filetype ==# 'sh'
+        call setline(1,          '#!/bin/bash')
+        call append(line('.'),   '# >File Name   : '.l:file_name)
+        call append(line('.')+1, '# >Author      : '.l:user)
+        call append(line('.')+2, '# >Description :')
+        call append(line('.')+3, '# >#############')
+        call append(line('.')+4, '# > version 1.0: '.l:create_time)
+        call append(line('.')+5, '#       >')
+        call append(line('.')+6, '')
         normal! G
-    elseif &filetype == 'python'
-        call setline(1,          "\#!/usr/bin/python")
-        call append(line("."),   "\# -*- coding: UTF-8 -*-")
-        call append(line(".")+1, "\# >File Name   : ".l:file_name)
-        call append(line(".")+2, "\# >Author      : ".l:user)
-        call append(line(".")+3, "\# >Description :")
-        call append(line(".")+4, "\# >#############")
-        call append(line(".")+5, "\# > version 1.0: ".l:create_time)
-        call append(line(".")+6, "\#       >")
-        call append(line(".")+7, "")
-        call append(line(".")+8, "if __name__ == '__main__':")
-        call append(line(".")+9, "    pass")
+    elseif &filetype ==# 'python'
+        call setline(1,          '#!/usr/bin/python')
+        call append(line('.'),   '# -*- coding: UTF-8 -*-')
+        call append(line('.')+1, '# >File Name   : '.l:file_name)
+        call append(line('.')+2, '# >Author      : '.l:user)
+        call append(line('.')+3, '# >Description :')
+        call append(line('.')+4, '# >#############')
+        call append(line('.')+5, '# > version 1.0: '.l:create_time)
+        call append(line('.')+6, '#       >')
+        call append(line('.')+7, '')
+        call append(line('.')+8, 'if __name__ == "__main__":')
+        call append(line('.')+9, '    pass')
         normal! 9G
-    elseif &filetype == 'lua'
-        call setline(1,          "\#!/usr/bin/lua")
-        call append(line("."),   "-- >File Name   : ".l:file_name)
-        call append(line(".")+1, "-- >Author      : ".l:user)
-        call append(line(".")+2, "-- >Description :")
-        call append(line(".")+3, "-- >-------------")
-        call append(line(".")+4, "-- > version 1.0: ".l:create_time)
-        call append(line(".")+5, "--      >")
-        call append(line(".")+6, "")
+    elseif &filetype ==# 'lua'
+        call setline(1,          '#!/usr/bin/lua')
+        call append(line('.'),   '-- >File Name   : '.l:file_name)
+        call append(line('.')+1, '-- >Author      : '.l:user)
+        call append(line('.')+2, '-- >Description :')
+        call append(line('.')+3, '-- >-------------')
+        call append(line('.')+4, '-- > version 1.0: '.l:create_time)
+        call append(line('.')+5, '--      >')
+        call append(line('.')+6, '')
         normal! G
-    elseif &filetype == 'plantuml'
-        call setline(1,          "@startuml")
-        call append(line("."),   "")
-        call append(line(".")+1, "@enduml")
+    elseif &filetype ==# 'plantuml'
+        call setline(1,          '@startuml')
+        call append(line('.'),   '')
+        call append(line('.')+1, '@enduml')
         normal! 2G
     else
-        call setline(1,          "\/**")
-        call append(line("."),   " * File Name   : ".l:file_name)
-        call append(line(".")+1, " * Author      : ".l:user)
-        call append(line(".")+2, " * Description :")
-        call append(line(".")+3, " * *************")
-        call append(line(".")+4, " *  version 1.0: ".l:create_time)
-        call append(line(".")+5, " *      >")
-        call append(line(".")+6, " **/")
-        call append(line(".")+7, "")
+        call setline(1,          '/**')
+        call append(line('.'),   ' * File Name   : '.l:file_name)
+        call append(line('.')+1, ' * Author      : '.l:user)
+        call append(line('.')+2, ' * Description :')
+        call append(line('.')+3, ' * *************')
+        call append(line('.')+4, ' *  version 1.0: '.l:create_time)
+        call append(line('.')+5, ' *      >')
+        call append(line('.')+6, ' **/')
+        call append(line('.')+7, '')
         normal! G
     endif
 endfun
@@ -438,32 +447,32 @@ function! NewVersion(var)
             return
     endif
 
-    let l:create_time = strftime("%Y-%m-%d %H:%M:%S")
-    if &filetype == 'sh'
-        call append(5, "\# > version " . string(a:var) . ": " . l:create_time)
-        call append(6, "\#       >" )
-        call append(7, "\# >#############")
+    let l:create_time = strftime('%Y-%m-%d %H:%M:%S')
+    if &filetype ==# 'sh'
+        call append(5, '\# > version ' . string(a:var) . ': ' . l:create_time)
+        call append(6, '\#       >' )
+        call append(7, '\# >#############')
         normal! 7G$
-    elseif &filetype == 'python'
-        call append(6, "\# > version " . string(a:var) . ": " . l:create_time)
-        call append(7, "\#       >" )
-        call append(8, "\# >#############")
+    elseif &filetype ==# 'python'
+        call append(6, '\# > version ' . string(a:var) . ': ' . l:create_time)
+        call append(7, '\#       >' )
+        call append(8, '\# >#############')
         normal! 8G$
-    elseif &filetype == 'lua'
-        call append(4, "-- >-------------")
-        call append(5, "-- > version " . string(a:var) . ": " . l:create_time)
-        call append(6, "--      >")
+    elseif &filetype ==# 'lua'
+        call append(4, '-- >-------------')
+        call append(5, '-- > version ' . string(a:var) . ': ' . l:create_time)
+        call append(6, '--      >')
         normal! 7G$
     else
-        call append(5, " *  version " . string(a:var) . ": " . l:create_time)
-        call append(6, " *      >" )
-        call append(7, " * *************")
+        call append(5, ' *  version ' . string(a:var) . ': ' . l:create_time)
+        call append(6, ' *      >' )
+        call append(7, ' * *************')
         normal! 7G$
     endif
 endfun
 nmap <leader>nv :call NewVersion()<Left>
 
-if has("autocmd")
+if has('autocmd')
     " 重新打开文件时，光标定位到上次打开的位置
     augroup resCur
         autocmd!
