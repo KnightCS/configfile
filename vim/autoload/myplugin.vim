@@ -87,7 +87,6 @@ function! myplugin#begin()
     if empty(glob('~/.vim/autoload/plug.vim'))
         silent !curl -s --connect-timeout 5 -fLo ~/.vim/autoload/plug.vim --create-dirs
                     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     endif
 endfunction
 call plug#begin('~/.vim/plugged')
@@ -144,24 +143,28 @@ let g:lightline = {
             \ }
 
 function! LightlineModified()
-    return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+    return &filetype =~? 'help\|vimfiler\|gundo' ?
+                \ '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
 
 function! LightlineReadonly()
-    return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? "\ue0a2" : ''
+    return &filetype !~? 'help\|vimfiler\|gundo' && &readonly ?
+                \ "\ue0a2" : ''
 endfunction
 
 function! LightlineFilename()
-    let fname = expand('%:t')
-      return fname =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
-        \ fname =~ '__Tagbar__' ? has_key(g:lightline, 'fname') ? g:lightline.fname : 'Tagbar' :
-        \ fname =~ '__Gundo\|NERD_tree' ? '' :
-        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \ &ft == 'unite' ? unite#get_status_string() :
-        \ &ft == 'vimshell' ? vimshell#get_status_string() :
-        \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-        \ ('' != fname ? fname : '[No Name]') .
-        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+    let l:fname = expand('%:t')
+    return l:fname =~? 'ControlP' && has_key(g:lightline, 'ctrlp_item') ?
+                \   g:lightline.ctrlp_item :
+                \ l:fname =~? '__Tagbar__' ? has_key(g:lightline, 'fname') ?
+                \   g:lightline.fname : 'Tagbar' :
+                \ l:fname =~? '__Gundo\|NERD_tree' ? '' :
+                \ &filetype ==? 'vimfiler' ? vimfiler#get_status_string():
+                \ &filetype ==? 'unite'    ? unite#get_status_string():
+                \ &filetype ==? 'vimshell' ? vimshell#get_status_string():
+                \ ('' !=# LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+                \ ('' !=# l:fname ? l:fname : '[No Name]') .
+                \ ('' !=# LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
 function! LightlinePath() abort
@@ -169,9 +172,9 @@ function! LightlinePath() abort
 endfunction
 
 function! LightlineFugitive()
-    if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
-        let branch = fugitive#head()
-        return branch !=# '' ? "\ue0a0 ".branch : ''
+    if &filetype !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+        let l:branch = fugitive#head()
+        return l:branch !=# '' ? "\ue0a0 ".l:branch : ''
     endif
     return ''
 endfunction
@@ -185,11 +188,12 @@ function! LightlineFiletype()
 endfunction
 
 function! LightlineFileencoding()
-    return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+    return winwidth(0) > 70 ? (&fileencoding !=# '' ?
+                \ &fileencoding : &encoding) : ''
 endfunction
 
 function! LightlineLineInfo() abort
-    return winwidth(0) > 35 ? printf(" %03d:%-2d", line('.'), col('.')) : ''
+    return winwidth(0) > 35 ? printf(' %03d:%-2d', line('.'), col('.')) : ''
 endfunction
 
 function! LightlinePercent() abort
@@ -201,22 +205,22 @@ function! LightlineSyntastic() abort
 endfunction
 
 function! LightlineMode()
-    let fname = expand('%:t')
-    return fname =~ '__Tagbar__' ? 'Tagbar' :
-                \ fname =~ 'ControlP' ? 'CtrlP' :
-                \ fname =~ '__Gundo__' ? 'Gundo' :
-                \ fname =~ '__Gundo_Preview__' ? 'Gundo Preview' :
-                \ fname =~ 'NERD_tree' ? 'NERDTree' :
-                \ &ft == 'unite' ? 'Unite' :
-                \ &ft == 'vimfiler' ? 'VimFiler' :
-                \ &ft == 'vimshell' ? 'VimShell' :
+    let l:fname = expand('%:t')
+    return l:fname =~# '__Tagbar__' ? 'Tagbar' :
+                \ l:fname =~# 'ControlP' ? 'CtrlP' :
+                \ l:fname =~# '__Gundo__' ? 'Gundo' :
+                \ l:fname =~# '__Gundo_Preview__' ? 'Gundo Preview' :
+                \ l:fname =~# 'NERD_tree' ? 'NERDTree' :
+                \ &filetype ==? 'unite' ? 'Unite' :
+                \ &filetype ==? 'vimfiler' ? 'VimFiler' :
+                \ &filetype ==? 'vimshell' ? 'VimShell' :
                 \ winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 
 " lightline-bufferline
 let g:lightline#bufferline#show_number = 2
-for i in range(1,10)
-    exec "nmap <leader>b".(i % 10)." <Plug>lightline#bufferline#go(".i.")"
+for s:i in range(1,10)
+    exec 'nmap <leader>b'.(s:i % 10).' <Plug>lightline#bufferline#go('.s:i.')'
 endfor
 " }}}
 
@@ -232,11 +236,11 @@ let g:startify_custom_header = [
             \ ' @@@`      @@@@  @@@  @@@  @@@@@'
             \ ]
 function! s:filter_header(lines) abort
-    let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
-    let l:winwidth     = winwidth("$")
-    let centered_lines = map(copy(a:lines),
-                \ 'repeat(" ", (&columns / 2) - longest_line ) . v:val')
-    return centered_lines
+    let l:longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
+    let l:winwidth       = winwidth('$')
+    let l:centered_lines = map(copy(a:lines),
+                \ 'repeat(" ", (&columns / 2) - l:longest_line ) . v:val')
+    return l:centered_lines
 endfunction
 let g:startify_custom_header = s:filter_header(g:startify_custom_header)
 " }}}
@@ -248,16 +252,16 @@ Plug 'vim-scripts/nerdtree-ack', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 Plug 'vim-scripts/nerdtree-execute', { 'on': [ 'NERDTreeToggle', 'NERDTree' ] }
 " {{{
-let NERDTreeAutoCenter            = 1
-let NERDTreeMinimalUI             = 1
-let NERDTreeShowHidden            = 0
+let g:NERDTreeAutoCenter          = 1
+let g:NERDTreeMinimalUI           = 1
+let g:NERDTreeShowHidden          = 0
 let g:NERDTreeDirArrowExpandable  = '➧'
 let g:NERDTreeDirArrowCollapsible = '☇'
-let NERDTreeAutoDeleteBuffer      = 1
-let NERDTreeWinSize               = 30
-let NERDTreeIgnore                = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$',
-            \ '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
+let g:NERDTreeAutoDeleteBuffer    = 1
+let g:NERDTreeWinSize             = 30
 let g:netrw_home                  = '~/.cache/nerdtree'
+let g:NERDTreeIgnore              = [ '\.pyc$', '\.pyo$', '\.obj$', '\.o$',
+            \ '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
 
 " nerdtree-ack
 " 给 nerdtree 增加搜索功能
@@ -268,15 +272,15 @@ let g:nerdtree_tabs_open_on_console_startup = 2
 " nerdtree-git-plugin
 let g:NERDTreeShowIgnoredStatus  = 1
 let g:NERDTreeIndicatorMapCustom = {
-            \ "Modified"  : "✹",
-            \ "Staged"    : "✚",
-            \ "Untracked" : "✭",
-            \ "Renamed"   : "➜",
-            \ "Unmerged"  : "═",
-            \ "Deleted"   : "✖",
-            \ "Dirty"     : "✗",
-            \ "Clean"     : "✔︎",
-            \ "Unknown"   : "?"
+            \ 'Modified'  : '✹',
+            \ 'Staged'    : '✚',
+            \ 'Untracked' : '✭',
+            \ 'Renamed'   : '➜',
+            \ 'Unmerged'  : '═',
+            \ 'Deleted'   : '✖',
+            \ 'Dirty'     : '✗',
+            \ 'Clean'     : '✔︎',
+            \ 'Unknown'   : '?'
             \ }
 
 " nerdtree-execute
@@ -286,12 +290,14 @@ let g:NERDTreeIndicatorMapCustom = {
 " tagbar
 Plug 'majutsushi/tagbar', { 'on': ['TagbarToggle', 'TagbarOpen'] }
 " {{{
-let g:tagbar_width     = 30
-if exists("g:ctags_bin")
+call GetExternalBinary('ctags')
+if exists('g:ctags_bin')
     let g:tagbar_ctags_bin = g:ctags_bin
 else
-    let g:tagbar_ctags_bin = '/usr/bin/ctags'
+    echom 'Did no find ctags, pleace install ctags first.'
 endif
+
+let g:tagbar_width     = 30
 let g:tagbar_left      = 1
 let g:tagbar_compact   = 1
 let g:tagbar_iconchars = ['➧', '☇']
@@ -331,18 +337,6 @@ let g:tagbar_type_cpp = {
 \ }
 " }}}
 
-" Buffer view
-Plug 'jeetsukumaran/vim-buffergator', { 'on': ['BuffergatorOpen', 'BuffergatorTabsOpen'] }
-" {{{
-let g:buffergator_viewport_split_policy = 'T'
-let g:buffergator_split_size            = 5
-let g:buffergator_vsplit_size           = 30
-let g:buffergator_autodismiss_on_select = 1
-let g:buffergator_autoupdate            = 1
-
-nnoremap <leader>bf BuffergatorOpen<cr>
-" }}}
-
 " 显示当前文件跟仓库的差异
 Plug 'mhinz/vim-signify'
 " {{{
@@ -359,13 +353,13 @@ Plug 'vim-scripts/ZoomWin'
 " 启动 vim 时启用的插件
 function! VimEnterDealArgument() abort "{{{
     if !argc() || isdirectory(argv()[0])
-        if exists(":NERDTree")
+        if exists(':NERDTree')
             exe 'NERDTree '.expand(!argc()?'':isdirectory(argv()[0])?argv()[0]:'')
             setlocal nocursorline
             wincmd p
             ene
         endif
-        if exists(":Startify")
+        if exists(':Startify')
             Startify
             nnoremap <buffer> q :qa<cr>
         endif
@@ -390,7 +384,7 @@ function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
     let s:height        = &lines
     let s:nerdtree_open = (bufwinnr('NERD_tree')  != -1)
     let s:tagbar_open   = (bufwinnr('__Tagbar__') != -1)
-    if s:plugin == 'nerdtree' && exists(':NERDTree')
+    if s:plugin ==# 'nerdtree' && exists(':NERDTree')
         if !s:nerdtree_open && s:tagbar_open
             let s:plugin = 'tagbar'
             TagbarClose
@@ -398,7 +392,7 @@ function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
         NERDTreeToggle
         let s:nerdtree_open = 1
     endif
-    if s:plugin == 'tagbar' && exists(':TagbarToggle')
+    if s:plugin ==# 'tagbar' && exists(':TagbarToggle')
         if s:nerdtree_open
             let g:tagbar_vertical = s:height * 4 / 10
             NERDTreeFocus
@@ -429,33 +423,33 @@ let g:plantuml_path = ''
 function! Uml2png() abort
     call system('java -version')
     if v:shell_error != 0
-        echomsg string("No java execute found!")
+        echomsg string('No java execute found!')
         return
     endif
 
     if empty(g:plantuml_path)
-        let g:plantuml_path = g:plug_home."/vim-slumlord/plantuml.jar"
+        let g:plantuml_path = g:plug_home.'/vim-slumlord/plantuml.jar'
     endif
     if empty(glob(g:plantuml_path))
-        echomsg string("No plantuml.jar found!")
+        echomsg string('No plantuml.jar found!')
         return
     endif
 
-    let l:file_name = expand("%:p")
+    let l:file_name = expand('%:p')
     let l:jar_path  = g:plantuml_path
-    if has("win32unix") || has("win64unix")
+    if has('win32unix') || has('win64unix')
         let l:file_name = substitute(system('cygpath -w "'.l:file_name.'"'), "\n", '', '')
         let l:jar_path  = substitute(system('cygpath -w "'.l:jar_path.'"'), "\n", '', '')
     endif
 
     let l:cmd = 'java -jar "'.l:jar_path.'" -charset utf-8 "'.l:file_name.'"'
-    if exists("*jobstart")
-        call jobstart(cmd, 
-                    \ {"in_io": "null",
-                    \ "out_io": "null",
-                    \ "error_io": "null"})
+    if exists('*jobstart')
+        call jobstart(l:cmd,
+                    \ {'in_io'   : 'null',
+                    \  'out_io'  : 'null',
+                    \  'error_io': 'null'})
     else
-        call system(cmd)
+        call system(l:cmd)
     endif
 endfunction
 nmap <silent> <leader>utp :call Uml2png()<cr>
@@ -557,9 +551,20 @@ inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
 
-" Complete whth c/c++
-let g:clang_bin = substitute(system('which clang'), '\n', '', '')
+" c/c++
+call GetExternalBinary('clang')
+if exists('g:clang_bin')
+    let g:completor_clang_binary = g:clang_bin
+endif
 
+" Python
+function! GetJediPath() abort
+    let l:path = system('pip show jedi | grep Location | cut -d" " -f2')
+    if v:shell_error == 0
+        let g:completor_python_binary = substitute(l:path, '\n', '', '').'jedi'
+    endif
+endfunction
+call GetJediPath()
 " }}}
 
 " 快速插入代码片段 & 代码片段配置
@@ -641,15 +646,15 @@ if !(has('timers') && exists('*job_start') && exists('*ch_close_in')) " Vim8
     let g:syntastic_php_checkers          = ['php', 'phpcs', 'phpmd']
     let g:syntastic_html_checkers         = ['tidy', 'jshint']
     let g:syntastic_shell_checkers        = ['shellcheck']
-    let g:syntastic_shell_shellcheck_args = "-x"
+    let g:syntastic_shell_shellcheck_args = '-x'
     " to see error location list
     let g:syntastic_always_populate_loc_list = 0
     let g:syntastic_auto_loc_list            = 0
     let g:syntastic_loc_list_height          = 5
     function! ToggleErrors()
-        let old_last_winnr = winnr('$')
+        let l:old_last_winnr = winnr('$')
         lclose
-        if old_last_winnr == winnr('$')
+        if l:old_last_winnr == winnr('$')
             " Nothing was closed, open syntastic error location panel
             Errors
         endif
@@ -676,13 +681,13 @@ else
     let g:ale_linters_sh_shellcheck_exclusions = '-x'
     let g:ale_error_location_hight = 5
     function! ToggleErrors()
-        let old_last_winnr = winnr('$')
+        let l:old_last_winnr = winnr('$')
         lclose
-        if old_last_winnr == winnr('$')
+        if l:old_last_winnr == winnr('$')
             " Nothing was closed, open ale error location panel
             silent! lopen
             if len(getloclist(0)) == 0
-                echomsg "No warning or error"
+                echomsg 'No warning or error'
                 return
             endif
             exec 'resize '.g:ale_error_location_hight
@@ -713,9 +718,9 @@ else
         autocmd User ALELint call Update_light()
     augroup END
     " Keyword
-    noremap <silent> <leader>sl :call ToggleErrors()<cr>
-    noremap <silent> <leader>sp <Plug>(ale_previous_wrap)
-    noremap <silent> <leader>sn <Plug>(ale_next_wrap)
+    nmap <silent> <leader>sl :call ToggleErrors()<cr>
+    nmap <silent> <leader>sp <Plug>(ale_previous_wrap)
+    nmap <silent> <leader>sn <Plug>(ale_next_wrap)
     " }}}
 endif
 
@@ -762,7 +767,7 @@ Plug 'hotoo/pangu.vim', { 'for': ['markdown', 'text', 'wiki', 'cnx'] }
 " {{{
 " 对文本文档进行自动换行
 function! AutoWrapWithText() abort
-    if &filetype == 'markdown' || &filetype == 'text'
+    if &filetype ==# 'markdown' || &filetype ==# 'text'
 "        if &filetype == 'markdown'
 "            setlocal comments=fb:*,fb:-,fb:+,n:>
 "            setlocal commentstring=<!--%s-->
@@ -888,19 +893,15 @@ let g:ctrlsf_regex_pattern = 1
 let g:ctrlsf_position      = 'bottom'
 let g:ctrlsf_winsize       = '40%'
 let g:ctrlsf_mapping       = {
-    \ "next": "n",
-    \ "prev": "N",
+    \ 'next': 'n',
+    \ 'prev': 'N',
    \ }
 " 搜索当前词
 nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
 " }}}
 
 " Man 手册，:Man Keyword 触发 {{{
-if !empty(glob("$VIMRUNTIME/ftplugin/man.vim"))
-    so $VIMRUNTIME/ftplugin/man.vim
-else
-    Plug 'idbrii/vim-man', { 'on': 'Man' }
-endif
+Plug 'idbrii/vim-man', { 'on': 'Man' }
 nmap <leader>man :Man <c-r>=expand("<cword>")<cr>
 " }}}
 
