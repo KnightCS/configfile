@@ -219,9 +219,54 @@ endfunction
 
 " lightline-bufferline
 let g:lightline#bufferline#show_number = 2
-for s:i in range(1,10)
-    exec 'nmap <leader>b'.(s:i % 10).' <Plug>lightline#bufferline#go('.s:i.')'
+function! AddNewBufferGoMap(bufnr) abort
+    let l:bufnr = a:bufnr ? a:bufnr : 1
+    exec 'nmap <silent> <SID>(buffer-'.l:bufnr.') '.
+                \' <Plug>lightline#bufferline#go('.l:bufnr.')'
+    exec 'nmap <leader>b'.l:bufnr.' <SID>(buffer-'.l:bufnr.')'
+endfunction
+for s:i in range(1,bufnr('$'))
+    call AddNewBufferGoMap(s:i)
 endfor
+autocmd! BufNewFile,BufRead * call AddNewBufferGoMap(buffer_number(''))
+" }}}
+
+Plug 'hecal3/vim-leader-guide'
+" {{{
+let g:lmap = {}
+let g:lmap.b = { 'name': 'Buffer' }
+
+let g:topdict = {}
+exec 'let g:topdict["'.g:mapleader.'"] = g:lmap'
+exec 'let g:topdict["'.g:mapleader.'"]["name"] = "<leader>"'
+exec 'let g:topdict["'.g:maplocalleader.'"] = g:llmap'
+exec 'let g:topdict["'.g:maplocalleader.'"]["name"] = "<localleader>"'
+
+call leaderGuide#register_prefix_descriptions('', 'g:topd')
+exec 'nnoremap <silent> <leader> :<c-u>LeaderGuide "'.
+            \ g:mapleader.'"<CR>'
+exec 'vnoremap <silent> <leader> :<c-u>LeaderGuideVisual "'.
+            \ g:mapleader.'"<CR>'
+exec 'nnoremap <localsilent> <leader> :<c-u>LeaderGuide "'.
+            \ g:maplocalleader.'"<CR>'
+exec 'vnoremap <localsilent> <leader> :<c-u>LeaderGuideVisual "'.
+            \ g:maplocalleader.'"<CR>'
+nmap <leader>. <Plug>leaderguide-global
+nmap <localleader>. <Plug>leaderguide-buffer
+
+function! s:my_displayfunc()
+    let g:leaderGuide#displayname =
+                \ substitute(g:leaderGuide#displayname, '\c<cr>$', '', '')
+    let g:leaderGuide#displayname =
+                \ substitute(g:leaderGuide#displayname, '^<Plug>', '', '')
+    let g:leaderGuide#displayname =
+                \ substitute(g:leaderGuide#displayname, '^<SID>', '', '')
+    let g:leaderGuide#displayname =
+                \ substitute(g:leaderGuide#displayname, '^:call', '', '')
+    let g:leaderGuide#displayname =
+                \ substitute(g:leaderGuide#displayname, '^(\(.*\))$', '\1', 'g')
+endfunction
+let g:leaderGuide_displayfunc = [function('s:my_displayfunc')]
 " }}}
 
 " 有趣的开始导航
@@ -558,13 +603,7 @@ if exists('g:clang_bin')
 endif
 
 " Python
-function! GetJediPath() abort
-    let l:path = system('pip show jedi | grep Location | cut -d" " -f2')
-    if v:shell_error == 0
-        let g:completor_python_binary = substitute(l:path, '\n', '', '').'jedi'
-    endif
-endfunction
-call GetJediPath()
+let g:completor_python_binary = '/usr/lib/python3.4/site-packages/jedi'
 " }}}
 
 " 快速插入代码片段 & 代码片段配置
@@ -665,12 +704,14 @@ if !(has('timers') && exists('*job_start') && exists('*ch_close_in')) " Vim8
     noremap <leader>sn :lnext<cr>
     " }}}
 else
-    Plug 'w0rp/ale'
+    Plug 'w0rp/ale', { 'on': [ 'ALELint' ] }
     " {{{
     let g:ale_sign_column_always   = 1
+    let g:ale_lint_on_start        = 0
+    let g:ale_lint_start_delay     = 2000
     let g:ale_lint_on_save         = 1
     let g:ale_sign_open_list       = 1
-    let g:ale_lint_delay           = 500
+    let g:ale_lint_delay           = 5000
     let g:ale_sign_error           = '✗'
     let g:ale_sign_warning         = '•'
     let g:ale_statusline_format    = ['✘ %d', '• %d', '✔']
@@ -717,6 +758,12 @@ else
         autocmd WinEnter   * call AutoClose()
         autocmd User ALELint call Update_light()
     augroup END
+
+    " 延迟加载 ALE
+    function! AleStartDelay(timer) abort
+        ALELint
+    endfunction
+    let s:ale_start_timer = timer_start(g:ale_lint_start_delay, 'AleStartDelay')
     " Keyword
     nmap <silent> <leader>sl :call ToggleErrors()<cr>
     nmap <silent> <leader>sp <Plug>(ale_previous_wrap)

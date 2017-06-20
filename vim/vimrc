@@ -46,6 +46,7 @@
 " 1.0 全局变量设置
 " ----------
 let g:mapleader = ';'
+let g:maplocalleader = ','
 
 " 1.1
 " ----------
@@ -71,7 +72,9 @@ set backspace=2
 " 通过使用:substitute命令，告诉我们文件的哪一行被改变过
 set report=0
 " 编辑配置文件
-nmap <leader>ev :edit $MYVIMRC<CR>
+nnoremap <SID>(edit-myvimrc-file) :edit $MYVIMRC<CR>
+nmap <leader>fe <SID>(edit-myvimrc-file)
+
 " quickfix模式
 "autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 
@@ -79,7 +82,8 @@ nmap <leader>ev :edit $MYVIMRC<CR>
 set nospell
 " 拼写检查的语言：英文+中文
 set spelllang=en_us,cjk
-nmap <silent> <leader>isp :setlocal invspell<cr>
+nnoremap <silent> <SID>(toggle-spell) :setlocal invspell<CR>
+nmap <localleader>ss <SID>(toggle-spell)
 
 " 1.2 目录、文件
 " ----------
@@ -249,9 +253,13 @@ set foldlevel=0
 " 默认不折叠
 "set foldlevelstart=99
 " 映射折叠/不折叠键为 <leader>z
-nmap <silent> <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+nnoremap <SID>(toggle-cursor-fold)
+            \ @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+nmap <silent> <leader>fz <SID>(toggle-cursor-fold)
 " 映射全部折叠/不折叠键为 <leader>Z
-nmap <silent> <leader>Z @=(&foldlevel ? 'zM' : 'zR')<CR>
+nnoremap <SID>(toggle-all-fold)
+            \ @=(&foldlevel ? 'zM' : 'zR')<CR>
+nmap <silent> <leader>fZ <SID>(toggle-all-fold)
 
 " 2.7 命令行、状态栏
 " ----------
@@ -427,6 +435,8 @@ function! AddFileTitle()
         normal! G
     endif
 endfun
+nnoremap <SID>(add-file-title) :call AddFileTitle()<CR>
+nmap <leader>at <SID>(add-file-title)
 
 ""
 " @brief     插入新版本描述
@@ -449,14 +459,14 @@ function! NewVersion(var)
 
     let l:create_time = strftime('%Y-%m-%d %H:%M:%S')
     if &filetype ==# 'sh'
-        call append(5, '\# > version ' . string(a:var) . ': ' . l:create_time)
-        call append(6, '\#       >' )
-        call append(7, '\# >#############')
+        call append(5, '# > version ' . string(a:var) . ': ' . l:create_time)
+        call append(6, '#       >' )
+        call append(7, '# >#############')
         normal! 7G$
     elseif &filetype ==# 'python'
-        call append(6, '\# > version ' . string(a:var) . ': ' . l:create_time)
-        call append(7, '\#       >' )
-        call append(8, '\# >#############')
+        call append(6, '# > version ' . string(a:var) . ': ' . l:create_time)
+        call append(7, '#       >' )
+        call append(8, '# >#############')
         normal! 8G$
     elseif &filetype ==# 'lua'
         call append(4, '-- >-------------')
@@ -470,7 +480,8 @@ function! NewVersion(var)
         normal! 7G$
     endif
 endfun
-nmap <leader>nv :call NewVersion()<Left>
+nnoremap <SID>(add-version-message) :call NewVersion()<Left>
+nmap <leader>av <SID>(add-version-message)
 
 if has('autocmd')
     " 重新打开文件时，光标定位到上次打开的位置
@@ -478,7 +489,7 @@ if has('autocmd')
         autocmd!
         autocmd BufReadPost *
                     \ if line("'\"") > 1 && line("'\"") <= line("$") |
-                    \   exec "normal! g`\""|
+                    \   exec "normal! g`\"" |
                     \ endif
     augroup END
 
@@ -487,7 +498,7 @@ if has('autocmd')
         autocmd!
         " 标记代码中未被用作缩进的制表符
         autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
-    augroup END
+    augroup end
 
     " 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
     augroup HightlightActiveWindow
@@ -505,18 +516,18 @@ if has('autocmd')
         autocmd WinLeave *
                     \ setlocal nocursorline |
                     \ let &l:colorcolumn=0
-    augroup END
+    augroup end
 
     augroup AutoSourceVimrc
         autocmd!
         autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
-    augroup END
+    augroup end
 
     augroup autoFileHead
         autocmd!
         " 新建文件时，识别支持的文件自动加入文件头
         autocmd BufNewFile * call AddFileTitle()
-    augroup END
+    augroup end
 endif
 
 " 7. Other
