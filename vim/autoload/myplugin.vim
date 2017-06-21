@@ -220,7 +220,14 @@ endfunction
 " lightline-bufferline
 let g:lightline#bufferline#show_number = 2
 function! AddNewBufferGoMap(bufnr) abort
-    let l:bufnr = a:bufnr ? a:bufnr : 1
+    if !empty(&buftype)
+        return
+    endif
+    let l:bufnr = a:bufnr ? a:bufnr : -1
+    if l:bufnr == -1
+        let l:bufname = (lightline#bufferline#buffers())[1][0]
+        let l:bufnr   = substitute(l:bufname, '^\([0-9]*\) .*', '\1', 'g')
+    endif
     exec 'nmap <silent> <SID>(buffer-'.l:bufnr.') '.
                 \' <Plug>lightline#bufferline#go('.l:bufnr.')'
     exec 'nmap <leader>b'.l:bufnr.' <SID>(buffer-'.l:bufnr.')'
@@ -228,9 +235,19 @@ endfunction
 for s:i in range(1,bufnr('$'))
     call AddNewBufferGoMap(s:i)
 endfor
-autocmd! BufNewFile,BufRead * call AddNewBufferGoMap(buffer_number(''))
+autocmd! BufNewFile,BufReadPost * call AddNewBufferGoMap(0)
+nnoremap <silent> <SID>(buffer-delete) :bd<CR>
+nmap <leader>bd <SID>(buffer-delete)
+nnoremap <silent> <SID>(buffer-next) :bn<CR>
+nmap <leader>bn <SID>(buffer-next)
+nnoremap <silent> <SID>(buffer-previous) :bp<CR>
+nmap <leader>bp <SID>(buffer-previous)
 " }}}
 
+" height light cursorword
+Plug 'itchyny/vim-cursorword'
+
+" leader guide
 Plug 'hecal3/vim-leader-guide'
 " {{{
 let g:lmap = {}
@@ -338,8 +355,6 @@ Plug 'majutsushi/tagbar', { 'on': ['TagbarToggle', 'TagbarOpen'] }
 call GetExternalBinary('ctags')
 if exists('g:ctags_bin')
     let g:tagbar_ctags_bin = g:ctags_bin
-else
-    echom 'Did no find ctags, pleace install ctags first.'
 endif
 
 let g:tagbar_width     = 30
@@ -390,24 +405,45 @@ let g:signify_vcs_cmds = {
             \ }
 " }}}
 
-" 最大化当前窗口
-Plug 'vim-scripts/ZoomWin'
+" Zoom Windows
+Plug 'troydm/zoomwintab.vim', { 'on': ['ZoomWinTabIn', 'ZoomWinTabOut', 'ZoomWinTabToggle'] }
+" {{{
+let g:zoomwintab_remap      = 0
+let g:zoomwintab_hidetabbar = 0
+nnoremap <silent> <SID>(maximize-windows) :ZoomWinTabIn<CR>
+nnoremap <silent> <SID>(recovery-windows) :ZoomWinTabOut<CR>
+nnoremap <silent> <SID>(zoom-toogle-windows) :ZoomWinTabToggle<CR>
+nmap <leader>wm <SID>(maximize-windows)
+nmap <leader>wm <SID>(recovery-windows)
+nmap <leader>wz <SID>(zoom-toggle-Windows)
+" }}}
 
 " Start vim ui
 " -----
-" 启动 vim 时启用的插件
-function! VimEnterDealArgument() abort "{{{
+" 启动 vim 时启用的插件 {{{
+function! BGStart_NERDTree(timer) abort
+    if exists(':NERDTree')
+        NERDTree
+        setlocal nocursorline
+        wincmd p
+        ene
+    endif
+endfunction
+function! BGStart_Startify(timer) abort
+    if exists(':Startify')
+        Startify
+        nnoremap <buffer> q :qa<cr>
+    endif
+endfunction
+function! VimEnterDealArgument() abort
     if !argc() || isdirectory(argv()[0])
-        if exists(':NERDTree')
-            exe 'NERDTree '.expand(!argc()?'':isdirectory(argv()[0])?argv()[0]:'')
-            setlocal nocursorline
-            wincmd p
-            ene
+        if !has('timers')
+            call BGStart_NERDTree('')
+            call BGStart_Startify('')
+            return
         endif
-        if exists(':Startify')
-            Startify
-            nnoremap <buffer> q :qa<cr>
-        endif
+        let l:t = timer_start(0, 'BGStart_NERDTree')
+        let l:t = timer_start(30, 'BGStart_Startify')
     endif
 endfunction
 augroup DealArgument
@@ -416,7 +452,7 @@ augroup DealArgument
 augroup END
 "}}}
 
-" Deal with NERDTree and Tagbar like this
+" Deal with NERDTree and Tagbar {{{
 " +-----------+-------------+
 " | Tagbar    |             |
 " | contents  |             |
@@ -424,7 +460,7 @@ augroup END
 " | NERDTree  |             |
 " | contents  |             |
 " +-----------+-------------+
-function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
+function! ToggleNERDTreeAndTagbar(plugin) abort
     let s:plugin        = a:plugin
     let s:height        = &lines
     let s:nerdtree_open = (bufwinnr('NERD_tree')  != -1)
@@ -449,12 +485,15 @@ function! ToggleNERDTreeAndTagbar(plugin) abort " {{{
         endif
     endif
 endfunction
-" }}}
-
 " Toggle Tagbar
-nmap <leader>tb :call ToggleNERDTreeAndTagbar('tagbar')<cr>
+nnoremap <silent> <SID>(toggle-tagbar)
+            \ :call ToggleNERDTreeAndTagbar('tagbar')<CR>
+nmap <leader>ut <SID>(toggle-tagbar)
 " Toggle NERDTree
-nmap <leader>nt :call ToggleNERDTreeAndTagbar('nerdtree')<cr>
+nnoremap <silent> <SID>(toggle-nerdtree)
+            \ :call ToggleNERDTreeAndTagbar('nerdtree')<CR>
+nmap <leader>un <SID>(toggle-nerdtree)
+" }}}
 
 " 2.2 File Type
 " ----------
@@ -468,48 +507,53 @@ let g:plantuml_path = ''
 function! Uml2png() abort
     call system('java -version')
     if v:shell_error != 0
-        echomsg string('No java execute found!')
+        echohl ErrorMsg | echom 'No java execute found!' | echohl NONE
         return
     endif
 
-    if empty(g:plantuml_path)
+    if empty(g:plantuml_path) && !empty(glob(g:plug_home.'/vim-slumlord'))
         let g:plantuml_path = g:plug_home.'/vim-slumlord/plantuml.jar'
-    endif
-    if empty(glob(g:plantuml_path))
-        echomsg string('No plantuml.jar found!')
+    else
+        echohl ErrorMsg | echom 'No plantuml.jar found!' | echohl NONE
         return
     endif
 
     let l:file_name = expand('%:p')
     let l:jar_path  = g:plantuml_path
     if has('win32unix') || has('win64unix')
-        let l:file_name = substitute(system('cygpath -w "'.l:file_name.'"'), "\n", '', '')
-        let l:jar_path  = substitute(system('cygpath -w "'.l:jar_path.'"'), "\n", '', '')
+        let l:file_name = substitute(system('cygpath -aw "'.l:file_name.'"'),
+                    \ '\n', '', '')
+        let l:jar_path  = substitute(system('cygpath -aw "'.l:jar_path.'"'),
+                    \ '\n', '', '')
     endif
 
     let l:cmd = 'java -jar "'.l:jar_path.'" -charset utf-8 "'.l:file_name.'"'
-    if exists('*jobstart')
-        call jobstart(l:cmd,
-                    \ {'in_io'   : 'null',
-                    \  'out_io'  : 'null',
-                    \  'error_io': 'null'})
+    if has('job')
+        call job_start(l:cmd,
+                    \ {'in_io': 'null', 'out_io': 'null', 'err_io': 'null'})
     else
         call system(l:cmd)
     endif
 endfunction
-nmap <silent> <leader>utp :call Uml2png()<cr>
+nnoremap <silent> <SID>(create-png-from-uml) :call Uml2png()<CR>
+nmap <leader>fp <SID>(create-png-from-uml)
 " }}}
+
 Plug 'scrooloose/vim-slumlord', { 'for': ['pu', 'uml', 'plantuml'] }
 " {{{
 let g:slumlord_au_created = 0
-nmap <silent> <leader>utt :if exists("*jobstart") \|
-            \   call slumlord#updatePreview({}) \|
-            \ endif \|
-            \ call slumlord#updatePreview({'write': 1})<cr><cr>
+function! Uml2txt() abort
+    if has('job')
+        call slumlord#updatePreview({})
+    endif
+    call slumlord#updatePreview({'write': 1})
+endfunction
+nnoremap <silent> <SID>(create-txt-pic-from-uml) :call Uml2txt()<CR>
+nmap <leader>ft <SID>(create-txt-pic-from-uml)
 " }}}
 
 " H 文件
-Plug 'vim-scripts/a.vim'
+Plug 'vim-scripts/a.vim', { 'for': ['c', 'cpp', 'cc'] }
 
 " 2.3 complete
 " ----------
@@ -650,14 +694,9 @@ endif
 autocmd! BufWinEnter *.sh let g:neosnippet#disable_runtime_snippets = {'_': 1,}
 " }}}
 
-" 显示函数参数
-Plug 'Shougo/echodoc.vim'
-
-" 下划线当前词
-Plug 'itchyny/vim-cursorword'
-
 " 2.4 语法检测
 " ----------
+" Lint {{{
 if !(has('timers') && exists('*job_start') && exists('*ch_close_in')) " Vim8
             \  && !(has('nvim') && has('timers')) " NeoVim >= 0.1.5
     Plug 'scrooloose/Syntastic'
@@ -699,19 +738,19 @@ if !(has('timers') && exists('*job_start') && exists('*ch_close_in')) " Vim8
         endif
     endfunction
     " Keyword
-    noremap <leader>sl :call ToggleErrors()<cr>
-    noremap <leader>sp :lprevious<cr>
-    noremap <leader>sn :lnext<cr>
+    nmap <silent> <SID>(lint-toggle-error) :call ToggleErrors()<CR>
+    nmap <silent> <SID>(lint-previous)     :lprevious<CR>
+    nmap <silent> <SID>(lint-next)         :lnext<CR>
     " }}}
 else
     Plug 'w0rp/ale', { 'on': [ 'ALELint' ] }
     " {{{
     let g:ale_sign_column_always   = 1
-    let g:ale_lint_on_start        = 0
-    let g:ale_lint_start_delay     = 2000
+    let g:ale_lint_on_enter        = 0
+    let g:ale_lint_enter_delay     = 5000
     let g:ale_lint_on_save         = 1
     let g:ale_sign_open_list       = 1
-    let g:ale_lint_delay           = 5000
+    let g:ale_lint_delay           = 200
     let g:ale_sign_error           = '✗'
     let g:ale_sign_warning         = '•'
     let g:ale_statusline_format    = ['✘ %d', '• %d', '✔']
@@ -728,7 +767,7 @@ else
             " Nothing was closed, open ale error location panel
             silent! lopen
             if len(getloclist(0)) == 0
-                echomsg 'No warning or error'
+                echohl ErrorMsg | echom 'No warning or error' | echohl NONE
                 return
             endif
             exec 'resize '.g:ale_error_location_hight
@@ -761,21 +800,33 @@ else
 
     " 延迟加载 ALE
     function! AleStartDelay(timer) abort
+        if empty(glob(g:plug_home.'/ale'))
+            return
+        endif
         ALELint
     endfunction
-    let s:ale_start_timer = timer_start(g:ale_lint_start_delay, 'AleStartDelay')
+    let s:ale_start_timer = timer_start(g:ale_lint_enter_delay, 'AleStartDelay')
     " Keyword
-    nmap <silent> <leader>sl :call ToggleErrors()<cr>
-    nmap <silent> <leader>sp <Plug>(ale_previous_wrap)
-    nmap <silent> <leader>sn <Plug>(ale_next_wrap)
+    nmap <silent> <SID>(lint-toggle-error) :call ToggleErrors()<CR>
+    nmap <silent> <SID>(lint-previous)     <Plug>(ale_previous_wrap)
+    nmap <silent> <SID>(lint-next)         <Plug>(ale_next_wrap)
     " }}}
 endif
+nmap <leader>le <SID>(lint-toggle-error)
+nmap <leader>lp <SID>(lint-previous)
+nmap <leader>ln <SID>(lint-next)
+" }}}
 
 " 2.5 Unite
 " ----------
-Plug 'Shougo/denite.nvim'
+Plug 'Shougo/denite.nvim', { 'on': 'Denite' }
 " {{{
-noremap <leader>dt :Denite<space>
+nnoremap <SID>(denite-file) :Denite file<CR>
+nmap <leader>df <SID>(denite-file)
+nnoremap <SID>(denite-buffer) :Denite buffer<CR>
+nmap <leader>db <SID>(denite-buffer)
+nnoremap <SID>(denite-register) :Denite register<CR>
+nmap <leader>dg <SID>(denite-register)
 " }}}
 
 " 2.6 Code Formatting
@@ -791,7 +842,8 @@ nmap <leader>ga <Plug>(EasyAlign)
 " 末尾空格
 Plug 'bronson/vim-trailing-whitespace'
 " {{{
-nmap <leader>d<space> :FixWhitespace<cr>
+nnoremap <silent> <SID>(fix-white-space) :FixWhitespace<CR>
+nmap <leader>d<space> <SID>(fix-white-space)
 " }}}
 
 " 自动补全成对符号
@@ -830,7 +882,8 @@ function! AutoWrapWithText() abort
         " 添加拼写检查
         setlocal spell
         " 添加快捷键进行排版 + 格式纠错
-        nmap <silent> <leader>gq :Pangu<cr>gggqG2<c-o>
+        nnoremap <silent> <SID>(format-and-fix) :Pangu<cr>gggqG2<c-o>
+        nmap <leader>gq <SID>(format-and-fix)
     endif
 endfunction
 autocmd! BufWinEnter * :call AutoWrapWithText()
@@ -882,14 +935,16 @@ function! s:config_easyfuzzymotion(...) abort
                 \ }), get(a:, 1, {}))
 endfunction
 
-noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
+nmap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 " }}}
 
 " 替换可视化 & tab 自动选择
 Plug 'osyo-manga/vim-over', { 'on': 'OverCommandLine' }
 " {{{
-nmap <leader>co  :OverCommandLine<cr>
-nmap <leader>cos :OverCommandLine<cr>:%s/
+nnoremap <SID>(over-command-line) :OverCommandLine<CR>
+nmap <leader>cl <SID>(over-command-line)
+nnoremap <SID>(over-command-line-replace) :OverCommandLine<CR>:%s/
+nmap <leader>cr <SID>(over-command-line-replace)
 " }}}
 
 " 重复操作
@@ -905,31 +960,30 @@ vmap V <Plug>(expand_region_shrink)
 " 选择窗口
 Plug 't9md/vim-choosewin', { 'on': 'ChooseWin' }
 " {{{
-" rebind <c-w><c-w>
-nnoremap <expr><silent> <c-w><c-w> winnr('$') < 3 ?
-            \   ':wincmd p<cr>' : ':ChooseWin<cr>'
+nnoremap <silent> <SID>(choose-win) :ChooseWin<CR>
+nmap <TAB> <SID>(choose-win)
 " }}}
 
 " 2.8 Other tools
 " ----------
-" 文件搜索
-"Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
 " vimproc
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 
 " Git Plugin
 " -----
 Plug 'cohama/agit.vim', { 'on': ['Agit'] }
-Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
 " {{{
-" gina
-nmap <leader>gst :Gina<space>status<cr>
-nmap <leader>gci :Gina<space>commit<cr>
-" agit
 let g:agit_no_default_mappings = 1
 let g:agit_ignore_spaces       = 0
-nmap <leader>agit :Agit<cr>
+nnoremap <silent> <SID>(git-log) :Agit<CR>
+nmap <leader>gl <SID>(git-log)
+" }}}
+Plug 'lambdalisue/gina.vim', { 'on': ['Gina'] }
+" {{{
+nnoremap <silent> <SID>(git-status) :Gina<space>status<CR>
+nmap <leader>gs <SID>(git-status)
+nnoremap <silent> <SID>(git-commit) :Gina<space>commit<CR>
+nmap <leader>gc <SID>(git-commit)
 " }}}
 
 " 关键词搜索
@@ -944,12 +998,18 @@ let g:ctrlsf_mapping       = {
     \ 'prev': 'N',
    \ }
 " 搜索当前词
-nmap <leader>csf :CtrlSF<space><c-r>=expand("<cword>")<cr>
+nnoremap <SID>(search-word) :CtrlSF<space>
+nmap <leader>sw <SID>(search-word)
+nnoremap <SID>(search-cursor-word) :CtrlSF<space><c-r>=expand("<cword>")<CR>
+nmap <leader>sc <SID>(search-cursor-word)
 " }}}
 
 " Man 手册，:Man Keyword 触发 {{{
 Plug 'idbrii/vim-man', { 'on': 'Man' }
-nmap <leader>man :Man <c-r>=expand("<cword>")<cr>
+nnoremap <silent> <SID>(man-word) :Man
+nmap <leader>mw <SID>(man-word)
+nnoremap <silent> <SID>(man-cursor-word) :Man <c-r>=expand("<cword>")<CR>
+nmap <leader>mw <SID>(man-cursor-word)
 " }}}
 
 " 3. END

@@ -253,11 +253,11 @@ set foldlevel=0
 " 默认不折叠
 "set foldlevelstart=99
 " 映射折叠/不折叠键为 <leader>z
-nnoremap <SID>(toggle-cursor-fold)
+nnoremap <silent> <SID>(toggle-cursor-fold)
             \ @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 nmap <silent> <leader>fz <SID>(toggle-cursor-fold)
 " 映射全部折叠/不折叠键为 <leader>Z
-nnoremap <SID>(toggle-all-fold)
+nnoremap <silent> <SID>(toggle-all-fold)
             \ @=(&foldlevel ? 'zM' : 'zR')<CR>
 nmap <silent> <leader>fZ <SID>(toggle-all-fold)
 
@@ -364,6 +364,10 @@ function! GetExternalBinary(name) abort
     if v:shell_error == 0
         let l:bin = substitute(l:bin, '\n', '', '')
         exec 'let g:'.a:name.'_bin = "'.l:bin.'"'
+    else
+        echohl ErrorMsg
+        echom 'Did not find '.l:bin.' binary.'
+        echohl NONE
     endif
 endfunction
 
@@ -508,7 +512,7 @@ if has('autocmd')
                     \ if argc() < 2 |
                     \   setlocal cursorline |
                     \ endif
-        autocmd WinEnter *
+        autocmd WinEnter,BufWinEnter *
                     \ setlocal cursorline |
                     \ if exists("w:old_colorlumn") |
                     \   let &l:colorcolumn=w:old_colorlumn |
