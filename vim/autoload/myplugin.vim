@@ -236,12 +236,6 @@ for s:i in range(1,bufnr('$'))
     call AddNewBufferGoMap(s:i)
 endfor
 autocmd! BufNewFile,BufReadPost * call AddNewBufferGoMap(0)
-nnoremap <silent> <SID>(buffer-delete) :bd<CR>
-nmap <leader>bd <SID>(buffer-delete)
-nnoremap <silent> <SID>(buffer-next) :bn<CR>
-nmap <leader>bn <SID>(buffer-next)
-nnoremap <silent> <SID>(buffer-previous) :bp<CR>
-nmap <leader>bp <SID>(buffer-previous)
 " }}}
 
 " height light cursorword
@@ -251,7 +245,24 @@ Plug 'itchyny/vim-cursorword'
 Plug 'hecal3/vim-leader-guide'
 " {{{
 let g:lmap = {}
-let g:lmap.b = { 'name': 'Buffer' }
+" Buffer map
+let g:lmap.b = { 'name': '+Buffer' }
+nnoremap <silent> <SID>(buffer-delete)   :bd<CR>
+nnoremap <silent> <SID>(buffer-next)     :bn<CR>
+nnoremap <silent> <SID>(buffer-previous) :bp<CR>
+nmap <leader>bd <SID>(buffer-delete)
+nmap <leader>bn <SID>(buffer-next)
+nmap <leader>bp <SID>(buffer-previous)
+" Windows map
+let g:lmap.w = { 'name': '+Windows' }
+nnoremap <silent> <SID>(windows-split-right) :vs +enew \| right<CR>:wincmd p<CR>
+nnoremap <silent> <SID>(windows-split-left)  :vs +enew \| left<CR>
+nnoremap <silent> <SID>(windows-vsplit-top)    :sp +enew \| top<CR>
+nnoremap <silent> <SID>(windows-vsplit-bottom) :sp +enew \| bot<CR>:wincmd p<CR>
+nmap <leader>w\ <SID>(windows-split-right)
+nmap <leader>w\| <SID>(windows-split-left)
+nmap <leader>w- <SID>(windows-vsplit-top)
+nmap <leader>w_ <SID>(windows-vsplit-bottom)
 
 let g:topdict = {}
 exec 'let g:topdict["'.g:mapleader.'"] = g:lmap'
@@ -282,6 +293,8 @@ function! s:my_displayfunc()
                 \ substitute(g:leaderGuide#displayname, '^:call', '', '')
     let g:leaderGuide#displayname =
                 \ substitute(g:leaderGuide#displayname, '^(\(.*\))$', '\1', 'g')
+    let g:leaderGuide#displayname =
+                \ substitute(g:leaderGuide#displayname, '-', ' ', 'g')
 endfunction
 let g:leaderGuide_displayfunc = [function('s:my_displayfunc')]
 " }}}
@@ -410,19 +423,19 @@ Plug 'troydm/zoomwintab.vim', { 'on': ['ZoomWinTabIn', 'ZoomWinTabOut', 'ZoomWin
 " {{{
 let g:zoomwintab_remap      = 0
 let g:zoomwintab_hidetabbar = 0
-nnoremap <silent> <SID>(maximize-windows) :ZoomWinTabIn<CR>
-nnoremap <silent> <SID>(recovery-windows) :ZoomWinTabOut<CR>
+nnoremap <silent> <SID>(maximize-windows)    :ZoomWinTabIn<CR>
+nnoremap <silent> <SID>(recovery-windows)    :ZoomWinTabOut<CR>
 nnoremap <silent> <SID>(zoom-toogle-windows) :ZoomWinTabToggle<CR>
 nmap <leader>wm <SID>(maximize-windows)
-nmap <leader>wm <SID>(recovery-windows)
-nmap <leader>wz <SID>(zoom-toggle-Windows)
+nmap <leader>wr <SID>(recovery-windows)
+nmap <leader>wz <SID>(zoom-toggle-windows)
 " }}}
 
 " Start vim ui
 " -----
 " 启动 vim 时启用的插件 {{{
 function! BGStart_NERDTree(timer) abort
-    if exists(':NERDTree')
+    if !empty(glob(g:plug_home.'/nerdtree'))
         NERDTree
         setlocal nocursorline
         wincmd p
@@ -430,7 +443,7 @@ function! BGStart_NERDTree(timer) abort
     endif
 endfunction
 function! BGStart_Startify(timer) abort
-    if exists(':Startify')
+    if !empty(glob(g:plug_home.'/vim-startify'))
         Startify
         nnoremap <buffer> q :qa<cr>
     endif
@@ -443,10 +456,10 @@ function! VimEnterDealArgument() abort
             return
         endif
         let l:t = timer_start(0, 'BGStart_NERDTree')
-        let l:t = timer_start(30, 'BGStart_Startify')
+        let l:t = timer_start(25, 'BGStart_Startify')
     endif
 endfunction
-augroup DealArgument
+augroup au_vimstart
     autocmd!
     autocmd VimEnter * :call VimEnterDealArgument()
 augroup END
