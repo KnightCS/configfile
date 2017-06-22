@@ -119,8 +119,6 @@ language message en_US.utf-8
 " 屏幕显示编码
 set termencoding=utf-8
 " 设定默认解码
-set fileencodings=ucs-bom,utf-8,cp936
-set fileencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8,usc-bom,euc-jp,gb18030,gbk,gb2312,cp936,big5,euc-kr,latin1s
 
@@ -252,14 +250,21 @@ set foldcolumn=0
 set foldlevel=0
 " 默认不折叠
 "set foldlevelstart=99
-" 映射折叠/不折叠键为 <leader>z
+" fold keymap
 nnoremap <silent> <SID>(toggle-cursor-fold)
-            \ @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+            \ @=((foldlevel(line('.')) > 0 ?
+            \   ((foldclosed(line('.')) < 0) ? 'zc' : 'zo') :
+            \   ''))<CR>
 nmap <silent> <leader>fz <SID>(toggle-cursor-fold)
-" 映射全部折叠/不折叠键为 <leader>Z
 nnoremap <silent> <SID>(toggle-all-fold)
             \ @=(&foldlevel ? 'zM' : 'zR')<CR>
 nmap <silent> <leader>fZ <SID>(toggle-all-fold)
+nmap <silent> <expr><CR>
+            \ (foldlevel(line('.')) == 0 ? "\<CR>" :
+            \   (foldclosed(line('.')) < 0 ? "\<CR>" : "zo"))
+nmap <silent> <expr><BS>
+            \ (foldlevel(line('.')) == 0 ? "\<BS>" :
+            \   (foldclosed(line('.')) < 0 ? "zc" : "\<BS>"))
 
 " 2.7 命令行、状态栏
 " ----------
@@ -269,7 +274,7 @@ set showmode
 set wildmenu
 " 输入的命令显示出来，看的清楚些
 set showcmd
-" 命令行（在状态行下）的高度，默认为1，这里是2
+" 命令行（在状态行下）的高度，默认为1
 set cmdheight=1
 " 打开状态栏标尺
 set ruler
@@ -330,7 +335,7 @@ set textwidth=120
 " 字符间插入的像素行数目
 set linespace=0
 " 带有如下符号的单词不要被换行分割
-set iskeyword+=_,$,@,%,#,-
+set iskeyword+=_,$,@,%,#
 " 设置标志线的位置，默认
 set colorcolumn=81,101,121
 
@@ -493,7 +498,7 @@ if has('autocmd')
         autocmd!
         autocmd BufReadPost *
                     \ if line("'\"") > 1 && line("'\"") <= line("$") |
-                    \   exec "normal! g`\"" |
+                    \   exec 'normal! g`"zvzz' |
                     \ endif
     augroup END
 
@@ -502,7 +507,7 @@ if has('autocmd')
         autocmd!
         " 标记代码中未被用作缩进的制表符
         autocmd WinEnter,BufWinEnter * :call matchadd('ColorColumn', '[^\t]\zs\t\+')
-    augroup end
+    augroup END
 
     " 活动窗口突出显示当前行 & 显示限制竖线，非活动窗口不显示
     augroup HightlightActiveWindow
@@ -520,18 +525,18 @@ if has('autocmd')
         autocmd WinLeave *
                     \ setlocal nocursorline |
                     \ let &l:colorcolumn=0
-    augroup end
+    augroup END
 
     augroup AutoSourceVimrc
         autocmd!
         autocmd BufWritePost $MYVIMRC nested source $MYVIMRC
-    augroup end
+    augroup END
 
     augroup autoFileHead
         autocmd!
         " 新建文件时，识别支持的文件自动加入文件头
         autocmd BufNewFile * call AddFileTitle()
-    augroup end
+    augroup END
 endif
 
 " 7. Other
