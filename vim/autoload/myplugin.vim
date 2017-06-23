@@ -219,23 +219,30 @@ endfunction
 
 " lightline-bufferline
 let g:lightline#bufferline#show_number = 2
+" Add buffer map in enter.
+for s:i in range(1,bufnr('$'))
+    call AddNewBufferGoMap(s:i)
+endfor
 function! AddNewBufferGoMap(bufnr) abort
     if !empty(&buftype)
         return
     endif
     let l:bufnr = a:bufnr ? a:bufnr : -1
     if l:bufnr == -1
-        let l:bufname = (lightline#bufferline#buffers())[1][0]
-        let l:bufnr   = substitute(l:bufname, '^\([0-9]*\) .*', '\1', 'g')
+        let l:bufname = (lightline#bufferline#buffers())[1]
+        if empty(l:bufname)
+            return
+        endif
+        let l:bufnr = substitute(l:bufname[0], '^\([0-9]*\) .*', '\1', 'g')
     endif
     exec 'nmap <silent> <SID>(buffer-'.l:bufnr.') '.
                 \' <Plug>lightline#bufferline#go('.l:bufnr.')'
     exec 'nmap <leader>b'.l:bufnr.' <SID>(buffer-'.l:bufnr.')'
 endfunction
-for s:i in range(1,bufnr('$'))
-    call AddNewBufferGoMap(s:i)
-endfor
-autocmd! BufNewFile,BufReadPost * call AddNewBufferGoMap(0)
+augroup au_bufmap
+    autocmd!
+    autocmd BufNewFile,BufReadPost * call AddNewBufferGoMap(0)
+augroup end
 " }}}
 
 " height light cursorword
@@ -247,6 +254,7 @@ Plug 'hecal3/vim-leader-guide'
 let g:lmap = {}
 " Buffer map
 let g:lmap.b = { 'name': '+Buffer' }
+" buffer option
 nnoremap <silent> <SID>(buffer-delete)   :bd<CR>
 nnoremap <silent> <SID>(buffer-next)     :bn<CR>
 nnoremap <silent> <SID>(buffer-previous) :bp<CR>
@@ -255,14 +263,18 @@ nmap <leader>bn <SID>(buffer-next)
 nmap <leader>bp <SID>(buffer-previous)
 " Windows map
 let g:lmap.w = { 'name': '+Windows' }
-nnoremap <silent> <SID>(windows-split-right) :vs +enew \| right<CR>:wincmd p<CR>
-nnoremap <silent> <SID>(windows-split-left)  :vs +enew \| left<CR>
-nnoremap <silent> <SID>(windows-vsplit-top)    :sp +enew \| top<CR>
-nnoremap <silent> <SID>(windows-vsplit-bottom) :sp +enew \| bot<CR>:wincmd p<CR>
+" split windows
+nnoremap <silent> <SID>(windows-split-right)   :vs +enew<CR><C-W><C-X><C-W><C-P>
+nnoremap <silent> <SID>(windows-split-left)    :vs +enew<CR>
+nnoremap <silent> <SID>(windows-vsplit-bottom) :sp +enew<CR><C-W><C-X><C-W><C-P>
+nnoremap <silent> <SID>(windows-vsplit-top)    :sp +enew<CR>
 nmap <leader>w\ <SID>(windows-split-right)
 nmap <leader>w\| <SID>(windows-split-left)
 nmap <leader>w- <SID>(windows-vsplit-top)
 nmap <leader>w_ <SID>(windows-vsplit-bottom)
+" fresh windows
+nnoremap <silent> <SID>(windows-fresh) :redrew!<CR>
+nmap <leader>wf <SID>(windows-fresh)
 
 let g:topdict = {}
 exec 'let g:topdict["'.g:mapleader.'"] = g:lmap'
@@ -418,6 +430,16 @@ let g:signify_vcs_cmds = {
             \ }
 " }}}
 
+" any fold
+Plug 'pseewald/vim-anyfold', { 'for': ['c', 'cpp'] }
+" {{{
+augroup au_anyfold
+    autocmd!
+    autocmd Filetype c,cpp let b:anyfold_activate=1 |
+                \ let b:anyfold_identify_comments=1
+augroup end
+" }}}
+
 " Zoom Windows
 Plug 'troydm/zoomwintab.vim', { 'on': ['ZoomWinTabIn', 'ZoomWinTabOut', 'ZoomWinTabToggle'] }
 " {{{
@@ -501,11 +523,11 @@ endfunction
 " Toggle Tagbar
 nnoremap <silent> <SID>(toggle-tagbar)
             \ :call ToggleNERDTreeAndTagbar('tagbar')<CR>
-nmap <leader>ut <SID>(toggle-tagbar)
+nmap <leader>wt <SID>(toggle-tagbar)
 " Toggle NERDTree
 nnoremap <silent> <SID>(toggle-nerdtree)
             \ :call ToggleNERDTreeAndTagbar('nerdtree')<CR>
-nmap <leader>un <SID>(toggle-nerdtree)
+nmap <leader>wn <SID>(toggle-nerdtree)
 " }}}
 
 " 2.2 File Type
