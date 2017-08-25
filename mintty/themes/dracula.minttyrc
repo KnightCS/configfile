@@ -1,0 +1,19 @@
+Will not apply HSTS. The HSTS database must be a regular and non-world-writable file.
+ERROR: could not open HSTS store at '/root/.wget-hsts'. HSTS will be disabled.
+--2017-08-25 14:58:53--  https://github.com/dracula/mintty/raw/master/.minttyrc.dracula
+Loaded CA certificate '/etc/ssl/certs/ca-certificates.crt'
+Resolving github.com... 192.30.255.113, 192.30.255.112
+Connecting to github.com|192.30.255.113|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://raw.githubusercontent.com/dracula/mintty/master/.minttyrc.dracula [following]
+--2017-08-25 14:58:56--  https://raw.githubusercontent.com/dracula/mintty/master/.minttyrc.dracula
+Resolving raw.githubusercontent.com... 151.101.0.133, 151.101.64.133, 151.101.128.133, ...
+Connecting to raw.githubusercontent.com|151.101.0.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 360 [text/plain]
+Saving to: ‘.minttyrc.dracula’
+
+     0K                                                       100% 1.41M=0s
+
+2017-08-25 14:58:57 (1.41 MB/s) - ‘.minttyrc.dracula’ saved [360/360]
+

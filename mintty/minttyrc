@@ -1,0 +1,17 @@
+Transparency=medium
+OpaqueWhenFocused=no
+CursorType=line
+CursorBlinks=yes
+Locale=en_US
+Charset=UTF-8
+ScrollbackLines=99000
+ScrollMod=shift
+Scrollbar=none
+PgUpDnScroll=yes
+Term=xterm-256color
+CopyAsRTF=no
+RightClickAction=paste
+BellType=0
+BoldAsFont=no
+ZoomShortcuts=no
+ThemeFile=dracula.minttyrc
