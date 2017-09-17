@@ -24,6 +24,7 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
+HISTIGNORE='ls:history:pwd'
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -169,20 +170,16 @@ xterm*|rxvt*)
     ;;
 esac
 
-#********
-# Knight's config
-#
-alias grep='grep --color=auto'
-export PYTHONSTARTUP=~/.pystartup.py
-# set history
-HISTCONTROL=ignoreboth
-HISTIGNORE='ls:history:pwd'
+# User configuration
 
-# user powerline
-USER_SHELL=$0
-PIP_DIR=$(pip show powerline-status | grep "Location" | awk '{print $2}')
-if [ "${USER_SHELL}" == "/bin/bash" ] || [ "${USER_SHELL}" == "-bash" ] && [ "${PIP_DIR}" != "" ]; then
-	source "${PIP_DIR}"/powerline/bindings/bash/powerline.sh
+# Python with tab autocomplete
+[ -f "$HOME/.pystartup.py" ] && export PYTHONSTARTUP=~/.pystartup.py
+
+# Bash powerline
+if [[ "$0" =~ "bash" ]]; then
+    pid_dir="$(pip show powerline-status | awk '/Location/{print $2}')"
+    [ -z "$pid_dir" ] && source "$pid_dir/powerline/bindings/bash/powerline.sh"
 fi
 
-source ~/.bashrc_knight
+# Bash local configuration
+[ -f "$HOME/.bashrc_local" ] && source "$HOME/.zshrc_local"

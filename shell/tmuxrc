@@ -1,3 +1,5 @@
+which tmux &>/dev/null || exit 0
+
 if [ -z "$TMUX" ]; then
     tmux new-window  -c "$PWD" 2>/dev/null
     tmux new-session -A -D -s main && exit
