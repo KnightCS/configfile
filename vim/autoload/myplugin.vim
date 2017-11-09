@@ -430,16 +430,6 @@ let g:signify_vcs_cmds = {
             \ }
 " }}}
 
-" any fold
-Plug 'pseewald/vim-anyfold', { 'for': ['c', 'cpp'] }
-" {{{
-augroup au_anyfold
-    autocmd!
-    autocmd Filetype c,cpp let b:anyfold_activate=1 |
-                \ let b:anyfold_identify_comments=1
-augroup end
-" }}}
-
 " Zoom Windows
 Plug 'troydm/zoomwintab.vim', { 'on': ['ZoomWinTabIn', 'ZoomWinTabOut', 'ZoomWinTabToggle'] }
 " {{{
