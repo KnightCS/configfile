@@ -51,7 +51,7 @@ let g:maplocalleader = ','
 " 1.1
 " ----------
 " 不强制兼容vi
-"set nocompatible
+set nocompatible
 " 启动的时候不显示那个援助索马里儿童的提示
 set shortmess=atl
 " 去掉输入错误的提示声音
